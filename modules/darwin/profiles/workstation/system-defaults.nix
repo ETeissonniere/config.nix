@@ -22,6 +22,11 @@
       hitoolbox.AppleFnUsageType = "Start Dictation";
       iCal."first day of week" = "Monday";
 
+      WindowManager = {
+        StandardHideWidgets = true;
+        StageManagerHideWidgets = true;
+      };
+
       finder = {
         FXPreferredViewStyle = "clmv";
         ShowExternalHardDrivesOnDesktop = false;
