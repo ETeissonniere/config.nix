@@ -10,6 +10,7 @@
     ./fish
     ./ghostty.nix
     ./git.nix
+    ./ssh.nix
     ./zed.nix
   ];
 
