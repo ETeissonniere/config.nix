@@ -22,6 +22,27 @@ upgrades declared packages and removes unlisted packages and associated cask dat
 
 ## Post-install steps
 
+After activation, connect to the NAS network and grant your terminal Full Disk
+Access in System Settings → Privacy & Security. Run `make setup` without sudo:
+
+1. **GitHub:** Generates `~/.ssh/id_ed25519` if missing, prompts for an optional
+   passphrase, adds the key to Apple's SSH agent, and saves its passphrase in
+   Keychain. Signs into GitHub and registers the public key for SSH authentication
+   and commit signing. If scopes are missing, follow the printed refresh command.
+2. **Time Machine:** Registers `nas.teiss.org` using a password prompt, excludes
+   `~/Developer` and `~/Downloads`, and enables backups. Configure backup encryption
+   or adoption of an older Mac's backups separately in macOS.
+
+Existing keys and backup destinations are preserved. Credentials stay local;
+check `gh auth status` for token storage, since Keychain failures can cause a
+plaintext fallback. These scripts run only when invoked, independently of Nix
+rebuilds. To run either step separately:
+
+```sh
+fish scripts/postinstall/github-setup.fish
+fish scripts/postinstall/time-machine-setup.fish
+```
+
 Nix installs these apps; open each one after setup to configure it individually:
 
 - **Stats:** Choose the metrics and widgets to show in the menu bar, and enable
@@ -41,6 +62,7 @@ Nix installs these apps; open each one after setup to configure it individually:
 | `make check` | Evaluate the configuration |
 | `make build` | Build with `nh` without applying |
 | `make switch` | Build and apply with `nh` |
+| `make setup` | Set up SSH keys, GitHub, and Time Machine |
 | `make update` | Update pinned dependencies without applying |
 | `make fmt` | Format Nix files |
 | `make clean` | Clean old generations with `nh` |
