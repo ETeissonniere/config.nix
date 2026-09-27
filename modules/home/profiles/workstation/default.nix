@@ -21,7 +21,6 @@
       jq
       python3Packages.huggingface-hub
       ripgrep
-      uv
       vim
     ];
 
