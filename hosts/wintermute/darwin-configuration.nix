@@ -2,6 +2,7 @@
   config,
   inputs,
   hostName,
+  lib,
   ...
 }:
 {
@@ -12,7 +13,7 @@
   nixpkgs.hostPlatform = "aarch64-darwin";
   networking = {
     inherit hostName;
-    computerName = hostName;
+    computerName = lib.strings.toSentenceCase hostName;
     localHostName = hostName;
   };
 
