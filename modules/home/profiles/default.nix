@@ -1,4 +1,9 @@
-{ inputs, osConfig, lib, ... }:
+{
+  inputs,
+  osConfig,
+  lib,
+  ...
+}:
 {
   imports = [
     inputs.self.commonModules.profiles

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   programs.ghostty = lib.mkIf config.profiles.workstation.enable {
     enable = true;

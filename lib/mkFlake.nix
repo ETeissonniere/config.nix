@@ -21,7 +21,8 @@ let
 
   withDefaultModule =
     modules:
-    modules // {
+    modules
+    // {
       default.imports = builtins.attrValues (builtins.removeAttrs modules [ "default" ]);
     };
 in
@@ -50,9 +51,7 @@ in
             useGlobalPkgs = true;
             useUserPackages = true;
             extraSpecialArgs = { inherit inputs; };
-            users = lib.mapAttrs (
-              username: _: usersPath + "/${username}/home-configuration.nix"
-            ) users;
+            users = lib.mapAttrs (username: _: usersPath + "/${username}/home-configuration.nix") users;
           };
         }
       ];

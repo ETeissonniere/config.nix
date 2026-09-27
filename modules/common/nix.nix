@@ -3,7 +3,10 @@
   environment.systemPackages = [ pkgs.nh ];
 
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
     trusted-users = [ config.me.username ];
   };
   nix.gc = {
