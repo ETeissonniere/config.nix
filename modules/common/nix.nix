@@ -1,5 +1,7 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
+  environment.systemPackages = [ pkgs.nh ];
+
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     trusted-users = [ config.me.username ];

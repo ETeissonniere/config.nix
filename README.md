@@ -1,47 +1,40 @@
 # config.nix
 
-My machines and dotfiles, managed with Nix and nix-darwin (Mac hosts only).
+My Macs and dotfiles, managed with Nix, nix-darwin, and [nh](https://github.com/nix-community/nh).
 
 ## Setup
 
-1. Install [Nix](https://nixos.org/download/) and Apple's command-line tools
-   (`xcode-select --install`). Open a new terminal. Nix manages Homebrew's
-   installation and taps, adopting an existing installation if present.
-2. Choose a host from `hosts/`. Check its architecture, username, and UID
-   (`id -u`) before applying it. Hosts and modules are discovered automatically.
-   To add a Mac, copy a host directory, including its `users/` configuration.
-   Shared identity lives in `modules/common/me.nix`. Choose
-   `profiles.workstation.enable` for a desktop or `profiles.server.enable`
-   for a server; only workstations get Ghostty.
-3. Build, then apply from this repository:
+Install [Nix](https://nixos.org/download/) and Apple's command-line tools
+(`xcode-select --install`), then open a new terminal. Choose a host from `hosts/`
+and check its architecture, username, and UID (`id -u`).
 
-   ```sh
-   make check HOST=wintermute
-   make build HOST=wintermute
-   make switch HOST=wintermute
-   ```
+For the first activation (replace `wintermute` with your host):
 
-   `switch` requires sudo and configures the hostname, login shell, and dotfiles.
-   Homebrew updates and upgrades declared packages on activation. Cleanup uses
-   `zap`: unlisted packages and associated cask data are removed. Test in a VM
-   until the package list is complete. Restart your terminal afterward.
+```sh
+make check HOST=wintermute
+nix --extra-experimental-features 'nix-command flakes' build 'path:.#darwinConfigurations.wintermute.system'
+sudo ./result/sw/bin/darwin-rebuild switch --flake 'path:.#wintermute'
+```
+
+This installs `nh`; restart your terminal afterward.
+Homebrew is managed automatically; activation
+upgrades declared packages and removes unlisted packages and associated cask data.
 
 ## Usage
 
-`HOST` defaults to `wintermute`; pass `HOST=<name>` for another configured Mac.
+`HOST` defaults to `wintermute`; override it with `HOST=<name>`.
 
 | Command | Purpose |
 | --- | --- |
 | `make check` | Evaluate the configuration |
-| `make build` | Build without applying |
-| `make switch` | Build and apply |
-| `make update` | Update pinned dependencies |
+| `make build` | Build with `nh` without applying |
+| `make switch` | Build and apply with `nh` |
+| `make update` | Update pinned dependencies without applying |
 | `make fmt` | Format Nix files |
+| `make clean` | Clean old generations with `nh` |
 
-After edits or updates, run `make check` and `make build` before switching.
-Keep `stateVersion` values unchanged when updating packages.
-`make update` refreshes all inputs in `flake.lock`, including the Homebrew taps;
-`make switch` applies them. Ghostty's updater is disabled.
+Run `make check` and `make build` before switching. Automatic Nix garbage
+collection runs weekly with 30-day retention. Keep `stateVersion` values unchanged.
 
 ## Acknowledgments
 
