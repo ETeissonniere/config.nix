@@ -10,6 +10,17 @@
 
   profiles.workstation.enable = true;
 
+  services.time-machine = {
+    enable = true;
+    host = "nas.teiss.org";
+    username = "Eliott";
+    share = "Eliott's Time Machine";
+    exclusions = [
+      "${config.users.users.${config.me.username}.home}/Developer"
+      "${config.users.users.${config.me.username}.home}/Downloads"
+    ];
+  };
+
   nixpkgs.hostPlatform = "aarch64-darwin";
   networking = {
     inherit hostName;
