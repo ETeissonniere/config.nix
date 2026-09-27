@@ -2,14 +2,13 @@ HOST ?= wintermute
 FLAKE := path:$(CURDIR)
 NIX := nix --extra-experimental-features 'nix-command flakes'
 
-.PHONY: help check build switch postinstall update fmt
+.PHONY: help check build switch postinstall fmt
 
 help:
-	@echo "make check        Evaluate the configuration"
 	@echo "make build        Build without activating"
 	@echo "make switch       Build and activate with nh"
 	@echo "make postinstall  Set up SSH keys, GitHub, and Time Machine interactively"
-	@echo "make update       Update flake.lock; review before switching"
+	@echo "make check        Evaluate the configuration"
 	@echo "make fmt          Format Nix files"
 
 check:
@@ -25,9 +24,6 @@ switch:
 postinstall:
 	fish scripts/postinstall/github-setup.fish
 	fish scripts/postinstall/time-machine-setup.fish
-
-update:
-	$(NIX) flake update --flake "$(FLAKE)"
 
 fmt:
 	$(NIX) run "$(FLAKE)#formatter.$$($(NIX) eval --impure --raw --expr builtins.currentSystem)" -- --tree-root "$(CURDIR)"

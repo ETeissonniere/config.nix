@@ -63,7 +63,7 @@ Nix installs these apps; open each one after setup to configure it individually:
 | `make build` | Build with `nh` without applying |
 | `make switch` | Build and apply with `nh` |
 | `make postinstall` | Set up SSH keys, GitHub, and Time Machine |
-| `make update` | Update pinned dependencies without applying |
+| `nix flake update` | Update pinned dependencies without applying |
 | `make fmt` | Format Nix files |
 
 Run `make check` and `make build` before switching. Automatic Nix garbage
