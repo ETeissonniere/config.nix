@@ -1,6 +1,9 @@
 { inputs, osConfig, lib, ... }:
 {
-  imports = [ inputs.self.commonModules.profiles ];
+  imports = [
+    inputs.self.commonModules.profiles
+    ./workstation
+  ];
 
   profiles = {
     workstation.enable = lib.mkDefault osConfig.profiles.workstation.enable;

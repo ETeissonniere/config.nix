@@ -1,4 +1,9 @@
-{ config, inputs, hostName, ... }:
+{
+  config,
+  inputs,
+  hostName,
+  ...
+}:
 {
   imports = [ inputs.self.darwinModules.default ];
 

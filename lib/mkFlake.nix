@@ -17,15 +17,18 @@ let
         value = path + "/${name}";
       }) entries;
     in
-    modules
-    // {
+    modules;
+
+  withDefaultModule =
+    modules:
+    modules // {
       default.imports = builtins.attrValues (builtins.removeAttrs modules [ "default" ]);
     };
 in
 {
-  commonModules = discoverModules ../modules/common;
-  darwinModules = discoverModules ../modules/darwin;
-  homeModules = discoverModules ../modules/home;
+  commonModules = withDefaultModule (discoverModules ../modules/common);
+  darwinModules = withDefaultModule (discoverModules ../modules/darwin);
+  homeModules = withDefaultModule (discoverModules ../modules/home);
 
   darwinConfigurations = lib.mapAttrs (
     hostName: _:

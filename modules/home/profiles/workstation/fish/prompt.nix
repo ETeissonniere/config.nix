@@ -1,6 +1,6 @@
-{ ... }:
+{ config, lib, ... }:
 {
-  programs.starship = {
+  programs.starship = lib.mkIf config.programs.fish.enable {
     enable = true;
     enableFishIntegration = true;
     settings = {
