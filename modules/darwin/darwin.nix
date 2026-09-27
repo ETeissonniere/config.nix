@@ -7,6 +7,8 @@
 
   programs.fish.enable = true;
 
+  services.openssh.hostKeys = [ ];
+
   nix-homebrew = {
     enable = true;
     autoMigrate = true;
