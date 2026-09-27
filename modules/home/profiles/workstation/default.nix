@@ -9,6 +9,7 @@
     ./codex
     ./fish
     ./ghostty.nix
+    ./git.nix
     ./zed.nix
   ];
 
@@ -28,10 +29,5 @@
       ripgrep
       vim
     ];
-
-    programs.git = {
-      enable = true;
-      lfs.enable = true;
-    };
   };
 }
