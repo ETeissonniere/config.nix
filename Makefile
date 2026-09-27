@@ -2,16 +2,16 @@ HOST ?= wintermute
 FLAKE := path:$(CURDIR)
 NIX := nix --extra-experimental-features 'nix-command flakes'
 
-.PHONY: help check build switch setup update clean fmt
+.PHONY: help check build switch postinstall update clean fmt
 
 help:
-	@echo "make check   Evaluate the configuration"
-	@echo "make build   Build without activating"
-	@echo "make switch  Build and activate with nh"
-	@echo "make setup   Bootstrap local GitHub credentials and Time Machine interactively"
-	@echo "make update  Update flake.lock; review before switching"
-	@echo "make fmt     Format Nix files"
-	@echo "make clean   Remove old generations and collect garbage with nh"
+	@echo "make check        Evaluate the configuration"
+	@echo "make build        Build without activating"
+	@echo "make switch       Build and activate with nh"
+	@echo "make postinstall  Set up SSH keys, GitHub, and Time Machine interactively"
+	@echo "make update       Update flake.lock; review before switching"
+	@echo "make fmt          Format Nix files"
+	@echo "make clean        Remove old generations and collect garbage with nh"
 
 check:
 	$(NIX) flake check --no-build "$(FLAKE)"
@@ -23,7 +23,7 @@ build:
 switch:
 	nh darwin switch "$(FLAKE)" --hostname "$(HOST)"
 
-setup:
+postinstall:
 	fish scripts/postinstall/github-setup.fish
 	fish scripts/postinstall/time-machine-setup.fish
 

@@ -23,7 +23,7 @@ upgrades declared packages and removes unlisted packages and associated cask dat
 ## Post-install steps
 
 After activation, connect to the NAS network and grant your terminal Full Disk
-Access in System Settings → Privacy & Security. Run `make setup` without sudo:
+Access in System Settings → Privacy & Security. Run `make postinstall` without sudo:
 
 1. **GitHub:** Generates `~/.ssh/id_ed25519` if missing, prompts for an optional
    passphrase, adds the key to Apple's SSH agent, and saves its passphrase in
@@ -62,7 +62,7 @@ Nix installs these apps; open each one after setup to configure it individually:
 | `make check` | Evaluate the configuration |
 | `make build` | Build with `nh` without applying |
 | `make switch` | Build and apply with `nh` |
-| `make setup` | Set up SSH keys, GitHub, and Time Machine |
+| `make postinstall` | Set up SSH keys, GitHub, and Time Machine |
 | `make update` | Update pinned dependencies without applying |
 | `make fmt` | Format Nix files |
 | `make clean` | Clean old generations with `nh` |
