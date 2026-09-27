@@ -11,6 +11,7 @@
   profiles.workstation.enable = true;
 
   services.time-machine = {
+    # Does not auto-connect to the NAS yet; secret management needs more research and a decision.
     enable = true;
     host = "nas.teiss.org";
     username = "Eliott";
