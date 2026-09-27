@@ -14,6 +14,10 @@
   config = lib.mkIf config.profiles.workstation.enable {
     programs.fish.enable = true;
 
+    home.activation.createDeveloperDirectory = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      run mkdir -p ${lib.escapeShellArg "${config.home.homeDirectory}/Developer"}
+    '';
+
     home.packages = with pkgs; [
       codex
       gh

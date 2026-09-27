@@ -8,6 +8,11 @@
   config = lib.mkIf config.profiles.workstation.enable {
     environment.systemPackages = [ pkgs.appcleaner ];
 
+    programs.mac-default-browser = {
+      enable = true;
+      browser = "chrome";
+    };
+
     homebrew.casks = [
       "bambu-studio"
       "chatgpt"
