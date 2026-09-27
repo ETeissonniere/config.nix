@@ -9,10 +9,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-things = {
-      url = "github:oake/nix-things";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     homebrew-core = {
       url = "github:homebrew/homebrew-core";
@@ -24,26 +20,5 @@
     };
   };
 
-  outputs =
-    inputs:
-    let
-      blueprint = inputs.nix-things.lib.mkFlake {
-        inherit inputs;
-        systems = [
-          "aarch64-darwin"
-          "x86_64-darwin"
-        ];
-      };
-    in
-    {
-      inherit (blueprint)
-        darwinConfigurations
-        nixosConfigurations
-        commonModules
-        darwinModules
-        homeModules
-        nixosModules
-        formatter
-        ;
-    };
+  outputs = inputs: import ./lib/mkFlake.nix { inherit inputs; };
 }
