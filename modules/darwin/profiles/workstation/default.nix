@@ -1,3 +1,6 @@
 {
-  imports = [ ./apps.nix ];
+  imports = [
+    ./apps.nix
+    ./dock.nix
+  ];
 }
