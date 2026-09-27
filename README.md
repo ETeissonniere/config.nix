@@ -65,7 +65,6 @@ Nix installs these apps; open each one after setup to configure it individually:
 | `make postinstall` | Set up SSH keys, GitHub, and Time Machine |
 | `make update` | Update pinned dependencies without applying |
 | `make fmt` | Format Nix files |
-| `make clean` | Clean old generations with `nh` |
 
 Run `make check` and `make build` before switching. Automatic Nix garbage
 collection runs weekly with 30-day retention. Keep `stateVersion` values unchanged.
