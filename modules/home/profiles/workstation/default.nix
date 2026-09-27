@@ -6,6 +6,7 @@
 }:
 {
   imports = [
+    ./codex
     ./fish
     ./ghostty.nix
     ./zed.nix
