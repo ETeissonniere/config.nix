@@ -16,7 +16,7 @@ jobs:
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Check configuration
-        run: make check
+        run: make check HOST=wintermute
       - name: Check formatting
         run: |
           make fmt

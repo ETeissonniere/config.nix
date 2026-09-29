@@ -1,4 +1,4 @@
-HOST ?= wintermute
+HOST ?= $(shell scutil --get LocalHostName | tr '[:upper:]' '[:lower:]')
 FLAKE := path:$(CURDIR)
 NIX := nix --extra-experimental-features 'nix-command flakes'
 

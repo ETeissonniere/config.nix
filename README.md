@@ -55,7 +55,8 @@ Nix installs these apps; open each one after setup to configure it individually:
 
 ## Usage
 
-`HOST` defaults to `wintermute`; override it with `HOST=<name>`.
+`HOST` defaults to the Mac's local hostname, lowercased (for example, `Neutrino`
+becomes `neutrino`); override it with `HOST=<name>`.
 
 | Command | Purpose |
 | --- | --- |
