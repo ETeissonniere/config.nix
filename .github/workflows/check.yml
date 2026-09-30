@@ -15,8 +15,12 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check configuration
-        run: make check HOST=wintermute
+      - name: Check all host configurations
+        run: |
+          hosts=$(nix eval --json "path:$PWD#darwinConfigurations" --apply builtins.attrNames | jq -r '.[]')
+          for host in $hosts; do
+            make check HOST="$host"
+          done
       - name: Check formatting
         run: |
           make fmt
