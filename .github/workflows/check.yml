@@ -15,8 +15,8 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check configuration
-        run: make check HOST=wintermute
+      - name: Check all host configurations
+        run: make check-all
       - name: Check formatting
         run: |
           make fmt
