@@ -18,7 +18,16 @@ check:
 
 check-all:
 	$(NIX) flake check --no-build --all-systems "$(FLAKE)"
-	$(NIX) eval --impure --json --expr 'builtins.getFlake "$(FLAKE)"' --apply 'flake: { darwinConfigurations = builtins.mapAttrs (_: host: host.system.drvPath) (flake.darwinConfigurations or {}); nixosConfigurations = builtins.mapAttrs (_: host: host.config.system.build.toplevel.drvPath) (flake.nixosConfigurations or {}); }'
+	$(NIX) eval --impure --json \
+		--expr 'builtins.getFlake "$(FLAKE)"' \
+		--apply "flake: { \
+			darwinConfigurations = builtins.mapAttrs \
+				(_: host: host.system.drvPath) \
+				(flake.darwinConfigurations or {}); \
+			nixosConfigurations = builtins.mapAttrs \
+				(_: host: host.config.system.build.toplevel.drvPath) \
+				(flake.nixosConfigurations or {}); \
+		}"
 
 build:
 	nh darwin build "$(FLAKE)" --hostname "$(HOST)"
