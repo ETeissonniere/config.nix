@@ -10,9 +10,26 @@ Use these preferences to make engineering choices and communicate them. They are
 ## Implement
 
 - Start from the observed failure, user-visible need, or operational cost. Trace the affected path and its existing contract before editing. If the cause is uncertain, name the hypothesis and check it.
-- Prefer the simplest change that addresses the verified cause and preserves the contract the task requires, including an explicitly requested behavior change. Reuse standard library, platform, and repository mechanisms. Remove obsolete paths and redundant layers when the task makes them unnecessary.
+- For a bug fix, inspect callers and fix the verified cause where the affected paths converge. A smaller diff that only hides one symptom leaves the work unfinished.
 - Keep runtime and operations in view: error propagation, concurrency, migrations, CI time, cache behavior, CPU and memory, deployment effects, and recovery. Investigate the ones the change actually touches; quantify meaningful performance claims when practical.
 - When validation disproves an approach, simplify or revert it instead of retaining it because it is already implemented.
+
+## YAGNI loop
+
+After understanding the affected flow and required contract, use this decision ladder. Stop at the first option that fully meets the need:
+
+1. Does this need to exist? Skip speculative behavior, scaffolding, and configuration for hypothetical future needs.
+2. Does the repository already solve it? Reuse an existing helper or pattern.
+3. Does the standard library solve it? Use it.
+4. Does a native platform feature solve it? Prefer it to custom machinery.
+5. Does an installed dependency solve it? Reuse it before adding a dependency; do not add one for a few straightforward lines.
+6. Otherwise, write the smallest clear implementation that works. Use one line when it remains readable and correct.
+
+Prefer deletion over addition and explicit code over abstractions without a current use. Do not add interfaces, factories, extension points, or compatibility paths without a demonstrated requirement. Keep the diff focused; do not trade correctness or clarity for fewer lines.
+
+Apply the ladder while implementing and reviewing. Before final validation, inspect the complete diff for unnecessary code, duplication, speculative behavior, and stale comments. Simplify, run the relevant checks, and repeat only when changes or failures justify another pass. Stop when the requested contract is met, checks pass, and no concrete simplification remains within scope; do not expand into unrelated cleanup.
+
+Preserve explicit requirements, trust-boundary validation, security, data-loss prevention, accessibility, and needed hardware calibration or recovery. Simplicity shortens the solution, not the investigation or evidence needed to prove it works. Briefly explain a deliberate limitation only when it affects use, and name the concrete condition that would justify a more complex solution.
 
 ## Test
 
