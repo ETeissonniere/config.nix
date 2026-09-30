@@ -6,9 +6,10 @@
   ...
 }:
 {
-  imports = [ inputs.self.darwinModules.default ];
-
-  profiles.workstation.enable = true;
+  imports = [
+    inputs.self.darwinModules.base
+    inputs.self.darwinModules.profiles.workstation
+  ];
 
   nixpkgs.hostPlatform = "aarch64-darwin";
   networking = {

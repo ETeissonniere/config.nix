@@ -28,8 +28,12 @@ let
 in
 {
   commonModules = withDefaultModule (discoverModules ../modules/common);
-  darwinModules = withDefaultModule (discoverModules ../modules/darwin);
-  homeModules = withDefaultModule (discoverModules ../modules/home);
+  darwinModules = discoverModules ../modules/darwin // {
+    profiles = discoverModules ../modules/darwin/profiles;
+  };
+  homeModules = discoverModules ../modules/home // {
+    profiles = discoverModules ../modules/home/profiles;
+  };
 
   darwinConfigurations = lib.mapAttrs (
     hostName: _:
