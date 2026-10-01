@@ -26,6 +26,7 @@
   services.mac-wallpaper.image = lib.mkForce ../../assets/wallpaper-phenix.jpg;
 
   homebrew.casks = [
+    "google-drive"
     "kicad"
     "linear"
   ];
