@@ -15,13 +15,13 @@
     wvous-br-corner = 1;
 
     persistent-apps = [
-      "/Applications/Google Chrome.app"
+      "${pkgs.google-chrome}/Applications/Google Chrome.app"
       "/System/Applications/Mail.app"
       "/System/Applications/Messages.app"
       "/System/Applications/Notes.app"
       "/System/Applications/Calendar.app"
-      "/Applications/Ghostty.app"
-      "/Applications/ChatGPT.app"
+      "${pkgs.ghostty-bin}/Applications/Ghostty.app"
+      "${pkgs.chatgpt}/Applications/ChatGPT.app"
       "${pkgs.zed-editor}/Applications/Zed.app"
       "/Applications/BambuStudio.app"
       "/System/Applications/Siri.app"

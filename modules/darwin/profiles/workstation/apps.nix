@@ -5,7 +5,14 @@
   ...
 }:
 {
-  environment.systemPackages = [ pkgs.appcleaner ];
+  environment.systemPackages = with pkgs; [
+    appcleaner
+    chatgpt
+    ghostty-bin
+    google-chrome
+    orbstack
+    stats
+  ];
 
   programs.mac-default-browser = {
     enable = true;
@@ -14,12 +21,8 @@
 
   homebrew.casks = [
     "bambu-studio"
-    "chatgpt"
-    "google-chrome"
     "logi-options+"
     "monitorcontrol"
-    "orbstack"
-    "stats"
   ];
 
   homebrew.masApps = {
