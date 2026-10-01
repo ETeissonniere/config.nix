@@ -3,6 +3,7 @@
   inputs,
   hostName,
   lib,
+  pkgs,
   ...
 }:
 {
@@ -28,7 +29,6 @@
   homebrew.casks = [
     "google-drive"
     "kicad"
-    "linear"
   ];
 
   homebrew.masApps = {
@@ -36,8 +36,10 @@
     "Tailscale" = 1475387142;
   };
 
+  environment.systemPackages = [ pkgs.linear ];
+
   system.defaults.dock.persistent-apps = [
     "/Applications/Slack.app"
-    "/Applications/Linear.app"
+    "${pkgs.linear}/Applications/Linear.app"
   ];
 }

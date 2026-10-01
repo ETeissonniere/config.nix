@@ -26,4 +26,10 @@
     ripgrep
     vim
   ];
+
+  # Nix owns OrbStack updates; its built-in updater cannot modify the store.
+  targets.darwin.defaults."dev.kdrag0n.MacVirt" = {
+    SUEnableAutomaticChecks = false;
+    SUAutomaticallyUpdate = false;
+  };
 }
