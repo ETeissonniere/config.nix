@@ -13,6 +13,7 @@
 - Use cargo for Rust. Use relevant existing formatters, linters, and language servers.
 - Inspect existing devcontainer, Compose, and Dockerfile setups first. For missing tools, prefer a compatible existing container environment, Apple's `container` when available, or Docker over asking the user to install tools on the host.
 
+@shellInstructions@
 ## Validate and deliver
 - Before final validation, make a simplification pass over the complete diff, including delegated changes. Remove unnecessary abstractions, duplication, speculative behavior, and stale comments while preserving required behavior and preferences. Keep the pass within scope; do not turn it into an unrelated rewrite.
 - Test user-visible behavior and contracts, not incidental structure or wording. Use descriptive scenario names and table-driven cases where useful. Add coverage when it can catch a real regression; avoid tests that mirror the implementation.
