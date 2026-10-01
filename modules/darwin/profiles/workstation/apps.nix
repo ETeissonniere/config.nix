@@ -7,7 +7,6 @@
 {
   environment.systemPackages = with pkgs; [
     appcleaner
-    chatgpt
     ghostty-bin
     google-chrome
     orbstack
@@ -21,6 +20,7 @@
 
   homebrew.casks = [
     "bambu-studio"
+    "chatgpt"
     "logi-options+"
     "monitorcontrol"
   ];
