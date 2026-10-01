@@ -11,19 +11,20 @@ and check its architecture, username, and UID (`id -u`).
 For the first activation (replace `wintermute` with your host):
 
 ```sh
-make check HOST=wintermute
-nix --extra-experimental-features 'nix-command flakes' build 'path:.#darwinConfigurations.wintermute.system'
-sudo ./result/sw/bin/darwin-rebuild switch --flake 'path:.#wintermute'
+nix --extra-experimental-features 'nix-command flakes' shell --inputs-from . nixpkgs#just nixpkgs#nh
+just host=wintermute check
+just host=wintermute switch
+exit
 ```
 
-This installs `nh`; restart your terminal afterward.
+This installs `nh` and `just`; restart your terminal afterward.
 Homebrew is managed automatically; activation
 upgrades declared packages and removes unlisted packages and associated cask data.
 
 ## Post-install steps
 
 After activation, connect to the NAS network and grant your terminal Full Disk
-Access in System Settings → Privacy & Security. Run `make postinstall` without sudo:
+Access in System Settings → Privacy & Security. Run `just postinstall` without sudo:
 
 1. **GitHub:** Generates `~/.ssh/id_ed25519` if missing, prompts for an optional
    passphrase, adds the key to Apple's SSH agent, and saves its passphrase in
@@ -55,20 +56,22 @@ Nix installs these apps; open each one after setup to configure it individually:
 
 ## Usage
 
-`HOST` defaults to the Mac's local hostname, lowercased (for example, `Neutrino`
-becomes `neutrino`); override it with `HOST=<name>`.
+`host` defaults to the Mac's local hostname, lowercased (for example, `Neutrino`
+becomes `neutrino`); override it before the recipe: `just host=wintermute check`.
 
 | Command | Purpose |
 | --- | --- |
-| `make check` | Evaluate the configuration |
-| `make build` | Build with `nh` without applying |
-| `make switch` | Build and apply with `nh` |
-| `make postinstall` | Set up SSH keys, GitHub, and Time Machine |
-| `nix flake update` | Update pinned dependencies without applying |
-| `make fmt` | Format Nix files |
+| `just check` | Evaluate the configuration |
+| `just check-all` | Evaluate all Darwin and NixOS configurations |
+| `just build` | Build with `nh` without applying |
+| `just switch` | Build and apply with `nh` |
+| `just postinstall` | Set up SSH keys, GitHub, and Time Machine |
+| `just update` | Update pinned dependencies without applying |
+| `just format` | Format Nix files and recipes |
 
-Run `make check` and `make build` before switching. Automatic Nix garbage
-collection runs weekly with 30-day retention. Keep `stateVersion` values unchanged.
+Run `just` to list recipes. Run `just check` and `just build` before switching.
+Automatic Nix garbage collection runs weekly with 30-day retention. Keep
+`stateVersion` values unchanged.
 
 ## Acknowledgments
 

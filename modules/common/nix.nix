@@ -1,6 +1,9 @@
 { config, pkgs, ... }:
 {
-  environment.systemPackages = [ pkgs.nh ];
+  environment.systemPackages = [
+    pkgs.just
+    pkgs.nh
+  ];
 
   nix.settings = {
     experimental-features = [

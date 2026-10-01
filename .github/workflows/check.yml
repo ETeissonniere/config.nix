@@ -15,9 +15,13 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install command-line tools
+        run: |
+          nix profile add --inputs-from . nixpkgs#just nixpkgs#nh
+          echo "$HOME/.nix-profile/bin" >> "$GITHUB_PATH"
       - name: Check all host configurations
-        run: make check-all
+        run: just check-all
       - name: Check formatting
         run: |
-          make fmt
+          just format
           git diff --exit-code
