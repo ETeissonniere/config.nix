@@ -21,7 +21,7 @@
       "/System/Applications/Notes.app"
       "/System/Applications/Calendar.app"
       "${pkgs.ghostty-bin}/Applications/Ghostty.app"
-      "${pkgs.chatgpt}/Applications/ChatGPT.app"
+      "/Applications/ChatGPT.app"
       "${pkgs.zed-editor}/Applications/Zed.app"
       "/Applications/BambuStudio.app"
       "/System/Applications/Siri.app"
