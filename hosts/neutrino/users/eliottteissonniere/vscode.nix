@@ -1,5 +1,33 @@
-{ pkgs, ... }:
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  mcc = pkgs.vscode-utils.extensionFromVscodeMarketplace {
+    publisher = "microchip";
+    name = "mplab-code-configurator";
+    version = "1.0.5";
+    hash = "sha256-Y7n06W4lWg8EX9BIb8iRBFvKDcS7cxwZekky3w0KHQY=";
+  };
+  mccDirectory = "${config.xdg.dataHome}/vscode-mcc/${builtins.baseNameOf mcc}";
+in
+{
+  # MCC downloads its backend beside its code; ContentPath does not relocate it.
+  home.file.".vscode/extensions/microchip.mplab-code-configurator".source = lib.mkForce (
+    config.lib.file.mkOutOfStoreSymlink mccDirectory
+  );
+  home.activation.prepareMccExtension =
+    lib.hm.dag.entryBetween [ "linkGeneration" ] [ "writeBoundary" ]
+      ''
+        if [ ! -d ${lib.escapeShellArg mccDirectory} ]; then
+          run mkdir -p ${lib.escapeShellArg (builtins.dirOf mccDirectory)}
+          run cp -R ${mcc}/share/vscode/extensions/microchip.mplab-code-configurator ${lib.escapeShellArg mccDirectory}
+          run chmod -R u+w ${lib.escapeShellArg mccDirectory}
+        fi
+      '';
+
   programs.vscode = {
     enable = true;
     package = pkgs.vscode.overrideAttrs {
@@ -12,7 +40,10 @@
     };
 
     # Include the pack's members: Home Manager does not resolve extension packs.
-    profiles.default.extensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+    profiles.default.extensions = [
+      mcc
+    ]
+    ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
       {
         publisher = "eclipse-cdt";
         name = "memory-inspector";
@@ -30,12 +61,6 @@
         name = "mplab-clangd";
         version = "2.0.0";
         hash = "sha256-T21e9TLfpHIk0NVgWDBHQBCjAQLPcC5wUF1pLEOi9DY=";
-      }
-      {
-        publisher = "microchip";
-        name = "mplab-code-configurator";
-        version = "1.0.5";
-        hash = "sha256-Y7n06W4lWg8EX9BIb8iRBFvKDcS7cxwZekky3w0KHQY=";
       }
       {
         publisher = "microchip";
