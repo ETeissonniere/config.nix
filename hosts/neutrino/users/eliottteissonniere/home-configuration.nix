@@ -1,6 +1,9 @@
 { inputs, ... }:
 {
-  imports = [ inputs.self.homeModules.profiles.workstation ];
+  imports = [
+    inputs.self.homeModules.profiles.workstation
+    ./vscode.nix
+  ];
 
   # Nix owns Linear updates; its built-in updater cannot modify the store.
   targets.darwin.defaults."com.linear".AutoUpdateDisabled = true;
