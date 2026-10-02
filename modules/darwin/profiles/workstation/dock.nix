@@ -24,7 +24,6 @@
       "/Applications/ChatGPT.app"
       "${pkgs.zed-editor}/Applications/Zed.app"
       "/Applications/BambuStudio.app"
-      "/System/Applications/Siri.app"
     ];
 
     persistent-others = [
