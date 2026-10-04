@@ -32,6 +32,10 @@ build:
 switch:
     nh darwin switch "{{ flake }}" --hostname "{{ host }}"
 
+# Set up the local SSH key and its passphrase in the macOS login Keychain
+setup-ssh:
+    fish scripts/postinstall/ssh-setup.fish
+
 # Set up SSH keys, GitHub, and Time Machine interactively
 postinstall:
     fish scripts/postinstall/github-setup.fish
