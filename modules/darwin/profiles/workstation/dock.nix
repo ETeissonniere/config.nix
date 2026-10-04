@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   ...
 }:
 {
@@ -15,14 +14,14 @@
     wvous-br-corner = 1;
 
     persistent-apps = [
-      "${pkgs.google-chrome}/Applications/Google Chrome.app"
+      "/Applications/Nix Apps/Google Chrome.app"
       "/System/Applications/Mail.app"
       "/System/Applications/Messages.app"
       "/System/Applications/Notes.app"
       "/System/Applications/Calendar.app"
-      "${pkgs.ghostty-bin}/Applications/Ghostty.app"
+      "/Applications/Nix Apps/Ghostty.app"
       "/Applications/ChatGPT.app"
-      "${pkgs.zed-editor}/Applications/Zed.app"
+      "/Applications/Nix Apps/Zed.app"
       "/Applications/BambuStudio.app"
     ];
 

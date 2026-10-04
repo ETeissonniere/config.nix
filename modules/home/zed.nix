@@ -2,7 +2,7 @@
 {
   programs.zed-editor = {
     enable = true;
-    defaultEditor = true;
+    package = null;
     userSettings.telemetry = {
       diagnostics = false;
       metrics = false;
