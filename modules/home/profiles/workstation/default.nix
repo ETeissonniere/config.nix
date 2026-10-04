@@ -24,8 +24,12 @@
     jq
     python3Packages.huggingface-hub
     ripgrep
-    vim
   ];
+
+  programs.vim = {
+    enable = true;
+    defaultEditor = true;
+  };
 
   # Nix owns these apps; their built-in updaters cannot modify the store.
   targets.darwin.defaults = {

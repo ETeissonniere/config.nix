@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 {
   programs.zed-editor = {
     enable = true;
@@ -12,10 +12,5 @@
       "nix"
       "toml"
     ];
-  };
-
-  home.sessionVariables = {
-    EDITOR = "${pkgs.zed-editor.meta.mainProgram} --wait";
-    VISUAL = "${pkgs.zed-editor.meta.mainProgram} --wait";
   };
 }
