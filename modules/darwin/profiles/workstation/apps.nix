@@ -11,6 +11,7 @@
     google-chrome
     orbstack
     stats
+    zed-editor
   ];
 
   programs.mac-default-browser = {

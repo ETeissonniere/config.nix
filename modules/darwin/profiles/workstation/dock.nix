@@ -21,7 +21,7 @@
       "/System/Applications/Calendar.app"
       "/Applications/Nix Apps/Ghostty.app"
       "/Applications/ChatGPT.app"
-      "${config.users.users.${config.me.username}.home}/Applications/Home Manager Apps/Zed.app"
+      "/Applications/Nix Apps/Zed.app"
       "/Applications/BambuStudio.app"
     ];
 
