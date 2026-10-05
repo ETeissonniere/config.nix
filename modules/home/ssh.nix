@@ -1,7 +1,5 @@
-{ config, inputs, ... }:
+{ config, ... }:
 {
-  imports = [ inputs.scauth.homeManagerModules.default ];
-
   programs.scauth = {
     enable = true;
     identities.default.touchId = true;

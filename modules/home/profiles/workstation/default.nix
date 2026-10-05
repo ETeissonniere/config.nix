@@ -6,6 +6,7 @@
 }:
 {
   imports = [
+    ../../home.nix
     ../../codex
     ../../fish
     ../../ghostty.nix
