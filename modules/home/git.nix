@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 {
   programs.git = {
     enable = true;
@@ -16,7 +16,7 @@
       init.defaultBranch = "master";
     };
     signing = {
-      key = "~/.ssh/id_ed25519.pub";
+      key = config.programs.scauth.identities.default.publicKeyFile;
       format = "ssh";
     };
     ignores = [

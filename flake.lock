@@ -131,7 +131,34 @@
         "homebrew-core": "homebrew-core",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "scauth": "scauth"
+      }
+    },
+    "scauth": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nix-darwin": [
+          "nix-darwin"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791243334,
+        "narHash": "sha256-1haVR4tif+lwcdHT3iNJ6PZ8UcgMYnxOPr86Q3jK76Q=",
+        "owner": "ETeissonniere",
+        "repo": "scauth.nix",
+        "rev": "90f47905d737b50c6cf95213ccbbd78c6d6e2a07",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ETeissonniere",
+        "repo": "scauth.nix",
+        "type": "github"
       }
     }
   },
