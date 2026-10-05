@@ -1,7 +1,7 @@
 { config, ... }:
 {
   # Git signs through ssh-keygen, which does not read ~/.ssh/config.
-  home.sessionVariables.SSH_SK_PROVIDER = "/usr/lib/ssh-keychain.dylib";
+  home.sessionVariables.SSH_SK_PROVIDER = config.programs.scauth.securityKeyProvider;
 
   programs.git = {
     enable = true;

@@ -148,11 +148,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791243334,
-        "narHash": "sha256-1haVR4tif+lwcdHT3iNJ6PZ8UcgMYnxOPr86Q3jK76Q=",
+        "lastModified": 1791244204,
+        "narHash": "sha256-VZDKhRlcQVppedc0qirP42k4T8EBo3cdKMFHdGjkkXY=",
         "owner": "ETeissonniere",
         "repo": "scauth.nix",
-        "rev": "90f47905d737b50c6cf95213ccbbd78c6d6e2a07",
+        "rev": "5b16abf2afb6ea23109a99842e3fbf38d7fdb59c",
         "type": "github"
       },
       "original": {

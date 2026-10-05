@@ -14,7 +14,7 @@
       ForwardAgent = false;
       IdentityFile = config.programs.scauth.identities.default.identityFile;
       IdentitiesOnly = true;
-      SecurityKeyProvider = "/usr/lib/ssh-keychain.dylib";
+      SecurityKeyProvider = config.programs.scauth.securityKeyProvider;
     };
   };
 }
