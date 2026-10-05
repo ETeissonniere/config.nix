@@ -18,27 +18,19 @@ exit
 ```
 
 This installs `nh` and `just`; restart your terminal afterward.
-Both wintermute and neutrino provision a Touch ID–protected `default` SSH identity
-using [scauth.nix](https://github.com/ETeissonniere/scauth.nix). You may be prompted
-to approve Touch ID during activation. Each Mac generates its own key, used for
-SSH and Git signing. Existing SSH keys remain on disk, but are no longer selected
-by this configuration. Register the new public key with your servers before using
-it to connect; print it with `scauth pubkey default`.
-
-Removing the identity from the configuration permanently deletes its managed key
-on the next activation; a rollback cannot restore it.
-
 Homebrew is managed automatically; activation
 upgrades declared packages and removes unlisted packages and associated cask data.
+
+Each Mac provisions a Touch ID–protected `default` key for SSH and Git signing.
+Approve any Touch ID prompt during activation. Use `scauth pubkey default` to
+retrieve its public key for your servers.
 
 ## Post-install steps
 
 After activation, connect to the NAS network and grant your terminal Full Disk
 Access in System Settings → Privacy & Security. Run `just postinstall` without sudo:
 
-1. **GitHub:** Signs into GitHub and registers the provisioned public key at
-   `~/.ssh/scauth/default/id_ecdsa_sk.pub` for SSH authentication
-   and commit signing. If scopes are missing, follow the printed refresh command.
+1. **GitHub:** Signs in and registers the `default` key for SSH and commit signing.
 2. **Time Machine:** Registers `nas.teiss.org` using a password prompt, excludes
    `~/Developer` and `~/Downloads`, and enables backups. Configure backup encryption
    or adoption of an older Mac's backups separately in macOS.
@@ -74,7 +66,7 @@ becomes `neutrino`); override it before the recipe: `just host=wintermute check`
 | `just check-all` | Evaluate all Darwin and NixOS configurations |
 | `just build` | Build with `nh` without applying |
 | `just switch` | Build and apply with `nh` |
-| `just postinstall` | Set up SSH keys, GitHub, and Time Machine |
+| `just postinstall` | Register the GitHub key and set up Time Machine |
 | `just update` | Update pinned dependencies without applying |
 | `just format` | Format Nix files and recipes |
 

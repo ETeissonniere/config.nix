@@ -32,7 +32,7 @@ build:
 switch:
     nh darwin switch "{{ flake }}" --hostname "{{ host }}"
 
-# Set up SSH keys, GitHub, and Time Machine interactively
+# Register the GitHub key and set up Time Machine interactively
 postinstall:
     fish scripts/postinstall/github-setup.fish
     fish scripts/postinstall/time-machine-setup.fish

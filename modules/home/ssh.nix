@@ -1,14 +1,11 @@
+{ config, inputs, ... }:
 {
-  config,
-  ...
-}:
-{
+  imports = [ inputs.scauth.homeManagerModules.default ];
+
   programs.scauth = {
     enable = true;
     identities.default.touchId = true;
   };
-
-  home.sessionVariables.SSH_SK_PROVIDER = "/usr/lib/ssh-keychain.dylib";
 
   programs.ssh = {
     enable = true;

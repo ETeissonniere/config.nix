@@ -31,7 +31,6 @@
   };
 
   home-manager = {
-    sharedModules = [ inputs.scauth.homeManagerModules.default ];
     backupFileExtension = "before-nix";
   };
 }
