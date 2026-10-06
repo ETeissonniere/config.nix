@@ -21,9 +21,9 @@ This installs `nh` and `just`; restart your terminal afterward.
 Homebrew is managed automatically; activation
 upgrades declared packages and removes unlisted packages and associated cask data.
 
-Each Mac provisions a Touch ID–protected `default` key for SSH and Git signing.
-Approve any Touch ID prompt during activation. Use `scauth pubkey default` to
-retrieve its public key for your servers.
+Each Mac provisions a `default` key for SSH and Git signing. Wintermute requires
+Touch ID; neutrino does not. Use `scauth pubkey default` to retrieve its public key
+for your servers.
 
 ## Post-install steps
 
