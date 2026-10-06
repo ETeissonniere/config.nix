@@ -5,6 +5,7 @@
     ./vscode.nix
   ];
 
+  # Using neutrino mostly in clamshell mode
   programs.scauth.identities.default.touchId = false;
 
   # Nix owns Linear updates; its built-in updater cannot modify the store.
