@@ -1,5 +1,8 @@
-{ ... }:
+{ config, ... }:
 {
+  # Git signs through ssh-keygen, which does not read ~/.ssh/config.
+  home.sessionVariables.SSH_SK_PROVIDER = config.programs.scauth.securityKeyProvider;
+
   programs.git = {
     enable = true;
     lfs.enable = true;
@@ -16,7 +19,7 @@
       init.defaultBranch = "master";
     };
     signing = {
-      key = "~/.ssh/id_ed25519.pub";
+      key = config.programs.scauth.identities.default.publicKeyFile;
       format = "ssh";
     };
     ignores = [

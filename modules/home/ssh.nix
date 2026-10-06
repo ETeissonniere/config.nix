@@ -1,17 +1,18 @@
+{ config, ... }:
 {
-  lib,
-  pkgs,
-  ...
-}:
-{
+  programs.scauth = {
+    enable = true;
+    identities.default.touchId = true;
+  };
+
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
     settings."*" = {
       ForwardAgent = false;
-      AddKeysToAgent = "yes";
-      IdentityFile = "~/.ssh/id_ed25519";
-      UseKeychain = lib.mkIf pkgs.stdenvNoCC.hostPlatform.isDarwin true;
+      IdentityFile = config.programs.scauth.identities.default.identityFile;
+      IdentitiesOnly = true;
+      SecurityKeyProvider = config.programs.scauth.securityKeyProvider;
     };
   };
 }

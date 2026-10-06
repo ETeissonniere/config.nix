@@ -21,15 +21,16 @@ This installs `nh` and `just`; restart your terminal afterward.
 Homebrew is managed automatically; activation
 upgrades declared packages and removes unlisted packages and associated cask data.
 
+Each Mac provisions a Touch ID–protected `default` key for SSH and Git signing.
+Approve any Touch ID prompt during activation. Use `scauth pubkey default` to
+retrieve its public key for your servers.
+
 ## Post-install steps
 
 After activation, connect to the NAS network and grant your terminal Full Disk
 Access in System Settings → Privacy & Security. Run `just postinstall` without sudo:
 
-1. **GitHub:** Generates `~/.ssh/id_ed25519` if missing, prompts for an optional
-   passphrase, adds the key to Apple's SSH agent, and saves its passphrase in
-   Keychain. Signs into GitHub and registers the public key for SSH authentication
-   and commit signing. If scopes are missing, follow the printed refresh command.
+1. **GitHub:** Signs in and registers the `default` key for SSH and commit signing.
 2. **Time Machine:** Registers `nas.teiss.org` using a password prompt, excludes
    `~/Developer` and `~/Downloads`, and enables backups. Configure backup encryption
    or adoption of an older Mac's backups separately in macOS.
@@ -65,7 +66,7 @@ becomes `neutrino`); override it before the recipe: `just host=wintermute check`
 | `just check-all` | Evaluate all Darwin and NixOS configurations |
 | `just build` | Build with `nh` without applying |
 | `just switch` | Build and apply with `nh` |
-| `just postinstall` | Set up SSH keys, GitHub, and Time Machine |
+| `just postinstall` | Register the GitHub key and set up Time Machine |
 | `just update` | Update pinned dependencies without applying |
 | `just format` | Format Nix files and recipes |
 
