@@ -4,6 +4,10 @@ let
 
   directories = path: lib.filterAttrs (_: type: type == "directory") (builtins.readDir path);
 
+  darwinHosts = lib.filterAttrs (
+    hostName: _: builtins.pathExists (../hosts + "/${hostName}/darwin-configuration.nix")
+  ) (directories ../hosts);
+
   discoverModules =
     path:
     let
@@ -60,7 +64,7 @@ in
         }
       ];
     }
-  ) (directories ../hosts);
+  ) darwinHosts;
 
   formatter.aarch64-darwin = inputs.nixpkgs.legacyPackages.aarch64-darwin.nixfmt-tree;
   formatter.x86_64-linux = inputs.nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;

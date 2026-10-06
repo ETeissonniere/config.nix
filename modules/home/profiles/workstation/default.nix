@@ -30,17 +30,4 @@
     enable = true;
     defaultEditor = true;
   };
-
-  # Nix owns these apps; their built-in updaters cannot modify the store.
-  targets.darwin.defaults = {
-    "dev.kdrag0n.MacVirt" = {
-      SUEnableAutomaticChecks = false;
-      SUAutomaticallyUpdate = false;
-    };
-    "net.freemacsoft.AppCleaner" = {
-      SUEnableAutomaticChecks = false;
-      SUAutomaticallyUpdate = false;
-    };
-    "eu.exelban.Stats"."update-interval" = "Never";
-  };
 }

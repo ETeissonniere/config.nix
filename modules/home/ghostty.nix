@@ -1,13 +1,11 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 {
   programs.ghostty = {
     enable = true;
-    package = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin null;
     settings = {
       command = lib.mkDefault (lib.getExe config.programs.fish.package);
       auto-update = "off";
