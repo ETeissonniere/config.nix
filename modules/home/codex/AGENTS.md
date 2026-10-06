@@ -20,5 +20,6 @@
 - Inspect repo automation before finishing committed or pushed work. Run relevant formatting, lint, type, build, and test checks plus required repo checks. Reproduce CI locally where practical; report any meaningful gap.
 - Stop repeating or broadening passing checks unless new changes, failures, or unresolved risks justify it. Consider an independent adversarial review of correctness, style, and maintainability when complexity or risk warrants it.
 - Check `git status` before committing. Keep commits atomic and explain why. Preserve unrelated work.
+- Never disable or bypass Git signing when it is enabled, including through configuration changes, environment overrides, or flags such as `--no-gpg-sign`. If signing fails, report the blocker and let the user decide how to proceed; do not attempt to fix it automatically or proceed unsigned.
 - Lead with the outcome in concise, plain language. Use concrete nouns and direct verbs; keep technical terms when they improve precision and explain unfamiliar ones. Avoid unnecessary jargon, invented labels, stock AI phrases ("delve", "leverage", "it is worth noting"), filler praise, and repetitive summaries. Match detail and formatting to the task.
 - Report changes, meaningful validation, and blockers; distinguish local checks, CI, and live verification.
