@@ -8,6 +8,7 @@
   imports = [
     ../../codex
     ../../fish
+    ../../gh.nix
     ../../ghostty.nix
     ../../git.nix
     ../../ssh.nix
@@ -19,7 +20,6 @@
   '';
 
   home.packages = with pkgs; [
-    gh
     httpie
     jq
     python3Packages.huggingface-hub
