@@ -2,7 +2,7 @@
 {
   programs.scauth = {
     enable = true;
-    identities.default.touchId = true;
+    identities.default = { };
   };
 
   programs.ssh = {
