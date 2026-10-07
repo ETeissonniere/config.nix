@@ -32,9 +32,8 @@ build:
 switch:
     nh darwin switch "{{ flake }}" --hostname "{{ host }}"
 
-# Register the GitHub key and set up Time Machine interactively
+# Set up Time Machine interactively
 postinstall:
-    fish scripts/postinstall/github-setup.fish
     fish scripts/postinstall/time-machine-setup.fish
 
 # Update pinned dependencies without applying

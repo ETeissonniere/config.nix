@@ -23,27 +23,19 @@ upgrades declared packages and removes unlisted packages and associated cask dat
 
 Each Mac provisions a `default` key for SSH and Git signing. Wintermute requires
 Touch ID; neutrino does not. Use `scauth pubkey default` to retrieve its public key
-for your servers.
+for your servers, and save it on GitHub as both an authentication and signing key.
 
 ## Post-install steps
 
 After activation, connect to the NAS network and grant your terminal Full Disk
-Access in System Settings → Privacy & Security. Run `just postinstall` without sudo:
+Access in System Settings → Privacy & Security. Run `just postinstall` without sudo.
 
-1. **GitHub:** Signs in and registers the `default` key for SSH and commit signing.
-2. **Time Machine:** Registers `nas.teiss.org` using a password prompt, excludes
-   `~/Developer` and `~/Downloads`, and enables backups. Configure backup encryption
-   or adoption of an older Mac's backups separately in macOS.
+This registers `nas.teiss.org` for Time Machine using a password prompt, excludes
+`~/Developer` and `~/Downloads`, and enables backups. Configure backup encryption
+or adoption of an older Mac's backups separately in macOS.
 
-Existing keys and backup destinations are preserved. Credentials stay local;
-check `gh auth status` for token storage, since Keychain failures can cause a
-plaintext fallback. These scripts run only when invoked, independently of Nix
-rebuilds. To run either step separately:
-
-```sh
-fish scripts/postinstall/github-setup.fish
-fish scripts/postinstall/time-machine-setup.fish
-```
+Existing backup destinations are preserved. The setup script runs only when
+invoked, independently of Nix rebuilds.
 
 Nix installs these apps; open each one after setup to configure it individually:
 
@@ -66,7 +58,7 @@ becomes `neutrino`); override it before the recipe: `just host=wintermute check`
 | `just check-all` | Evaluate all Darwin and NixOS configurations |
 | `just build` | Build with `nh` without applying |
 | `just switch` | Build and apply with `nh` |
-| `just postinstall` | Register the GitHub key and set up Time Machine |
+| `just postinstall` | Set up Time Machine |
 | `just update` | Update pinned dependencies without applying |
 | `just format` | Format Nix files and recipes |
 
