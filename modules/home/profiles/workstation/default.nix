@@ -26,7 +26,7 @@
     ripgrep
   ];
 
-  programs.vim = {
+  programs.neovim = {
     enable = true;
     defaultEditor = true;
   };
