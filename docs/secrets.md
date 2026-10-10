@@ -75,7 +75,15 @@ Mac to grant access to existing secrets. Do not generate another recovery key.
 
 ## Use and recover
 
-Enroll the host age identity before declaring secrets. Use `just secret-edit`,
+Before declaring secrets, create the host identity once (replace `HOST`):
+
+```fish
+ssh root@HOST 'umask 077; mkdir -p /var/lib/agenix; age-keygen -pq -o /var/lib/agenix/key.txt'
+mkdir -p secrets/public-keys
+ssh root@HOST age-keygen -y /var/lib/agenix/key.txt > secrets/public-keys/HOST.pub
+```
+
+Commit the public key using the host's configured name. Use `just secret-edit`,
 declare `age.secrets.<name>.rekeyFile`, then `just rekey`. Commit ciphertexts before
 deploying. Hosts decrypt with their own age identity.
 

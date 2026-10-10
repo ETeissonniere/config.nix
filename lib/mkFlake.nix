@@ -41,7 +41,7 @@ in
 
   agenix-rekey = inputs.agenix-rekey.configure {
     userFlake = inputs.self;
-    nixosConfigurations = { };
+    nixosConfigurations = inputs.self.nixosConfigurations or { };
     darwinConfigurations = inputs.self.darwinConfigurations;
     agePackage =
       pkgs:

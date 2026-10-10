@@ -2,6 +2,7 @@
   config,
   inputs,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -21,6 +22,7 @@ in
     inputs.agenix.nixosModules.default
     inputs.agenix-rekey.nixosModules.default
   ];
+  environment.systemPackages = [ pkgs.age ];
   age.identityPaths = [ "/var/lib/agenix/key.txt" ];
   age.rekey = {
     agePlugins = [ ]; # Supplied by the operator-platform age wrapper.
