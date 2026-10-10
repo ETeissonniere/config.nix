@@ -8,6 +8,10 @@ let
     hostName: _: builtins.pathExists (../hosts + "/${hostName}/darwin-configuration.nix")
   ) (directories ../hosts);
 
+  nixosHosts = lib.filterAttrs (
+    hostName: _: builtins.pathExists (../hosts + "/${hostName}/configuration.nix")
+  ) (directories ../hosts);
+
   discoverModules =
     path:
     let
@@ -32,12 +36,34 @@ let
 in
 {
   commonModules = withDefaultModule (discoverModules ../modules/common);
+  nixosModules = discoverModules ../modules/nixos;
   darwinModules = discoverModules ../modules/darwin // {
     profiles = discoverModules ../modules/darwin/profiles;
   };
   homeModules = discoverModules ../modules/home // {
     profiles = discoverModules ../modules/home/profiles;
   };
+
+  nixosConfigurations = lib.mapAttrs (
+    hostName: _:
+    lib.nixosSystem {
+      specialArgs = { inherit inputs hostName; };
+      modules = [ (../hosts + "/${hostName}/configuration.nix") ];
+    }
+  ) nixosHosts;
+
+  deploy.nodes = lib.mapAttrs (hostName: host: {
+    hostname = host.config.networking.hostName;
+    sshUser = "deploy";
+    profiles.system = {
+      user = "root";
+      path = inputs.deploy-rs.lib.${host.config.nixpkgs.hostPlatform.system}.activate.nixos host;
+    };
+  }) inputs.self.nixosConfigurations;
+
+  checks = lib.genAttrs [ "aarch64-darwin" "x86_64-linux" ] (
+    system: inputs.deploy-rs.lib.${system}.deployChecks inputs.self.deploy
+  );
 
   darwinConfigurations = lib.mapAttrs (
     hostName: _:
