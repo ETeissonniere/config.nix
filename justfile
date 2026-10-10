@@ -40,6 +40,18 @@ postinstall:
 update:
     {{ nix }} flake update --flake "{{ flake }}"
 
+# Encrypt or edit a secret with the operator's external master identity
+secret-edit file:
+    {{ nix }} run "{{ flake }}#agenix-rekey.$({{ nix }} eval --impure --raw --expr builtins.currentSystem).edit-view" -- edit "{{ file }}"
+
+# Encrypt configured secrets for each host's public identity
+rekey:
+    {{ nix }} run "{{ flake }}#agenix-rekey.$({{ nix }} eval --impure --raw --expr builtins.currentSystem).rekey"
+
+# Re-encrypt existing master secrets after changing operator/recovery recipients
+update-masterkeys:
+    {{ nix }} run "{{ flake }}#agenix-rekey.$({{ nix }} eval --impure --raw --expr builtins.currentSystem).update-masterkeys"
+
 # Format Nix files and recipes
 format:
     just --fmt
