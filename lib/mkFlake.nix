@@ -39,6 +39,20 @@ in
     profiles = discoverModules ../modules/home/profiles;
   };
 
+  agenix-rekey = inputs.agenix-rekey.configure {
+    userFlake = inputs.self;
+    nixosConfigurations = inputs.self.nixosConfigurations or { };
+    darwinConfigurations = inputs.self.darwinConfigurations;
+    agePackage =
+      pkgs:
+      (pkgs.age.withPlugins (
+        plugins: lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ plugins.age-plugin-se ]
+      )).overrideAttrs
+        (_: {
+          meta.mainProgram = "age";
+        });
+  };
+
   darwinConfigurations = lib.mapAttrs (
     hostName: _:
     let
