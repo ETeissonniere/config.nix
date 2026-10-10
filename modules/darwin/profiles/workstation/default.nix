@@ -1,3 +1,4 @@
+{ inputs, ... }:
 {
   imports = [
     ./apps.nix
@@ -7,6 +8,7 @@
   ];
 
   home-manager.sharedModules = [
+    inputs.scauth.homeManagerModules.default
     ({ config, ... }: {
       # Codex uses zsh on macOS even though our default shell is fish.
       # Enabling it ensures that the SSH_SK_PROVIDER value is passed

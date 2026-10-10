@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   pkgs,
   ...
 }:
@@ -25,7 +24,6 @@ let
 in
 {
   # Create a key without Touch ID so Nix can transparently connect to our remote builder.
-  home-manager.sharedModules = [ inputs.scauth.homeManagerModules.default ];
   home-manager.users.${config.me.username}.programs.scauth.identities.nix-builder.touchId = false;
   # CTK signing must run in the login session, not in the root Nix daemon.
   launchd.user.agents.nix-builder-agent.serviceConfig = {
@@ -40,7 +38,7 @@ in
   programs.ssh.extraConfig = ''
     Host lxc-builder
       HostName 192.168.86.23
-    Match localuser root user builder
+    Match host lxc-builder,192.168.86.23 localuser root user builder
       IdentityFile ${scauth.identities.nix-builder.identityFile}
       SecurityKeyProvider ${scauth.securityKeyProvider}
       IdentitiesOnly yes

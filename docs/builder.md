@@ -68,15 +68,10 @@ exit
 
 ## Enable remote builds
 
-Add a `nix.buildMachines` entry to each Mac's configuration:
-
-- `hostName`: builder address
-- `system`: `"x86_64-linux"`
-- `protocol`: `"ssh-ng"`
-- `sshUser`: `"builder"`
-- `maxJobs`: `2` concurrent builds to start
-- `publicHostKey`: base64-encoded, verified SSH public host key
-- `supportedFeatures`: `[ "big-parallel" ]`
+The shared configuration enables remote builds for hosts with a public key in
+`secrets/public-keys/ssh/builders/<hostname>.pub`. Deploy the exported key to the
+builder, then apply the client configuration. Linux clients also need their Nix
+daemon's SSH identity configured locally.
 
 SSH selects the scauth identity for root connections as `builder`.
 Run `just switch`, then verify access:
