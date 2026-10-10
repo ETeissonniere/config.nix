@@ -8,15 +8,12 @@ Choose an unused guest ID, storage, network, CPU, RAM and disk allocation.
 Create and export this Mac's admin and builder keys:
 
 ```fish
-sudo install -d -m 700 /var/root/.ssh
-if not sudo test -e /var/root/.ssh/nix-builder
-    sudo ssh-keygen -t ed25519 -N '' -f /var/root/.ssh/nix-builder; or exit 1
-end
+just switch
 just export-ssh-keys
 ```
 
-The Nix daemon uses this root-owned key directly, without an SSH agent or login
-session. Keep the private key outside Git. Linux clients use `/root/.ssh/nix-builder`.
+Activation creates the root-owned key once and preserves it on subsequent runs.
+The Nix daemon uses it directly, without an SSH agent or login session. Keep the private key outside Git. Linux clients use `/root/.ssh/nix-builder`.
 
 Review and commit the exported keys under `secrets/public-keys/ssh/`.
 Send the admin keys to Proxmox:
@@ -85,3 +82,21 @@ Then run `just build lxc-builder`; Nix selects a compatible builder automaticall
 The Mac SSH configuration maps `lxc-builder` to `192.168.86.23`; reserve that
 address in the router.
 Use `just deploy lxc-builder` for updates; deploy-rs handles activation and rollback.
+
+## Migrate from the scauth builder key
+
+Run these in order, stopping on any error. The first deployment uses your unchanged
+admin identity and builds on the server, so it does not require the old builder key.
+
+```fish
+just switch
+just export-ssh-keys
+nix run --inputs-from . deploy-rs -- "path:$PWD#lxc-builder" --remote-build
+sudo ssh -F /dev/null -o IdentitiesOnly=yes -o IdentityAgent=none \
+    -i /var/root/.ssh/nix-builder builder@192.168.86.23 true
+just build lxc-builder
+```
+
+Switching creates the software key and removes the old builder agent and managed
+scauth builder identity. Deployment replaces the server's authorized public key.
+Commit the exported public key after verification; never commit the private key.
