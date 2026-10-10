@@ -19,7 +19,7 @@
     },
     "deploy-rs": {
       "inputs": {
-        "flake-compat": "flake-compat_2",
+        "flake-compat": "flake-compat",
         "nixpkgs": [
           "nixpkgs"
         ],
@@ -39,7 +39,7 @@
         "type": "github"
       }
     },
-    "flake-compat_2": {
+    "flake-compat": {
       "flake": false,
       "locked": {
         "lastModified": 1733328505,
@@ -187,11 +187,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791340765,
-        "narHash": "sha256-iKRnjguvNrIoCyGif9ywrzCPDbC65Qrxe1/wLmW02VA=",
+        "lastModified": 1791613785,
+        "narHash": "sha256-VqfFjo/yTbPfPv3QFEN3B65sgmrMtGtuWMlYvfTufCA=",
         "owner": "ETeissonniere",
         "repo": "scauth.nix",
-        "rev": "3cefbf2a171aeced08cc485e1e46c3b6d5e2612f",
+        "rev": "fe3c494e9e4e5506511278980d73bb29905f7107",
         "type": "github"
       },
       "original": {
