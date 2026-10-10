@@ -91,7 +91,8 @@ admin identity and builds on the server, so it does not require the old builder 
 ```fish
 just switch
 just export-ssh-keys
-nix run --inputs-from . deploy-rs -- "path:$PWD#lxc-builder" --remote-build
+just check-all
+nix run --inputs-from . deploy-rs -- "path:$PWD#lxc-builder" --remote-build --skip-checks
 sudo ssh -F /dev/null -o IdentitiesOnly=yes -o IdentityAgent=none \
     -i /var/root/.ssh/nix-builder builder@192.168.86.23 true
 just build lxc-builder
@@ -99,4 +100,6 @@ just build lxc-builder
 
 Switching creates the software key and removes the old builder agent and managed
 scauth builder identity. Deployment replaces the server's authorized public key.
+`--skip-checks` avoids pre-deployment builds through the key being replaced;
+`just check-all` evaluates the configuration first. Normal deployments keep checks enabled.
 Commit the exported public key after verification; never commit the private key.
