@@ -8,13 +8,15 @@ Choose an unused guest ID, storage, network, CPU, RAM and disk allocation.
 Create and export this Mac's admin and builder keys:
 
 ```fish
-just switch
+sudo install -d -m 700 /var/root/.ssh
+if not sudo test -e /var/root/.ssh/nix-builder
+    sudo ssh-keygen -t ed25519 -N '' -f /var/root/.ssh/nix-builder; or exit 1
+end
 just export-ssh-keys
 ```
 
-The `nix-builder` scauth identity uses the Secure Enclave without Touch ID.
-A dedicated login-session SSH agent signs for the Nix daemon; remote builds
-require this Mac's user to be logged in.
+The Nix daemon uses this root-owned key directly, without an SSH agent or login
+session. Keep the private key outside Git. Linux clients use `/root/.ssh/nix-builder`.
 
 Review and commit the exported keys under `secrets/public-keys/ssh/`.
 Send the admin keys to Proxmox:
@@ -70,14 +72,13 @@ exit
 
 The shared configuration enables remote builds for hosts with a public key in
 `secrets/public-keys/ssh/builders/<hostname>.pub`. Deploy the exported key to the
-builder, then apply the client configuration. Linux clients also need their Nix
-daemon's SSH identity configured locally.
+builder, then apply the client configuration.
 
-SSH selects the scauth identity for root connections as `builder`.
 Run `just switch`, then verify access:
 
 ```fish
-sudo ssh builder@BUILDER_IP true
+sudo ssh -F /dev/null -o IdentitiesOnly=yes -o IdentityAgent=none \
+    -i /var/root/.ssh/nix-builder builder@BUILDER_IP true
 ```
 
 Then run `just build lxc-builder`; Nix selects a compatible builder automatically.

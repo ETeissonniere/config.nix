@@ -46,7 +46,7 @@ postinstall:
 export-ssh-keys:
     #!/usr/bin/env fish
     set admin_key (scauth pubkey default); or exit 1
-    set builder_key (scauth pubkey nix-builder); or exit 1
+    set builder_key (sudo cat /var/root/.ssh/nix-builder.pub); or exit 1
     mkdir -p secrets/public-keys/ssh/admin secrets/public-keys/ssh/builders; or exit 1
     printf '%s\n' "$admin_key" > secrets/public-keys/ssh/admin/{{ host }}.pub; or exit 1
     printf '%s\n' "$builder_key" > secrets/public-keys/ssh/builders/{{ host }}.pub; or exit 1
