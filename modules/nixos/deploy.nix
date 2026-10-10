@@ -17,6 +17,10 @@
           options = [ "NOPASSWD" ];
         }
         {
+          command = "/run/current-system/sw/bin/systemctl reboot --no-block";
+          options = [ "NOPASSWD" ];
+        }
+        {
           command = "/run/current-system/sw/bin/rm ^/tmp/deploy-rs-canary-[a-z0-9]{32}$";
           options = [ "NOPASSWD" ];
         }
