@@ -25,8 +25,13 @@ check-all:
         }'
 
 # Build without activating
-build:
-    nh darwin build "{{ flake }}" --hostname "{{ host }}"
+build target=host:
+    #!/usr/bin/env fish
+    if test -f "{{ justfile_directory() }}/hosts/{{ target }}/darwin-configuration.nix"
+        nh darwin build "{{ flake }}" --hostname "{{ target }}"
+    else
+        nh os build "{{ flake }}" --hostname "{{ target }}"
+    end
 
 # Build and activate with nh
 switch:
@@ -36,9 +41,23 @@ switch:
 postinstall:
     fish scripts/postinstall/time-machine-setup.fish
 
+# Export SSH public keys configured on the current host for provisioning on our servers
+# Currently macOS-only because this assumes scauth is available
+export-ssh-keys:
+    #!/usr/bin/env fish
+    set admin_key (scauth pubkey default); or exit 1
+    set builder_key (sudo cat /var/root/.ssh/nix-builder.pub); or exit 1
+    mkdir -p secrets/public-keys/ssh/admin secrets/public-keys/ssh/builders; or exit 1
+    printf '%s\n' "$admin_key" > secrets/public-keys/ssh/admin/{{ host }}.pub; or exit 1
+    printf '%s\n' "$builder_key" > secrets/public-keys/ssh/builders/{{ host }}.pub; or exit 1
+
 # Update pinned dependencies without applying
 update:
     {{ nix }} flake update --flake "{{ flake }}"
+
+# Deploy a NixOS host with deploy-rs rollback protections
+deploy target='lxc-builder':
+    {{ nix }} run --inputs-from "{{ flake }}" deploy-rs -- "{{ flake }}#{{ target }}"
 
 # Format Nix files and recipes
 format:

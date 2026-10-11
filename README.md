@@ -56,7 +56,7 @@ becomes `neutrino`); override it before the recipe: `just host=wintermute check`
 | --- | --- |
 | `just check` | Evaluate the configuration |
 | `just check-all` | Evaluate all Darwin and NixOS configurations |
-| `just build` | Build with `nh` without applying |
+| `just build [host]` | Build the current machine or a named host without applying |
 | `just switch` | Build and apply with `nh` |
 | `just postinstall` | Set up Time Machine |
 | `just update` | Update pinned dependencies without applying |

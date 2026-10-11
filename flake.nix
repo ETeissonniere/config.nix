@@ -1,5 +1,9 @@
 {
   inputs = {
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin/master";
