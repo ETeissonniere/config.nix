@@ -12,7 +12,7 @@ Keep the Proxmox container until these checks pass. From this checkout:
 ```fish
 just switch
 sudo ssh linux-builder true
-nix build --impure --no-link --rebuild --expr '
+nix build --impure --no-link --expr '
   let f = builtins.getFlake (toString ./.);
   in map (system: f.inputs.nixpkgs.legacyPackages.${system}.runCommand
     "local-builder-check"
@@ -22,8 +22,24 @@ nix build --impure --no-link --rebuild --expr '
 ```
 
 The first boot can take a moment. Both builds must succeed through `linux-builder`.
-Normal `nix build` commands then select it automatically. The default VM uses one
-CPU and 3 GiB RAM; configuration lives in `modules/darwin/linux-builder.nix`.
+Normal `nix build` commands then select it automatically. The VM uses 6 cores,
+8 GiB RAM, a 40 GiB disk and 2 concurrent builds; configuration lives in
+`modules/darwin/linux-builder.nix`.
+The persistent guest runs weekly Nix garbage collection with `--delete-older-than 30d`.
+
+If you already started the default 20 GiB VM, `just switch` does not resize its
+existing disk. After switching, recreate its build cache once (the old disk is
+kept as a backup):
+
+```fish
+test ! -e /var/lib/linux-builder/nixos.qcow2.backup; and \
+    sudo launchctl bootout system/org.nixos.linux-builder; and \
+    sudo mv -n /var/lib/linux-builder/nixos.qcow2 /var/lib/linux-builder/nixos.qcow2.backup; and \
+    sudo launchctl bootstrap system /Library/LaunchDaemons/org.nixos.linux-builder.plist
+```
+
+Repeat the SSH check and build command with `--rebuild` (the test outputs now
+exist) before deleting `nixos.qcow2.backup`.
 
 ## Remove the old builder
 
