@@ -7,13 +7,9 @@
 let
   rootHome = if pkgs.stdenv.hostPlatform.isDarwin then "/var/root" else "/root";
   builderKey = "${rootHome}/.ssh/nix-builder";
-  generateSshKey = import ../../lib/generateSshKey.nix { inherit lib pkgs; };
 in
 {
-  system.activationScripts.${
-    if pkgs.stdenv.hostPlatform.isDarwin then "postActivation" else "builderKey"
-  }.text =
-    generateSshKey { path = builderKey; };
+  system.sshKeys.nix-builder.path = builderKey;
 
   nix.buildMachines = lib.mkDefault (
     lib.optionals
