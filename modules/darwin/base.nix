@@ -1,6 +1,7 @@
 {
   imports = [
     ./darwin.nix
+    ./linux-builder.nix
     ./user.nix
     ./mac-default-browser.nix
     ./mac-shortcuts.nix
