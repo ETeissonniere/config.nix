@@ -41,7 +41,7 @@ end
 
 An absent old agent or known-hosts entry is harmless. Keep the new
 `/etc/nix/builder_ed25519` credentials and `/var/lib/linux-builder` VM data.
-Personal scauth and agenix identities are unrelated and must stay.
+Keep personal scauth identities. Optional agenix cleanup is below.
 
 On **Proxmox**, inspect CT 100 and confirm it is `lxc-builder`. Copy out anything
 you need: destruction deletes its disk, including the old host age identity.
@@ -59,18 +59,19 @@ No router changes are needed. Container destruction removes its mDNS advertiser.
 
 ## Abandon secrets enrollment
 
-No encrypted secrets were committed. If you encrypted anything elsewhere, recover
+Only after the local builder checks pass: no encrypted secrets were committed.
+If you encrypted anything elsewhere, recover
 it before deleting identities. On each enrolled Mac:
 
 ```fish
 rm -f ~/.config/agenix/secure-enclave-pq.identity ~/.config/agenix/recovery-pq.age
-rm -f ~/.config/agenix/secure-enclave.identity ~/.config/agenix/yubikey.identity
+rm -f ~/.config/agenix/secure-enclave.identity
 rmdir ~/.config/agenix 2>/dev/null
 set -e AGENIX_RECOVERY_IDENTITY AGENIX_REKEY_PRIMARY_IDENTITY AGENIX_REKEY_PRIMARY_IDENTITY_ONLY
 ```
 
 Delete the offline `recovery-pq.age` backup and copies of these identity files too.
 The age Secure Enclave identity is a device-bound file; it has no separate slot to
-empty. This does not affect personal scauth identities. If the earlier YubiKey
-PIV key still exists, identify its slot with `ykman piv info` before deleting that
-specific key; do not reset the whole YubiKey.
+empty. This does not affect personal scauth identities. Defer any YubiKey cleanup:
+keep its identity descriptor until its exact PIV key and slot are matched against
+the age recipient. `ykman piv info` alone is insufficient; do not reset the token.
