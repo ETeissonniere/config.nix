@@ -42,7 +42,7 @@ pct start VMID
 Once the guest has booted, read its SSH fingerprint and return to the Mac:
 
 ```sh
-pct exec VMID -- ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+pct exec VMID -- /run/current-system/sw/bin/ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
 exit
 ```
 

@@ -25,9 +25,7 @@
 
   users.users.builder = {
     isNormalUser = true;
-    openssh.authorizedKeys.keys = map (key: "no-touch-required ${key}") (
-      builtins.attrValues config.me.builderKeys
-    );
+    openssh.authorizedKeys.keys = builtins.attrValues config.me.builderKeys;
   };
   nix = {
     settings = {

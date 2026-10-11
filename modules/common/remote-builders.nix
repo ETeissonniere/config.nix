@@ -14,9 +14,9 @@ in
   }.text =
     ''
       ${pkgs.coreutils}/bin/install -d -m 700 ${rootHome}/.ssh || exit 1
-        if [ ! -e ${builderKey} ]; then
-          (umask 077; ${pkgs.openssh}/bin/ssh-keygen -q -t ed25519 -N "" -f ${builderKey}) || exit 1
-        fi
+      if [ ! -e ${builderKey} ]; then
+        (umask 077; ${pkgs.openssh}/bin/ssh-keygen -q -t ed25519 -N "" -f ${builderKey}) || exit 1
+      fi
       ${pkgs.coreutils}/bin/chown 0 ${builderKey} || exit 1
       ${pkgs.coreutils}/bin/chmod 600 ${builderKey} || exit 1
       builder_public_key=$(${pkgs.openssh}/bin/ssh-keygen -y -P "" -f ${builderKey}) || exit 1
