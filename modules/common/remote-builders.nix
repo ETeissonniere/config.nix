@@ -7,21 +7,13 @@
 let
   rootHome = if pkgs.stdenv.hostPlatform.isDarwin then "/var/root" else "/root";
   builderKey = "${rootHome}/.ssh/nix-builder";
+  generateSshKey = import ../../lib/generateSshKey.nix { inherit lib pkgs; };
 in
 {
   system.activationScripts.${
     if pkgs.stdenv.hostPlatform.isDarwin then "postActivation" else "builderKey"
   }.text =
-    ''
-      ${pkgs.coreutils}/bin/install -d -m 700 ${rootHome}/.ssh || exit 1
-      if [ ! -e ${builderKey} ]; then
-        (umask 077; ${pkgs.openssh}/bin/ssh-keygen -q -t ed25519 -N "" -f ${builderKey}) || exit 1
-      fi
-      ${pkgs.coreutils}/bin/chown 0 ${builderKey} || exit 1
-      ${pkgs.coreutils}/bin/chmod 600 ${builderKey} || exit 1
-      builder_public_key=$(${pkgs.openssh}/bin/ssh-keygen -y -P "" -f ${builderKey}) || exit 1
-      printf '%s\n' "$builder_public_key" > ${builderKey}.pub || exit 1
-    '';
+    generateSshKey { path = builderKey; };
 
   nix.buildMachines = lib.mkDefault (
     lib.optionals
