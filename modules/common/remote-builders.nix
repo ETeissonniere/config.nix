@@ -31,7 +31,7 @@ in
       )
       [
         {
-          hostName = "192.168.86.23";
+          hostName = "lxc-builder.local";
           system = "x86_64-linux";
           protocol = "ssh-ng";
           sshUser = "builder";
@@ -47,6 +47,6 @@ in
   nix.settings.builders-use-substitutes = lib.mkIf config.nix.distributedBuilds true;
   programs.ssh.extraConfig = ''
     Host lxc-builder
-      HostName 192.168.86.23
+      HostName lxc-builder.local
   '';
 }

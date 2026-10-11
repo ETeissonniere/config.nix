@@ -15,6 +15,13 @@
   nixpkgs.hostPlatform = "x86_64-linux";
   networking.hostName = hostName;
   proxmoxLXC.manageHostName = true;
+  services.avahi = {
+    openFirewall = true;
+    publish = {
+      enable = true;
+      addresses = true;
+    };
+  };
 
   users.users.builder = {
     isNormalUser = true;

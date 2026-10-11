@@ -75,26 +75,30 @@ Run `just switch`, then verify access:
 
 ```fish
 sudo ssh -F /dev/null -o IdentitiesOnly=yes -o IdentityAgent=none \
-    -i /var/root/.ssh/nix-builder builder@BUILDER_IP true
+    -i /var/root/.ssh/nix-builder builder@lxc-builder.local true
 ```
 
 Then run `just build lxc-builder`; Nix selects a compatible builder automatically.
-The Mac SSH configuration maps `lxc-builder` to `192.168.86.23`; reserve that
-address in the router.
+Avahi advertises `lxc-builder.local` on the local network, so DHCP address changes
+do not require client updates. Multicast DNS must be allowed between the machines.
+SSH maps `lxc-builder` to this name; the builder's SSH host key remains pinned.
 Use `just deploy lxc-builder` for updates; deploy-rs handles activation and rollback.
 
 ## Migrate from the scauth builder key
 
 Run these in order, stopping on any error. The first deployment uses your unchanged
 admin identity and builds on the server, so it does not require the old builder key.
+Use the container's current IP for this first deployment (`192.168.86.25` below),
+before it advertises its name. Verify the SSH fingerprint against Proxmox if prompted.
 
 ```fish
 just switch
 just export-ssh-keys
 just check-all
-nix run --inputs-from . deploy-rs -- "path:$PWD#lxc-builder" --remote-build --skip-checks
+nix run --inputs-from . deploy-rs -- "path:$PWD#lxc-builder" \
+    --hostname 192.168.86.25 --remote-build --skip-checks
 sudo ssh -F /dev/null -o IdentitiesOnly=yes -o IdentityAgent=none \
-    -i /var/root/.ssh/nix-builder builder@192.168.86.23 true
+    -i /var/root/.ssh/nix-builder builder@lxc-builder.local true
 just build lxc-builder
 ```
 
