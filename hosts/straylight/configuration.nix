@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   lib,
   pkgs,
@@ -14,6 +15,7 @@
   ];
 
   nixpkgs.hostPlatform = "x86_64-linux";
+  users.users.${config.me.username}.extraGroups = [ "docker" ];
   hardware.enableRedistributableFirmware = true;
   hardware.cpu.amd.updateMicrocode = true;
   systemd.network.links."10-straylight-lan" = {
