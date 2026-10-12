@@ -6,9 +6,13 @@ default:
     @just --list
 
 # Evaluate the configuration
-check:
+check target=host:
     {{ nix }} flake check --no-build "{{ flake }}"
-    {{ nix }} eval "{{ flake }}#darwinConfigurations.{{ host }}.system.drvPath"
+    if [ -f "{{ justfile_directory() }}/hosts/{{ target }}/configuration.nix" ]; then \
+        {{ nix }} eval "{{ flake }}#nixosConfigurations.{{ target }}.config.system.build.toplevel.drvPath"; \
+    else \
+        {{ nix }} eval "{{ flake }}#darwinConfigurations.{{ target }}.system.drvPath"; \
+    fi
 
 # Evaluate all Darwin and NixOS configurations
 check-all:
@@ -25,8 +29,12 @@ check-all:
         }'
 
 # Build without activating
-build:
-    nh darwin build "{{ flake }}" --hostname "{{ host }}"
+build target=host:
+    if [ -f "{{ justfile_directory() }}/hosts/{{ target }}/configuration.nix" ]; then \
+        {{ nix }} build "{{ flake }}#nixosConfigurations.{{ target }}.config.system.build.toplevel" --no-link; \
+    else \
+        nh darwin build "{{ flake }}" --hostname "{{ target }}"; \
+    fi
 
 # Build and activate with nh
 switch:
@@ -44,3 +52,12 @@ update:
 format:
     just --fmt
     {{ nix }} run "{{ flake }}#formatter.$({{ nix }} eval --impure --raw --expr builtins.currentSystem)" -- --tree-root "{{ justfile_directory() }}"
+
+# Install on an empty machine; this ERASES the disks configured for the host
+[confirm('This erases the target disks. Have you checked the address and host disk configuration?')]
+install target address:
+    {{ nix }} run "{{ flake }}#nixos-anywhere" -- --build-on local --flake "{{ flake }}#{{ target }}" --target-host "{{ address }}"
+
+# Deploy updates with automatic rollback if activation/connectivity fails
+deploy target *args:
+    {{ nix }} run "{{ flake }}#deploy" -- "{{ flake }}#{{ target }}" {{ args }}
