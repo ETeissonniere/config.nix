@@ -5,8 +5,6 @@
     inputs.nix-homebrew.darwinModules.nix-homebrew
   ];
 
-  programs.fish.enable = true;
-
   services.openssh.hostKeys = [ ];
 
   nix-homebrew = {

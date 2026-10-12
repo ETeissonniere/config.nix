@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 let
   username = config.me.username;
 in
@@ -7,7 +7,6 @@ in
   users.knownUsers = [ username ];
   users.users.${username} = {
     home = "/Users/${username}";
-    shell = pkgs.fish;
   };
 
   security.pam.services.sudo_local.touchIdAuth = true;
