@@ -33,35 +33,25 @@ settings remain in `/data/steam`. The rest of the server keeps running.
 
 ### First-time setup
 
-On Straylight, create the private credentials file if it does not already exist:
-
-```fish
-sudo install -d -m 700 /data/steam
-sudo touch /data/steam/environment
-sudo chmod 600 /data/steam/environment
-sudo nvim /data/steam/environment
-```
-
-Add these values, replacing the placeholders with your own passwords:
-
-```dotenv
-USER_PASSWORD=your-container-password
-SUNSHINE_PASS=your-sunshine-password
-```
-
 Start gaming, then open an SSH tunnel from your computer and leave it running
-during setup:
+while using the setup interface:
 
 ```fish
-ssh -N -L 8083:localhost:8083 -L 47990:localhost:47990 straylight.local
+ssh -N -L 8483:localhost:8483 straylight.local
 ```
 
-1. Open <http://localhost:8083> for the container desktop, log in to Steam, and
-   use `/mnt/games` for the Steam library.
-2. Open <https://localhost:47990> for Sunshine administration. Its local
-   certificate is self-signed. Log in as `admin` using `SUNSHINE_PASS`.
-3. In Moonlight on your computer, add `straylight.local` and enter the pairing
-   PIN in Sunshine. Start the Desktop stream to access Steam and launch games.
+1. Open <https://localhost:8483> for Steam Headless setup. Its local certificate
+   is self-signed. The first-start service logs show the `steamheadless` account's
+   temporary password; choose a permanent password in the setup interface.
+2. Finish setup before pairing: Sunshine remains disabled until the permanent
+   password is set. Use <https://localhost:8483/sunshine> to pair Moonlight with
+   `straylight.local`. Start the Desktop stream to log in to Steam and launch
+   games. The game library is under `/mnt/games/GameLibrary/Steam`.
+
+This pinned image uses Steam Headless v2. The older `USER_PASSWORD` and
+`SUNSHINE_PASS` environment file is no longer used. Authentication and driver
+cache state persist in `/data/steam/state`, desktop settings in `/data/steam/home`,
+and service journals in `/data/steam/journal`.
 
 ### Playing after setup
 
@@ -75,3 +65,21 @@ For troubleshooting, view the service logs:
 ```fish
 ssh straylight.local 'sudo journalctl -u docker-steam -n 100 --no-pager'
 ```
+
+After a deployment that fixes a startup failure, clear the restart limit and
+start the service again:
+
+```fish
+ssh straylight.local 'sudo systemctl reset-failed docker-steam; sudo systemctl start docker-steam'
+```
+
+Once initialization finishes, check the desktop, audio, input, and streaming
+services inside the container:
+
+```fish
+ssh straylight.local 'sudo docker exec steam /usr/local/bin/steam-headless-healthcheck'
+```
+
+A successful Nix evaluation does not verify GPU encoding or streaming. Complete
+setup, run the health check, and test a Moonlight session with video, audio, and
+controller input before considering gaming ready.
