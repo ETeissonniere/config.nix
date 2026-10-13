@@ -23,6 +23,7 @@ in
       image = "docker.io/josh5/steam-headless@sha256:28acbee506844b60fe0a49f1f2a85f4a0a8dbccf8a83db7af73aacbb08d20f74";
       autoStart = false;
       environment = {
+        TZ = "America/Los_Angeles";
         PUID = "1000";
         PGID = "1000";
         SUNSHINE_NAME = "Straylight";
