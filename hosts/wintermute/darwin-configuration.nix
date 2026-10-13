@@ -8,6 +8,7 @@
 {
   imports = [
     inputs.self.darwinModules.profiles.workstation
+    inputs.self.commonModules.nix-builders
   ];
 
   nixpkgs.hostPlatform = "aarch64-darwin";

@@ -2,6 +2,7 @@
 {
   imports = [
     inputs.self.nixosModules.profiles.server-docker
+    inputs.self.nixosModules.profiles.server-nixbuilder
     inputs.self.nixosModules.profiles.server-wol
     inputs.self.nixosModules.profiles.nvidia
     inputs.self.nixosModules.profiles.secure-boot

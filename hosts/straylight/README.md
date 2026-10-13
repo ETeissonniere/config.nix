@@ -5,7 +5,8 @@ and mDNS.
 
 Straylight is the main lab compute server. It is used for a mix of remote play
 and hosting a couple experiments or mini VMs/containers to isolate work and
-personal projects.
+personal projects. Because it runs Nix and SSH, we have also configured it as a
+remote Nix builder for convenience.
 
 We have two SSDs, with the bigger one set to hold AI models, Steam games, and so
 on.
