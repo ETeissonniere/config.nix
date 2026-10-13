@@ -1,7 +1,6 @@
 { config, inputs, ... }:
 {
   imports = [
-    inputs.self.commonModules.default
     inputs.nix-homebrew.darwinModules.nix-homebrew
   ];
 

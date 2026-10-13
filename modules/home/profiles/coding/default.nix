@@ -6,16 +6,15 @@
 }:
 {
   imports = [
-    ../../cli-tools.nix
-    ../../codex
-    ../../developer-folder.nix
-    ../../gh.nix
-    ../../git.nix
-    ../../neovim.nix
-    ../../ssh.nix
+    ./codex
+    ./developer-folder.nix
+    ./gh.nix
+    ./git.nix
     ../../sshkey.nix
-    ../../scauth.nix
+    ./scauth.nix
   ];
+
+  home.packages = [ pkgs.python3Packages.huggingface-hub ];
 
   sshKey.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isLinux;
   programs.git.signing.key = lib.mkDefault (

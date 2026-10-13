@@ -1,7 +1,7 @@
 {
   imports = [
     ../coding
-    ../../ghostty.nix
-    ../../zed.nix
+    ./ghostty.nix
+    ./zed.nix
   ];
 }

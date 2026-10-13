@@ -7,7 +7,6 @@
 }:
 {
   imports = [
-    inputs.self.darwinModules.base
     inputs.self.darwinModules.profiles.workstation
   ];
 
@@ -19,6 +18,8 @@
   };
 
   users.users.${config.me.username}.uid = 501;
+
+  homebrew.casks = [ "moonlight" ];
 
   # Compatibility baseline for this installation; do not bump during updates.
   system.stateVersion = 6;

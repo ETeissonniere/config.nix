@@ -55,8 +55,8 @@ format:
 
 # Install on an empty machine; this ERASES the disks configured for the host
 [confirm('This erases the target disks. Have you checked the address and host disk configuration?')]
-install target address:
-    {{ nix }} run "{{ flake }}#nixos-anywhere" -- --build-on local --flake "{{ flake }}#{{ target }}" --target-host "{{ address }}"
+install target address *args:
+    {{ nix }} run "{{ flake }}#nixos-anywhere" -- --build-on local --flake "{{ flake }}#{{ target }}" --target-host "{{ address }}" {{ args }}
 
 # Deploy updates with automatic rollback if activation/connectivity fails
 deploy target *args:
