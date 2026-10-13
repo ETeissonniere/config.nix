@@ -11,6 +11,22 @@ let
   ];
 in
 {
+  environment.systemPackages = [
+    (pkgs.writeShellScriptBin "gaming" ''
+      if [ "$#" -ne 1 ]; then
+        echo "Usage: gaming {on|off|status}" >&2
+        exit 2
+      fi
+
+      case "$1" in
+        on) exec /run/wrappers/bin/sudo ${pkgs.systemd}/bin/systemctl start docker-steam ;;
+        off) exec /run/wrappers/bin/sudo ${pkgs.systemd}/bin/systemctl stop docker-steam ;;
+        status) exec ${pkgs.systemd}/bin/systemctl status docker-steam --no-pager ;;
+        *) echo "Usage: gaming {on|off|status}" >&2; exit 2 ;;
+      esac
+    '')
+  ];
+
   boot.kernelModules = [
     "uinput"
     "uhid"

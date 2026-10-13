@@ -15,18 +15,21 @@ We run with Secure Boot on with our own keys, as well as TPM backed disk decrypt
 ## Gaming
 
 Gaming runs in a Steam Headless container with Sunshine. It stays off after boot
-until started manually. Run these commands from your own computer:
+until started manually. On Straylight:
 
 ```fish
 # Turn gaming on
-ssh straylight.local 'sudo systemctl start docker-steam'
+gaming on
 
 # Check its status
-ssh straylight.local 'systemctl status docker-steam --no-pager'
+gaming status
 
 # Turn gaming off (quit your game first)
-ssh straylight.local 'sudo systemctl stop docker-steam'
+gaming off
 ```
+
+From another computer, use `ssh straylight.local gaming on` (or `off` / `status`).
+The command delegates to systemd; it does not change whether gaming starts at boot.
 
 Stopping gaming stops Steam, Sunshine, and the container desktop. Games and
 settings remain in `/data/steam`. The rest of the server keeps running.
