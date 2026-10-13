@@ -11,16 +11,6 @@ let
   ];
 in
 {
-  # The RTX 4080 SUPER stays on the host; CDI exposes it to the gaming container.
-  services.xserver.videoDrivers = [ "nvidia" ];
-  hardware = {
-    nvidia = {
-      open = true;
-      modesetting.enable = true;
-      nvidiaSettings = false;
-    };
-    nvidia-container-toolkit.enable = true;
-  };
   boot.kernelModules = [
     "uinput"
     "uhid"
@@ -28,7 +18,6 @@ in
   ];
 
   virtualisation.oci-containers = {
-    backend = "docker";
     containers.steam = {
       # josh5/steam-headless, linux/amd64, published 2026-10-04.
       image = "docker.io/josh5/steam-headless@sha256:28acbee506844b60fe0a49f1f2a85f4a0a8dbccf8a83db7af73aacbb08d20f74";

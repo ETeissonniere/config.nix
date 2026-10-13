@@ -2,7 +2,7 @@ let
   encryptedFilesystem = name: mountpoint: {
     type = "luks";
     inherit name;
-    # Supplied to the installer out of band, never placed in the Nix store.
+    # Supplied only at install time; delete afterward. Never put it in the Nix store.
     passwordFile = "/tmp/straylight-disk-password";
     settings.crypttabExtraOpts = [ "tpm2-device=auto" ];
     content = {

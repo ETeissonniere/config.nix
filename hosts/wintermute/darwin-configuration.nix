@@ -7,7 +7,6 @@
 }:
 {
   imports = [
-    inputs.self.darwinModules.base
     inputs.self.darwinModules.profiles.workstation
   ];
 

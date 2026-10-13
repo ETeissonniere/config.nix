@@ -2,16 +2,20 @@
   config,
   inputs,
   hostName,
+  lib,
   pkgs,
   ...
 }:
 {
   imports = [
-    inputs.self.commonModules.default
     inputs.self.nixosModules.profiles.ssh-server
   ];
 
   environment.systemPackages = [ pkgs.ghostty.terminfo ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.enableRedistributableFirmware = lib.mkDefault true;
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault true;
 
   networking = {
     inherit hostName;

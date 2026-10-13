@@ -1,8 +1,8 @@
 {
   imports = [
-    ../../cli-tools.nix
-    ../../fish
-    ../../neovim.nix
-    ../../ssh.nix
+    ./cli-tools.nix
+    ./fish
+    ./neovim.nix
+    ./ssh.nix
   ];
 }

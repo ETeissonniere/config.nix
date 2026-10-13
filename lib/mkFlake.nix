@@ -65,6 +65,8 @@ in
     inputs.nix-darwin.lib.darwinSystem {
       specialArgs = { inherit inputs hostName; };
       modules = [
+        inputs.self.commonModules.base
+        inputs.self.darwinModules.profiles.base
         (../hosts + "/${hostName}/darwin-configuration.nix")
         inputs.home-manager.darwinModules.home-manager
         (homeManagerConfig hostName)
@@ -77,6 +79,7 @@ in
     inputs.nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs hostName; };
       modules = [
+        inputs.self.commonModules.base
         (../hosts + "/${hostName}/configuration.nix")
         inputs.home-manager.nixosModules.home-manager
         (homeManagerConfig hostName)
