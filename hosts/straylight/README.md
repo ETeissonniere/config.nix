@@ -3,28 +3,20 @@
 Ryzen 9 9900X / RTX 4080 SUPER host, reachable at `straylight.local` via DHCP
 and mDNS.
 
-Straylight is the main lab compute server. It is used for a mix of remote play
-and hosting a couple experiments or mini VMs/containers to isolate work and
-personal projects. Because it runs Nix and SSH, we have also configured it as a
-remote Nix builder for convenience.
+Straylight is the main lab compute server for remote gaming, experiments, and
+isolated work and personal environments. It also serves as a remote Nix builder
+for our Macs.
 
-We have two SSDs, with the bigger one set to hold AI models, Steam games, and so
-on.
+It has two SSDs, with the larger one holding AI models, Steam games, and other
+data. Secure Boot uses our own keys, with TPM-backed disk decryption :smile:!
 
-We run with Secure Boot on with our own keys, as well as TPM backed disk decryption :smile:.
+## Containers
 
-## Gaming
+We prefer native NixOS containers when possible, though also use Docker support
+through `virtualisation.oci-containers` when needed. Manage both through systemd,
+for example `sudo systemctl restart container@slopcannon`.
 
-Gaming runs in a Steam Headless container with Sunshine. It stays off after boot
-until started manually. On Straylight:
-
-```fish
-# Turn gaming on
-gaming on
-
-# Check its status
-gaming status
-
-# Turn gaming off (quit your game first)
-gaming off
-```
+| Service | Purpose | Access and storage | Startup |
+| --- | --- | --- | --- |
+| `container@slopcannon` | Remote development in a native NixOS container. | Own LAN address and mDNS name: `ssh slopcannon.local`. Home, SSH host keys, and credentials persist under `/var/lib/nixos-containers/slopcannon`. | Automatic |
+| `container@steam` | Remote gaming with [Steam Headless](https://github.com/Steam-Headless/docker-steam-headless), Sunshine, and NVIDIA GPU access. | Connect with Moonlight to Straylight. Persistent data lives under `/data/steam`. | Manual: `sudo systemctl start container@steam` |

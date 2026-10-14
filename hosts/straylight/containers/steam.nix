@@ -11,22 +11,6 @@ let
   ];
 in
 {
-  environment.systemPackages = [
-    (pkgs.writeShellScriptBin "gaming" ''
-      if [ "$#" -ne 1 ]; then
-        echo "Usage: gaming {on|off|status}" >&2
-        exit 2
-      fi
-
-      case "$1" in
-        on) exec /run/wrappers/bin/sudo ${pkgs.systemd}/bin/systemctl start docker-steam ;;
-        off) exec /run/wrappers/bin/sudo ${pkgs.systemd}/bin/systemctl stop docker-steam ;;
-        status) exec ${pkgs.systemd}/bin/systemctl status docker-steam --no-pager ;;
-        *) echo "Usage: gaming {on|off|status}" >&2; exit 2 ;;
-      esac
-    '')
-  ];
-
   boot.kernelModules = [
     "uinput"
     "uhid"
@@ -35,6 +19,7 @@ in
 
   virtualisation.oci-containers = {
     containers.steam = {
+      serviceName = "container@steam";
       # josh5/steam-headless, linux/amd64, published 2026-10-04.
       image = "docker.io/josh5/steam-headless@sha256:28acbee506844b60fe0a49f1f2a85f4a0a8dbccf8a83db7af73aacbb08d20f74";
       autoStart = false;
@@ -103,7 +88,7 @@ in
     "d /data/steam/state 0700 root root -"
     "d /data/steam/journal 0700 root root -"
   ];
-  systemd.services.docker-steam = {
+  systemd.services."container@steam" = {
     unitConfig.RequiresMountsFor = [ "/data/steam" ];
     requires = [ "nvidia-container-toolkit-cdi-generator.service" ];
     after = [ "nvidia-container-toolkit-cdi-generator.service" ];
