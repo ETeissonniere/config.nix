@@ -12,7 +12,7 @@
     ./containers
   ];
 
-  containerBase.network.mainNetworkInterface = "eth0";
+  containerBase.network.mainNetworkInterface = "enp12s0";
 
   boot.initrd.availableKernelModules = [
     "ahci"
