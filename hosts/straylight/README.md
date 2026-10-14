@@ -34,12 +34,12 @@ Gaming runs in a Steam Headless container with Sunshine. It stays off after boot
 until started manually. On Straylight:
 
 ```fish
-# Turn gaming on
-gaming on
+# Start gaming
+sudo systemctl start container@steam
 
 # Check its status
-gaming status
+systemctl status container@steam
 
-# Turn gaming off (quit your game first)
-gaming off
+# Stop gaming (quit your game first)
+sudo systemctl stop container@steam
 ```
