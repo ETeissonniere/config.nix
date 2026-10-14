@@ -13,6 +13,21 @@ on.
 
 We run with Secure Boot on with our own keys, as well as TPM backed disk decryption :smile:.
 
+## Remote development (`slopcannon`)
+
+Slopcannon is a native NixOS container with private user and network namespaces.
+Its home, SSH host keys, and credentials persist under
+`/var/lib/nixos-containers/slopcannon`. It has its own LAN address and mDNS name;
+connect with `ssh slopcannon.local`.
+
+The container shares the host kernel and Nix store. Nix builds use the host
+daemon as an untrusted client through remapped UIDs. The developer has no sudo
+access, host Docker socket, host home, or forwarded SSH agent. Outbound network
+access remains available.
+
+On Straylight, use `sudo systemctl status container@slopcannon` or
+`sudo systemctl restart container@slopcannon` to manage the container.
+
 ## Gaming
 
 Gaming runs in a Steam Headless container with Sunshine. It stays off after boot
