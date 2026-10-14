@@ -72,6 +72,11 @@ in
       bridges.br-lan.interfaces = [ network.mainNetworkInterface ];
       interfaces.br-lan.useDHCP = true;
     };
+    # Keep container interfaces from changing the bridge's DHCP identity.
+    systemd.services.br-lan-netdev.postStart = ''
+      read -r macAddress < "/sys/class/net/${network.mainNetworkInterface}/address"
+      ip link set dev br-lan address "$macAddress"
+    '';
     # Docker must not drop forwarding for the native containers' LAN bridge.
     virtualisation.docker.daemon.settings = lib.mkIf config.virtualisation.docker.enable {
       "ip-forward-no-drop" = true;
