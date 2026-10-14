@@ -8,6 +8,9 @@ let
 in
 {
   containers.slopcannon.config = {
+    # Codex CLI sandbox seem to have various issues in the systemd-nspawn container,
+    # so we need to enable a couple "hacks" it can work as expected.
+    imports = [ ./codex-fixes.nix ];
     me = { inherit username sshKeys; };
     # Agents do not need sudo; change the environment through a host Nix rebuild.
     security.sudo.enable = false;
