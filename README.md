@@ -26,7 +26,7 @@ Homebrew is managed automatically; activation
 upgrades declared packages and removes unlisted packages and associated cask data.
 
 Each Mac provisions a `default` key for SSH and Git signing. Wintermute requires
-Touch ID; neutrino does not. Use `scauth pubkey default` to retrieve its public key
+Touch ID. Use `scauth pubkey default` to retrieve its public key
 for your servers, and save it on GitHub as both an authentication and signing key.
 
 ## macOS post-install steps
@@ -53,8 +53,8 @@ Nix installs these apps; open each one after setup to configure it individually:
 
 ## Usage
 
-`host` defaults to this machine's hostname, lowercased (for example, `Neutrino`
-becomes `neutrino`); override it before the recipe: `just host=wintermute check`.
+`host` defaults to this machine's hostname, lowercased (for example, `Wintermute`
+becomes `wintermute`); override it before the recipe: `just host=wintermute check`.
 
 | Command | Purpose |
 | --- | --- |
