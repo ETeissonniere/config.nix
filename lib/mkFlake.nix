@@ -100,7 +100,10 @@ in
   checks.x86_64-linux = inputs.deploy-rs.lib.x86_64-linux.deployChecks inputs.self.deploy;
 
   apps = lib.genAttrs [ "aarch64-darwin" "x86_64-linux" ] (system: {
-    deploy = inputs.deploy-rs.apps.${system}.default;
+    deploy = {
+      type = "app";
+      program = "${inputs.nixpkgs.legacyPackages.${system}.deploy-rs}/bin/deploy";
+    };
     nixos-anywhere = {
       type = "app";
       program = "${inputs.nixos-anywhere.packages.${system}.default}/bin/nixos-anywhere";
