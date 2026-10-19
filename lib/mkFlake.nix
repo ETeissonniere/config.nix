@@ -102,10 +102,12 @@ in
   apps = lib.genAttrs [ "aarch64-darwin" "x86_64-linux" ] (system: {
     deploy = {
       type = "app";
+      meta.description = "Deploy NixOS configurations with automatic rollback";
       program = "${inputs.nixpkgs.legacyPackages.${system}.deploy-rs}/bin/deploy";
     };
     nixos-anywhere = {
       type = "app";
+      meta.description = "Install NixOS on a remote machine";
       program = "${inputs.nixos-anywhere.packages.${system}.default}/bin/nixos-anywhere";
     };
   });
