@@ -29,7 +29,7 @@ in
           hostBridge = lib.mkIf network.enable (lib.mkDefault "br-lan");
           config = { config, ... }: {
             imports = [
-              inputs.self.commonModules.base
+              inputs.self.lib.commonModules.base
               inputs.self.nixosModules.profiles.ssh-server
               inputs.home-manager.nixosModules.home-manager
             ];
