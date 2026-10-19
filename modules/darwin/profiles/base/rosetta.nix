@@ -1,7 +1,0 @@
-{
-  system.activationScripts.preActivation.text = ''
-    if ! /usr/sbin/pkgutil --pkg-info com.apple.pkg.RosettaUpdateAuto >/dev/null 2>&1; then
-      /usr/sbin/softwareupdate --install-rosetta --agree-to-license || exit 1
-    fi
-  '';
-}
