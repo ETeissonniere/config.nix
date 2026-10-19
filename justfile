@@ -28,10 +28,10 @@ check-all:
                 (flake.nixosConfigurations or {}); \
         }'
 
-# Build without activating
+# Build the deployment closure without activating (NixOS), or the Darwin system
 build target=host:
     if [ -f "{{ justfile_directory() }}/hosts/{{ target }}/configuration.nix" ]; then \
-        {{ nix }} build "{{ flake }}#nixosConfigurations.{{ target }}.config.system.build.toplevel" --no-link; \
+        {{ nix }} build "{{ flake }}#deploy.nodes.{{ target }}.profiles.system.path" --no-link; \
     else \
         nh darwin build "{{ flake }}" --hostname "{{ target }}"; \
     fi
@@ -58,6 +58,6 @@ format:
 install target address *args:
     {{ nix }} run "{{ flake }}#nixos-anywhere" -- --build-on local --flake "{{ flake }}#{{ target }}" --target-host "{{ address }}" {{ args }}
 
-# Deploy updates with automatic rollback if activation/connectivity fails
+# Build on the target and deploy with automatic rollback if activation/connectivity fails
 deploy target *args:
-    {{ nix }} run "{{ flake }}#deploy" -- "{{ flake }}#{{ target }}" {{ args }}
+    {{ nix }} run "{{ flake }}#deploy" -- "{{ flake }}#{{ target }}" --remote-build {{ args }}
