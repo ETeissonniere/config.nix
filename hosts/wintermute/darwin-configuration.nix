@@ -22,6 +22,13 @@
 
   homebrew.casks = [ "moonlight" ];
 
+  system.defaults.CustomUserPreferences."com.moonlight-stream.Moonlight" = {
+    fps = 120;
+    bitrate = 60000; # Kbps
+    autoadjustbitrate = false;
+    vsync = true;
+  };
+
   # Compatibility baseline for this installation; do not bump during updates.
   system.stateVersion = 6;
 }
