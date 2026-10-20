@@ -20,7 +20,10 @@
 
   users.users.${config.me.username}.uid = 501;
 
-  homebrew.casks = [ "moonlight" ];
+  homebrew.casks = [
+    "moonlight"
+    "utm"
+  ];
 
   system.defaults.CustomUserPreferences."com.moonlight-stream.Moonlight" = {
     fps = 120;
