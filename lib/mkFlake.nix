@@ -49,7 +49,9 @@ let
 
 in
 {
-  lib.commonModules = discoverModules ../modules/common;
+  lib.commonModules = discoverModules ../modules/common // {
+    profiles = discoverModules ../modules/common/profiles;
+  };
   darwinModules = discoverModules ../modules/darwin // {
     profiles = discoverModules ../modules/darwin/profiles;
   };
@@ -65,7 +67,7 @@ in
     inputs.nix-darwin.lib.darwinSystem {
       specialArgs = { inherit inputs hostName; };
       modules = [
-        inputs.self.lib.commonModules.base
+        inputs.self.lib.commonModules.profiles.base
         inputs.self.darwinModules.profiles.base
         (../hosts + "/${hostName}/darwin-configuration.nix")
         inputs.home-manager.darwinModules.home-manager
@@ -79,7 +81,7 @@ in
     inputs.nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs hostName; };
       modules = [
-        inputs.self.lib.commonModules.base
+        inputs.self.lib.commonModules.profiles.base
         (../hosts + "/${hostName}/configuration.nix")
         inputs.home-manager.nixosModules.home-manager
         (homeManagerConfig hostName)

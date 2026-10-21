@@ -5,12 +5,12 @@
   ...
 }:
 let
-  network = config.containerBase.network;
+  network = config.containerHost.network;
 in
 {
   imports = [ ./persistence.nix ];
 
-  options.containerBase.network = {
+  options.containerHost.network = {
     enable = lib.mkEnableOption "LAN bridging with DHCP and mDNS for native containers" // {
       default = true;
     };
@@ -31,8 +31,8 @@ in
           hostBridge = lib.mkIf network.enable (lib.mkDefault "br-lan");
           config = { config, ... }: {
             imports = [
-              inputs.self.lib.commonModules.base
-              inputs.self.nixosModules.profiles.ssh-server
+              inputs.self.lib.commonModules.profiles.base
+              inputs.self.nixosModules.ssh-server
               inputs.home-manager.nixosModules.home-manager
             ];
             nixpkgs.config.allowUnfree = true;

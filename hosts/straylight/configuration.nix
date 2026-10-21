@@ -1,20 +1,24 @@
 { inputs, ... }:
 {
   imports = [
-    inputs.self.nixosModules.profiles.container-base
-    inputs.self.nixosModules.profiles.server-docker
-    inputs.self.nixosModules.profiles.server-nixbuilder
-    inputs.self.nixosModules.profiles.server-wol
-    inputs.self.nixosModules.profiles.nvidia
-    inputs.self.nixosModules.profiles.secure-boot
-    inputs.self.nixosModules.profiles.ephemeral-root
+    inputs.self.nixosModules.profiles.server
+
+    inputs.self.nixosModules.container-host
+    inputs.self.nixosModules.docker
+    inputs.self.nixosModules.ephemeral-root
+    inputs.self.nixosModules.nix-builder
+    inputs.self.nixosModules.nvidia
+    inputs.self.nixosModules.secure-boot
+    inputs.self.nixosModules.wake-on-lan
+
     inputs.disko.nixosModules.disko
-    ./disko.nix
+
     ./containers
+    ./disko.nix
     ./persistence.nix
   ];
 
-  containerBase.network.mainNetworkInterface = "enp12s0";
+  containerHost.network.mainNetworkInterface = "enp12s0";
 
   boot.initrd.availableKernelModules = [
     "ahci"
