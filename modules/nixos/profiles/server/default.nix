@@ -8,7 +8,7 @@
 }:
 {
   imports = [
-    inputs.self.nixosModules.profiles.ssh-server
+    inputs.self.nixosModules.ssh-server
   ];
 
   environment.systemPackages = [ pkgs.ghostty.terminfo ];

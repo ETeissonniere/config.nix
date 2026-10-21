@@ -6,8 +6,8 @@
 }:
 {
   imports = [
-    ../me.nix
-    ../nix.nix
+    ../../me.nix
+    ../../nix.nix
   ];
 
   programs.fish.enable = true;

@@ -1,17 +1,19 @@
 { inputs, ... }:
 {
   imports = [
-    inputs.self.nixosModules.profiles.container-host
-    inputs.self.nixosModules.profiles.server-docker
-    inputs.self.nixosModules.profiles.server-nixbuilder
-    inputs.self.nixosModules.profiles.server-wol
-    inputs.self.nixosModules.profiles.nvidia
-    inputs.self.nixosModules.profiles.secure-boot
-    inputs.self.nixosModules.profiles.ephemeral-root
+    inputs.self.nixosModules.container-host
+    inputs.self.nixosModules.docker
+    inputs.self.nixosModules.nix-builder
+    inputs.self.nixosModules.wake-on-lan
+    inputs.self.nixosModules.nvidia
+    inputs.self.nixosModules.secure-boot
+    inputs.self.nixosModules.ephemeral-root
     inputs.disko.nixosModules.disko
     ./disko.nix
     ./containers
     ./persistence.nix
+    # Keep the role after capabilities to preserve system package ordering.
+    inputs.self.nixosModules.profiles.server
   ];
 
   containerHost.network.mainNetworkInterface = "enp12s0";
