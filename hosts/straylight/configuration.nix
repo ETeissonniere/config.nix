@@ -1,7 +1,7 @@
 { inputs, ... }:
 {
   imports = [
-    inputs.self.nixosModules.profiles.container-base
+    inputs.self.nixosModules.profiles.container-host
     inputs.self.nixosModules.profiles.server-docker
     inputs.self.nixosModules.profiles.server-nixbuilder
     inputs.self.nixosModules.profiles.server-wol
@@ -14,7 +14,7 @@
     ./persistence.nix
   ];
 
-  containerBase.network.mainNetworkInterface = "enp12s0";
+  containerHost.network.mainNetworkInterface = "enp12s0";
 
   boot.initrd.availableKernelModules = [
     "ahci"
