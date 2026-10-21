@@ -12,7 +12,7 @@
     ./disko.nix
     ./containers
     ./persistence.nix
-    # Keep the role after capabilities to preserve system package ordering.
+    # Preserve the existing system package order during this reorganization.
     inputs.self.nixosModules.profiles.server
   ];
 
