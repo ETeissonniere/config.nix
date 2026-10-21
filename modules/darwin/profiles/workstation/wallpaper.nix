@@ -2,6 +2,6 @@
 {
   services.mac-wallpaper = {
     enable = true;
-    image = ../../../../assets/wallpaper-italy.jpg;
+    image = ../../../../assets/wallpaper-robot.jpg;
   };
 }
