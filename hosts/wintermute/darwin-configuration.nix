@@ -22,7 +22,6 @@
 
   homebrew.casks = [
     "moonlight"
-    "utm"
   ];
 
   system.defaults.CustomUserPreferences."com.moonlight-stream.Moonlight" = {
