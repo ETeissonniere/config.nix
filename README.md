@@ -34,6 +34,11 @@ for your servers, and save it on GitHub as both an authentication and signing ke
 After activation, connect to the NAS network and grant your terminal Full Disk
 Access in System Settings → Privacy & Security. Run `just postinstall` without sudo.
 
+On Wintermute, this also opens `smb://Eliott@nas.teiss.org/personal_folder` in Finder.
+If prompted, enter the NAS password and save it in Keychain for future connections.
+Run `just postinstall` again to reconnect after a restart; the share is not mounted
+automatically at login.
+
 This registers `nas.teiss.org` for Time Machine using a password prompt, excludes
 `~/Developer` and `~/Downloads`, and enables backups. Configure backup encryption
 or adoption of an older Mac's backups separately in macOS.
@@ -64,7 +69,7 @@ becomes `wintermute`); override it before the recipe: `just host=wintermute chec
 | `just deploy [host]` | Deploy NixOS updates with deploy-rs |
 | `just install [host] [user@address]` | Install NixOS; erases the host's configured disks |
 | `just switch` | Build and apply this Mac's configuration with `nh` |
-| `just postinstall` | Set up Time Machine |
+| `just postinstall` | Connect Wintermute's NAS share and set up Time Machine |
 | `just update` | Update pinned dependencies without applying |
 | `just format` | Format Nix files and recipes |
 
