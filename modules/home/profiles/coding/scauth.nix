@@ -11,7 +11,7 @@
   config = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
     programs.scauth = {
       enable = true;
-      identities.default = { };
+      identities.default.touchId = false;
     };
 
     # Codex uses zsh on macOS; it needs the provider for Git signing too.
