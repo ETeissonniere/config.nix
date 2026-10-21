@@ -7,26 +7,41 @@ let
   inherit (config.me) username sshKeys;
 in
 {
-  containers.slopcannon.config = {
-    # Codex CLI sandbox seem to have various issues in the systemd-nspawn container,
-    # so we need to enable a couple "hacks" it can work as expected.
-    imports = [ ./codex-fixes.nix ];
-    me = { inherit username sshKeys; };
-    # Agents do not need sudo; change the environment through a host Nix rebuild.
-    security.sudo.enable = false;
-    # Prevent inadvertent access to the client laptop's SSH agent from the container.
-    services.openssh.settings.AllowAgentForwarding = false;
-    # So Codex can run even without an SSH session.
-    users.users.${username}.linger = true;
-    # Support Zed's downloaded language servers and other Linux binaries.
-    programs.nix-ld.enable = true;
-
-    home-manager.users.${username} = {
-      imports = [ inputs.self.homeModules.profiles.coding ];
-      services.codex-remote-control.enable = true;
-      home.stateVersion = "26.05";
+  containers.slopcannon = {
+    ephemeral = true;
+    persistence = {
+      directory = "/data/slopcannon";
+      directories = [
+        "/home"
+        "/etc/ssh"
+        "/var/lib/nixos"
+        "/var/lib/systemd"
+        "/var/log"
+      ];
     };
-    system.stateVersion = "26.05";
+    config = {
+      # Codex CLI sandbox seem to have various issues in the systemd-nspawn container,
+      # so we need to enable a couple "hacks" it can work as expected.
+      imports = [ ./codex-fixes.nix ];
+      me = { inherit username sshKeys; };
+      # Agents do not need sudo; change the environment through a host Nix rebuild.
+      security.sudo.enable = false;
+      # Prevent inadvertent access to the client laptop's SSH agent from the container.
+      services.openssh.settings.AllowAgentForwarding = false;
+      # So Codex can run even without an SSH session.
+      users.users.${username}.linger = true;
+      # Support Zed's downloaded language servers and other Linux binaries.
+      programs.nix-ld.enable = true;
+      users.mutableUsers = false;
+      users.allowNoPasswordLogin = true;
+
+      home-manager.users.${username} = {
+        imports = [ inputs.self.homeModules.profiles.coding ];
+        services.codex-remote-control.enable = true;
+        home.stateVersion = "26.05";
+      };
+      system.stateVersion = "26.05";
+    };
   };
 
   # These limits can be tuned, but are reasonable defaults for now.

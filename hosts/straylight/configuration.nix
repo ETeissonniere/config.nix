@@ -7,9 +7,11 @@
     inputs.self.nixosModules.profiles.server-wol
     inputs.self.nixosModules.profiles.nvidia
     inputs.self.nixosModules.profiles.secure-boot
+    inputs.self.nixosModules.profiles.ephemeral-root
     inputs.disko.nixosModules.disko
     ./disko.nix
     ./containers
+    ./persistence.nix
   ];
 
   containerBase.network.mainNetworkInterface = "enp12s0";

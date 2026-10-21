@@ -1,3 +1,4 @@
+{ config, ... }:
 let
   encryptedFilesystem = name: mountpoint: {
     type = "luks";
@@ -13,6 +14,22 @@ let
   };
 in
 {
+  disko.devices.nodev = {
+    "/" = {
+      fsType = "tmpfs";
+      device = "none";
+      # The ephemeral-root profile supplies the running system's tmpfs options.
+      mountOptions = [ "defaults" ];
+    };
+    "/nix" = {
+      fsType = "none";
+      device = "/persist/nix";
+      mountOptions = [ "bind" ];
+      # Disko mounts /persist first because it contains this bind's source.
+      preMountHook = "mkdir -p ${config.disko.rootMountPoint}/persist/nix";
+    };
+  };
+
   disko.devices.disk.system = {
     type = "disk";
     device = "/dev/disk/by-path/pci-0000:10:00.0-nvme-1";
@@ -31,7 +48,7 @@ in
         };
         root = {
           size = "100%";
-          content = encryptedFilesystem "cryptroot" "/";
+          content = encryptedFilesystem "cryptroot" "/persist";
         };
       };
     };

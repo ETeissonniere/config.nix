@@ -18,5 +18,5 @@ for example `sudo systemctl restart container@slopcannon`.
 
 | Service | Purpose | Access and storage | Startup |
 | --- | --- | --- | --- |
-| `container@slopcannon` | Remote development in a native NixOS container. | Own LAN address and mDNS name: `ssh slopcannon.local`. Home, SSH host keys, and credentials persist under `/var/lib/nixos-containers/slopcannon`. | Automatic |
+| `container@slopcannon` | Remote development in a native NixOS container. | Own LAN address and mDNS name: `ssh slopcannon.local`. Home, SSH host keys, and credentials persist under `/data/slopcannon`. | Automatic |
 | `container@steam` | Remote gaming with [Steam Headless](https://github.com/Steam-Headless/docker-steam-headless), Sunshine, and NVIDIA GPU access. | Connect with Moonlight to Straylight. Persistent data lives under `/data/steam`. | Manual: `sudo systemctl start container@steam` |

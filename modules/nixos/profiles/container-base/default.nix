@@ -8,6 +8,8 @@ let
   network = config.containerBase.network;
 in
 {
+  imports = [ ./persistence.nix ];
+
   options.containerBase.network = {
     enable = lib.mkEnableOption "LAN bridging with DHCP and mDNS for native containers" // {
       default = true;
