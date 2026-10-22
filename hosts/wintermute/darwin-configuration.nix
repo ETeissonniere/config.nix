@@ -13,6 +13,10 @@
 
   nixpkgs.hostPlatform = "aarch64-darwin";
   nix.linux-builder.enable = true; # For Raspberry Pi hosts.
+  nix.linux-builder.config.virtualisation = {
+    darwin-builder.diskSize = 64 * 1024;
+    fileSystems."/".autoResize = true;
+  };
   networking = {
     inherit hostName;
     computerName = lib.strings.toSentenceCase hostName;
