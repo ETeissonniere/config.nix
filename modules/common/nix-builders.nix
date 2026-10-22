@@ -16,7 +16,10 @@
       protocol = "ssh-ng";
       sshUser = "nix-ssh";
       sshKey = config.home-manager.users.${config.me.username}.sshKey.path;
-      systems = [ "x86_64-linux" ];
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
       maxJobs = 4;
       speedFactor = 10;
       supportedFeatures = [
