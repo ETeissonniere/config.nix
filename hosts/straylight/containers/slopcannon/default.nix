@@ -20,25 +20,41 @@ in
       ];
     };
     config = {
-      # Codex CLI sandbox seem to have various issues in the systemd-nspawn container,
-      # so we need to enable a couple "hacks" it can work as expected.
-      imports = [ ./codex-fixes.nix ];
+      imports = [
+        inputs.self.lib.commonModules.profiles.base
+        inputs.self.nixosModules.ssh-server
+        inputs.home-manager.nixosModules.home-manager
+        # Codex CLI sandbox seem to have various issues in the systemd-nspawn container,
+        # so we need to enable a couple "hacks" it can work as expected.
+        ./codex-fixes.nix
+      ];
+      nixpkgs.config.allowUnfree = true;
       me = { inherit username sshKeys; };
+      users.users.${username} = {
+        isNormalUser = true;
+        uid = 1000;
+        homeMode = "700";
+        # So Codex can run even without an SSH session.
+        linger = true;
+      };
       # Agents do not need sudo; change the environment through a host Nix rebuild.
       security.sudo.enable = false;
       # Prevent inadvertent access to the client laptop's SSH agent from the container.
       services.openssh.settings.AllowAgentForwarding = false;
-      # So Codex can run even without an SSH session.
-      users.users.${username}.linger = true;
       # Support Zed's downloaded language servers and other Linux binaries.
       programs.nix-ld.enable = true;
       users.mutableUsers = false;
       users.allowNoPasswordLogin = true;
 
-      home-manager.users.${username} = {
-        imports = [ inputs.self.homeModules.profiles.coding ];
-        services.codex-remote-control.enable = true;
-        home.stateVersion = "26.05";
+      home-manager = {
+        useGlobalPkgs = true;
+        useUserPackages = true;
+        extraSpecialArgs = { inherit inputs; };
+        users.${username} = {
+          imports = [ inputs.self.homeModules.profiles.coding ];
+          services.codex-remote-control.enable = true;
+          home.stateVersion = "26.05";
+        };
       };
       system.stateVersion = "26.05";
     };

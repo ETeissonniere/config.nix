@@ -29,25 +29,9 @@ in
           privateUsers = lib.mkDefault "pick";
           privateNetwork = lib.mkDefault true;
           hostBridge = lib.mkIf network.enable (lib.mkDefault "br-lan");
-          config = { config, ... }: {
-            imports = [
-              inputs.self.lib.commonModules.profiles.base
-              inputs.self.nixosModules.ssh-server
-              inputs.home-manager.nixosModules.home-manager
-            ];
-            nixpkgs.config.allowUnfree = true;
-            users.users.${config.me.username} = {
-              isNormalUser = lib.mkDefault true;
-              uid = lib.mkDefault 1000;
-              homeMode = lib.mkDefault "700";
-            };
+          config = {
             # Containers share the host store, so only the host schedules garbage collection.
             nix.gc.automatic = lib.mkForce false;
-            home-manager = {
-              useGlobalPkgs = lib.mkDefault true;
-              useUserPackages = lib.mkDefault true;
-              extraSpecialArgs = { inherit inputs; };
-            };
             networking = lib.mkIf network.enable {
               useHostResolvConf = false;
               interfaces.eth0.useDHCP = lib.mkDefault true;
