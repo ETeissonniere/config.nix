@@ -1,4 +1,9 @@
-{ inputs, ... }:
+{
+  config,
+  inputs,
+  lib,
+  ...
+}:
 {
   imports = [ inputs.preservation.nixosModules.preservation ];
 
@@ -6,7 +11,7 @@
   fileSystems."/" = {
     device = "none";
     fsType = "tmpfs";
-    options = [
+    options = lib.mkDefault [
       "size=4G"
       "mode=755"
     ];
@@ -17,7 +22,22 @@
   preservation = {
     enable = true;
     preserveAt."/persist" = {
+      users.${config.me.username}.directories = [
+        {
+          # Fish replaces its history file atomically, so preserve the directory.
+          directory = ".local/share/fish";
+          mode = "0700";
+        }
+        {
+          directory = ".cache";
+          mode = "0700";
+        }
+      ];
       directories = [
+        {
+          directory = "/etc/ssh";
+          inInitrd = true;
+        }
         {
           directory = "/var/lib/nixos";
           inInitrd = true;
