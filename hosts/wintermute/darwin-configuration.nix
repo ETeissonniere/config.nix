@@ -12,6 +12,7 @@
   ];
 
   nixpkgs.hostPlatform = "aarch64-darwin";
+  nix.linux-builder.enable = true; # For Raspberry Pi hosts.
   networking = {
     inherit hostName;
     computerName = lib.strings.toSentenceCase hostName;

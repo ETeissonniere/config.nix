@@ -19,7 +19,6 @@
   ];
 
   containerHost.network.mainNetworkInterface = "enp12s0";
-  nixBuilder.emulation.enable = true;
 
   boot.initrd.availableKernelModules = [
     "ahci"
