@@ -1,7 +1,6 @@
 {
   config,
   inputs,
-  lib,
   ...
 }:
 {
@@ -11,7 +10,8 @@
   fileSystems."/" = {
     device = "none";
     fsType = "tmpfs";
-    options = lib.mkDefault [
+    # Cap transient data on / at 4GiB. Note that this is not reserving RAM, just saying we may grow **up to** 4GiB
+    options = [
       "size=4G"
       "mode=755"
     ];
