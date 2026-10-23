@@ -1,3 +1,6 @@
 {
-  imports = [ ./coredns ];
+  imports = [
+    ./coredns
+    ./tailscale
+  ];
 }
