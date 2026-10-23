@@ -61,6 +61,10 @@ format:
 install target address *args:
     {{ nix }} run "{{ flake }}#nixos-anywhere" -- --build-on local --flake "{{ flake }}#{{ target }}" --target-host "{{ address }}" {{ args }}
 
-# Build on the target and deploy with automatic rollback if activation/connectivity fails
+# Build on the target and deploy with automatic rollback
 deploy target *args:
     {{ nix }} run "{{ flake }}#deploy" -- "{{ flake }}#{{ target }}" --remote-build {{ args }}
+
+# Build using the local Nix builders and deploy with automatic rollback
+deploy-local target *args:
+    {{ nix }} run "{{ flake }}#deploy" -- "{{ flake }}#{{ target }}" {{ args }}
