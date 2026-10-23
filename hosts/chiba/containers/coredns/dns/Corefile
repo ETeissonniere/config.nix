@@ -1,0 +1,12 @@
+teiss.org {
+  hosts /etc/coredns/hosts {
+    fallthrough
+  }
+  log
+}
+
+. {
+  forward . 1.1.1.1 1.0.0.1
+  cache 30
+  log
+}

@@ -15,7 +15,7 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.enableRedistributableFirmware = lib.mkDefault true;
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault true;
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault pkgs.stdenv.hostPlatform.isx86;
 
   networking = {
     inherit hostName;
