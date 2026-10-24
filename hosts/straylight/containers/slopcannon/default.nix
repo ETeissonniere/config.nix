@@ -39,6 +39,8 @@ in
       };
       # Agents do not need sudo; change the environment through a host Nix rebuild.
       security.sudo.enable = false;
+      # Let LAN clients reach development servers without per-project port rules.
+      networking.firewall.trustedInterfaces = [ "eth0" ];
       # Prevent inadvertent access to the client laptop's SSH agent from the container.
       services.openssh.settings.AllowAgentForwarding = false;
       # Support Zed's downloaded language servers and other Linux binaries.
