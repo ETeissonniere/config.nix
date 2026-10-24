@@ -20,8 +20,8 @@ in
   virtualisation.oci-containers = {
     containers.steam = {
       serviceName = "container@steam";
-      # josh5/steam-headless, linux/amd64, published 2026-10-04.
-      image = "docker.io/josh5/steam-headless@sha256:28acbee506844b60fe0a49f1f2a85f4a0a8dbccf8a83db7af73aacbb08d20f74";
+      # josh5/steam-headless 2.44.20261019.1, linux/amd64.
+      image = "docker.io/josh5/steam-headless@sha256:c60f4d7243a4d94515f722441fff90b752413bf6a45bb221c9a4ed55bc4d9108";
       autoStart = false;
       environment = {
         TZ = "America/Los_Angeles";
