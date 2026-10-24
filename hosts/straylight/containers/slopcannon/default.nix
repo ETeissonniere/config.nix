@@ -9,6 +9,7 @@ in
 {
   containers.slopcannon = {
     ephemeral = true;
+    nvidia.enable = true;
     persistence = {
       directory = "/data/slopcannon";
       directories = [

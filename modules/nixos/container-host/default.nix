@@ -8,7 +8,10 @@ let
   network = config.containerHost.network;
 in
 {
-  imports = [ ./persistence.nix ];
+  imports = [
+    ./persistence.nix
+    ./nvidia.nix
+  ];
 
   options.containerHost.network = {
     enable = lib.mkEnableOption "LAN bridging with DHCP and mDNS for native containers" // {
