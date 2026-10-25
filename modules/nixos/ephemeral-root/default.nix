@@ -1,10 +1,24 @@
 {
   config,
   inputs,
+  lib,
   ...
 }:
 {
-  imports = [ inputs.preservation.nixosModules.preservation ];
+  imports = [
+    (
+      args:
+      let
+        preservation = import inputs.preservation.nixosModules.preservation args;
+      in
+      lib.recursiveUpdate preservation {
+        # NixOS removed scripted initrd; Preservation still checks the removed option.
+        config.content.assertions = lib.filter (
+          assertion: assertion.message != "This module cannot be used with scripted initrd."
+        ) preservation.config.content.assertions;
+      }
+    )
+  ];
 
   # Hosts supply persistent /nix and /persist mounts and their own state allowlist.
   fileSystems."/" = {
@@ -16,7 +30,6 @@
       "mode=755"
     ];
   };
-  boot.initrd.systemd.enable = true;
   boot.tmp.useTmpfs = true;
   fileSystems."/persist".neededForBoot = true;
   preservation = {

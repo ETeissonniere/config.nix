@@ -42,9 +42,9 @@ in
             services.avahi = lib.mkIf network.enable {
               enable = lib.mkDefault true;
               openFirewall = lib.mkDefault true;
-              publish = {
-                enable = lib.mkDefault true;
-                addresses = lib.mkDefault true;
+              settings.publish = {
+                disable-publishing = lib.mkDefault false;
+                publish-addresses = lib.mkDefault true;
               };
             };
           };
