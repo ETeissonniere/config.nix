@@ -40,6 +40,14 @@ build target=host:
 switch:
     nh darwin switch "{{ flake }}" --hostname "{{ host }}"
 
+# Start the local ARM Linux builder (off by default)
+builder-start:
+    sudo launchctl kickstart system/org.nixos.linux-builder
+
+# Shut down the builder gracefully; finish any builds first
+builder-stop:
+    sudo ssh -o ConnectTimeout=5 builder@linux-builder shutdown -h now
+
 # Connect Wintermute's NAS share and set up Time Machine interactively
 postinstall:
     if [ "{{ host }}" = wintermute ]; then \

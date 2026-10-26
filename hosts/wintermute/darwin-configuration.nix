@@ -17,6 +17,10 @@
     darwin-builder.diskSize = 64 * 1024;
     fileSystems."/".autoResize = true;
   };
+  launchd.daemons.linux-builder.serviceConfig = {
+    RunAtLoad = lib.mkForce false;
+    KeepAlive = lib.mkForce false;
+  };
   networking = {
     inherit hostName;
     computerName = lib.strings.toSentenceCase hostName;
