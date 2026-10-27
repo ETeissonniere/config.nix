@@ -6,6 +6,5 @@
 
   preservation.preserveAt."/persist".directories = [
     "/var/lib/sbctl"
-    "/var/lib/docker"
   ];
 }

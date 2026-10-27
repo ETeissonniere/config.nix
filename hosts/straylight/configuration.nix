@@ -4,7 +4,6 @@
     inputs.self.nixosModules.profiles.server
 
     inputs.self.nixosModules.container-host
-    inputs.self.nixosModules.docker
     inputs.self.nixosModules.ephemeral-root
     inputs.self.nixosModules.nix-builder
     inputs.self.nixosModules.nvidia

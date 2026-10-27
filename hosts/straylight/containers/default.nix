@@ -1,6 +1,5 @@
 {
   imports = [
-    ./steam.nix
     ./slopcannon
   ];
 }
