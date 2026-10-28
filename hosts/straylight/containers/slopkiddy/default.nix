@@ -12,6 +12,7 @@ in
         "/var/lib/slopkiddy"
         "/var/lib/slopkiddy-secrets"
         "/var/lib/open-webui"
+        "/var/lib/docling-serve"
       ];
     };
     # Manually populated SSD storage; model weights never enter the Nix store.
@@ -28,6 +29,7 @@ in
         ./dashboard.nix
         ./inference.nix
         ./webui.nix
+        ./documents.nix
       ];
       nixpkgs.config.allowUnfree = true;
       networking.hostName = "slopkiddy";

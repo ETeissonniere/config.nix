@@ -63,6 +63,20 @@ in
     openFirewall = true;
     environmentFile = secretsFile;
     managedSettings = {
+      "code_execution.enable" = true;
+      "code_execution.engine" = "pyodide";
+      "code_interpreter.enable" = true;
+      "code_interpreter.engine" = "pyodide";
+      # Native date/time tools do not need a code-execution service.
+      "models.default_params" = {
+        function_calling = "native";
+      };
+      "models.default_metadata" = {
+        capabilities.builtin_tools = true;
+        capabilities.code_interpreter = true;
+        builtinTools.time = true;
+        builtinTools.code_interpreter = true;
+      };
       "image_generation.enable" = true;
       "image_generation.engine" = "comfyui";
       "image_generation.model" = "qwen-image-2.1-turbo.safetensors";
@@ -109,7 +123,6 @@ in
       WEB_SEARCH_RESULT_COUNT = "5";
       WEB_SEARCH_CONCURRENT_REQUESTS = "2";
       DEFAULT_INTERFACE_SETTINGS = builtins.toJSON { webSearch = "always"; };
-      DEFAULT_MODEL_PARAMS = builtins.toJSON { function_calling = "native"; };
       # Download this small embedding model into persistent state on first startup.
       RAG_EMBEDDING_ENGINE = "";
       RAG_EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2";
@@ -123,8 +136,6 @@ in
 
       ENABLE_FOLLOW_UP_GENERATION = "False";
       ENABLE_MEMORY_BACKGROUND_REVIEW = "False";
-      ENABLE_CODE_EXECUTION = "False";
-      ENABLE_CODE_INTERPRETER = "False";
       SCARF_NO_ANALYTICS = "True";
       DO_NOT_TRACK = "True";
       ANONYMIZED_TELEMETRY = "False";
