@@ -74,8 +74,16 @@ in
       "models.default_metadata" = {
         capabilities.builtin_tools = true;
         capabilities.code_interpreter = true;
+        capabilities.web_search = true;
+        defaultFeatureIds = [
+          "web_search"
+          "code_interpreter"
+        ];
         builtinTools.time = true;
         builtinTools.code_interpreter = true;
+        builtinTools.web_search = true;
+        builtinTools.files = true;
+        builtinTools.knowledge = true;
       };
       "image_generation.enable" = true;
       "image_generation.engine" = "comfyui";
