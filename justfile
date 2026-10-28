@@ -76,3 +76,11 @@ deploy target *args:
 # Build using the local Nix builders and deploy with automatic rollback
 deploy-local target *args:
     {{ nix }} run "{{ flake }}#deploy" -- "{{ flake }}#{{ target }}" {{ args }}
+
+# Edit a secret, or encrypt replacement contents piped through stdin
+secret name:
+    EDITOR="${EDITOR:-nano}" AGENIX_RULES="{{ justfile_directory() }}/secrets/agenix-rules.nix" agenix -e "{{ name }}.age" -i "$HOME/.config/age/wintermute.key"
+
+# Re-encrypt all secrets after changing recipient public keys
+secrets-rekey identity="$HOME/.config/age/wintermute.key":
+    AGENIX_RULES="{{ justfile_directory() }}/secrets/agenix-rules.nix" agenix -r -i "{{ identity }}"
