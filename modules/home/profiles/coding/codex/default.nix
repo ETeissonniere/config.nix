@@ -15,7 +15,16 @@
       }
     ];
 
-    home.packages = [ pkgs.codex ];
+    programs.codex = {
+      enable = true;
+      # Preserve settings written by Codex while applying shared defaults on activation.
+      mutableSettings = true;
+      settings = {
+        approval_policy = lib.mkDefault "on-request";
+        approvals_reviewer = lib.mkDefault "auto_review";
+        sandbox_mode = lib.mkDefault "workspace-write";
+      };
+    };
     home.file = {
       ".codex/AGENTS.md".text =
         builtins.replaceStrings
