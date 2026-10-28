@@ -13,8 +13,9 @@ let
         builtins.readFile (../../../secrets/recipients + "/${name}.pub")
       );
     in
-    assert lib.assertMsg (lib.hasPrefix "age1pq1" recipient)
-      "The ${name} age recipient must be post-quantum.";
+    assert lib.assertMsg (
+      lib.hasPrefix "age1pq1" recipient || (name == "wintermute" && lib.hasPrefix "age1tagpq1" recipient)
+    ) "The ${name} age recipient must be post-quantum.";
     recipient;
 in
 {
@@ -31,7 +32,7 @@ in
       masterIdentities = [
         {
           # Expanded by the CLI, keeping private keys outside the Nix store.
-          identity = "\"\${AGENIX_IDENTITY:-$HOME/.config/age/wintermute.key}\"";
+          identity = "\"\${AGENIX_IDENTITY:-$HOME/.config/age/identity.key}\"";
           pubkey = readRecipient "wintermute";
         }
       ];

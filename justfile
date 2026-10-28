@@ -69,5 +69,5 @@ secret name:
     EDITOR="${EDITOR:-nvim}" {{ nix }} run "{{ flake }}#agenix-rekey.$({{ nix }} eval --impure --raw --expr builtins.currentSystem).edit-view" -- edit "secrets/{{ name }}.age"
 
 # Refresh host ciphertext after editing secrets or changing host recipients
-secrets-rekey identity="$HOME/.config/age/wintermute.key":
+secrets-rekey identity="$HOME/.config/age/identity.key":
     AGENIX_IDENTITY="{{ identity }}" {{ nix }} run "{{ flake }}#agenix-rekey.$({{ nix }} eval --impure --raw --expr builtins.currentSystem).rekey"
