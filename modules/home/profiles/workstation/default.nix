@@ -3,7 +3,7 @@
   # for managing secrets in this repo
   home.packages = [
     pkgs.age
-    inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.agenix-rekey.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   imports = [

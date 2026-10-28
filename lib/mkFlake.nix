@@ -89,6 +89,12 @@ in
     }
   ) nixosHosts;
 
+  configurationPaths =
+    lib.mapAttrs (_: host: host.system.drvPath) inputs.self.darwinConfigurations
+    // lib.mapAttrs (
+      _: host: host.config.system.build.toplevel.drvPath
+    ) inputs.self.nixosConfigurations;
+
   deploy.nodes = lib.mapAttrs (hostName: host: {
     hostname = "${hostName}.local";
     sshUser = host.config.me.username;
@@ -100,6 +106,13 @@ in
   }) inputs.self.nixosConfigurations;
 
   checks.x86_64-linux = inputs.deploy-rs.lib.x86_64-linux.deployChecks inputs.self.deploy;
+
+  agenix-rekey = inputs.agenix-rekey.configure {
+    userFlake = inputs.self;
+    inherit (inputs.self) nixosConfigurations;
+    # Use Go age for the post-quantum recipients used throughout this repo.
+    agePackage = pkgs: pkgs.age;
+  };
 
   apps = lib.genAttrs [ "aarch64-darwin" "x86_64-linux" ] (system: {
     deploy = {

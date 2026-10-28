@@ -7,26 +7,13 @@ default:
 
 # Evaluate the configuration
 check target=host:
-    {{ nix }} flake check --no-build "{{ flake }}"
-    if [ -f "{{ justfile_directory() }}/hosts/{{ target }}/configuration.nix" ]; then \
-        {{ nix }} eval "{{ flake }}#nixosConfigurations.{{ target }}.config.system.build.toplevel.drvPath"; \
-    else \
-        {{ nix }} eval "{{ flake }}#darwinConfigurations.{{ target }}.system.drvPath"; \
-    fi
+    {{ nix }} eval "{{ flake }}#configurationPaths.{{ target }}"
 
 # Evaluate all Darwin and NixOS configurations
 check-all:
+    # Evaluate first so agenix-rekey can register its ciphertext paths in the store.
+    {{ nix }} eval --json "{{ flake }}#configurationPaths"
     {{ nix }} flake check --no-build --all-systems "{{ flake }}"
-    {{ nix }} eval --impure --json \
-        --expr 'builtins.getFlake "{{ flake }}"' \
-        --apply 'flake: { \
-            darwinConfigurations = builtins.mapAttrs \
-                (_: host: host.system.drvPath) \
-                (flake.darwinConfigurations or {}); \
-            nixosConfigurations = builtins.mapAttrs \
-                (_: host: host.config.system.build.toplevel.drvPath) \
-                (flake.nixosConfigurations or {}); \
-        }'
 
 # Build the deployment closure without activating (NixOS), or the Darwin system
 build target=host:
@@ -77,10 +64,10 @@ deploy target *args:
 deploy-local target *args:
     {{ nix }} run "{{ flake }}#deploy" -- "{{ flake }}#{{ target }}" {{ args }}
 
-# Edit a secret, or encrypt replacement contents piped through stdin
+# Edit a secret with $EDITOR (defaults to nvim)
 secret name:
-    EDITOR="${EDITOR:-nano}" AGENIX_RULES="{{ justfile_directory() }}/secrets/agenix-rules.nix" agenix -e "{{ name }}.age" -i "$HOME/.config/age/wintermute.key"
+    EDITOR="${EDITOR:-nvim}" {{ nix }} run "{{ flake }}#agenix-rekey.$({{ nix }} eval --impure --raw --expr builtins.currentSystem).edit-view" -- edit "secrets/{{ name }}.age"
 
-# Re-encrypt all secrets after changing recipient public keys
+# Refresh host ciphertext after editing secrets or changing host recipients
 secrets-rekey identity="$HOME/.config/age/wintermute.key":
-    AGENIX_RULES="{{ justfile_directory() }}/secrets/agenix-rules.nix" agenix -r -i "{{ identity }}"
+    AGENIX_IDENTITY="{{ identity }}" {{ nix }} run "{{ flake }}#agenix-rekey.$({{ nix }} eval --impure --raw --expr builtins.currentSystem).rekey"
