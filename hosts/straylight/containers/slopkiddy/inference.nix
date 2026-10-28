@@ -19,19 +19,18 @@
     stateDirectory = "slopkiddy";
     settings = {
       healthCheckTimeout = 600;
+      globalTTL = 600;
       models = {
         text = {
           unlisted = true;
           cmd = config.services.llama-cpp.command;
           proxy = "http://127.0.0.1:8081";
-          ttl = 600;
         };
         images = {
           unlisted = true;
           cmd = config.services.comfyui.command;
           proxy = "http://127.0.0.1:8189";
           checkEndpoint = "/system_stats";
-          ttl = 0;
           # Open WebUI holds /upstream/images/ws through generation and history lookup.
           compat.ignoreWebsockets = false;
           # UI assets share this limit with API requests and long-lived WebSockets.
