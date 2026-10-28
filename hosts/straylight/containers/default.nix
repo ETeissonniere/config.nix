@@ -1,5 +1,6 @@
 {
   imports = [
+    ./slopkiddy
     ./slopcannon
   ];
 }

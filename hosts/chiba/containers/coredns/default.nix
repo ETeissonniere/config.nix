@@ -1,9 +1,38 @@
-{ config, ... }:
+{ config, lib, ... }:
 let
-  nasAddress = "192.168.86.29";
   chibaAddress = (builtins.head config.networking.interfaces.eth0.ipv4.addresses).address;
+  slopkiddyAliases = [
+    "openwebui"
+    "comfy"
+  ];
+  nasAliases = [
+    "grimmory"
+    "shelfmark"
+    "home"
+    "dockhand"
+    "nas"
+    "immich"
+    "gitea"
+    "sonarr"
+    "radarr"
+    "prowlarr"
+    "qbit"
+    "jellyfin"
+    "bazarr"
+  ];
 in
 {
+  # We need to run systemd-resolved here so CoreDNS can resolve .local machine names
+  # and resolve the appropriate domains accordingly.
+  # This avoids us having to maintain static IPs on our network.
+  services.resolved = {
+    enable = true;
+    settings.Resolve = {
+      MulticastDNS = "resolve";
+      LLMNR = false;
+    };
+  };
+
   networking.firewall = {
     allowedTCPPorts = [ 53 ];
     allowedUDPPorts = [ 53 ];
@@ -19,27 +48,26 @@ in
         enable = true;
         config = ''
           teiss.org {
+            # Leave 127.0.0.53 available for systemd-resolved's mDNS-capable stub.
+            bind ${chibaAddress} 127.0.0.1
+            rewrite stop {
+              name regex ^(${lib.concatStringsSep "|" slopkiddyAliases})[.]teiss[.]org[.]$ slopkiddy.local.
+              answer auto
+            }
+            rewrite stop {
+              name regex ^(${lib.concatStringsSep "|" nasAliases})[.]teiss[.]org[.]$ gollum.local.
+              answer auto
+            }
             hosts /dev/null {
-              ${nasAddress} grimmory.teiss.org
-              ${nasAddress} shelfmark.teiss.org
-              ${nasAddress} home.teiss.org
-              ${nasAddress} dockhand.teiss.org
-              ${nasAddress} nas.teiss.org
-              ${nasAddress} immich.teiss.org
-              ${nasAddress} gitea.teiss.org
-              ${nasAddress} sonarr.teiss.org
-              ${nasAddress} radarr.teiss.org
-              ${nasAddress} prowlarr.teiss.org
-              ${nasAddress} qbit.teiss.org
-              ${nasAddress} jellyfin.teiss.org
-              ${nasAddress} bazarr.teiss.org
               ${chibaAddress} auth.teiss.org
               fallthrough
             }
+            forward local 127.0.0.53
             log
           }
 
           . {
+            bind ${chibaAddress} 127.0.0.1
             forward . 1.1.1.1 1.0.0.1
             cache 30
             log
@@ -64,8 +92,12 @@ in
       system.stateVersion = "26.05";
     };
   };
-  systemd.services."container@coredns".serviceConfig = {
-    MemoryMax = "256M";
-    TasksMax = 128;
+  systemd.services."container@coredns" = {
+    wants = [ "systemd-resolved.service" ];
+    after = [ "systemd-resolved.service" ];
+    serviceConfig = {
+      MemoryMax = "256M";
+      TasksMax = 128;
+    };
   };
 }
