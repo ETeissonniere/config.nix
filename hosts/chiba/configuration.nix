@@ -8,6 +8,7 @@
     ./containers
     ./sd-image.nix
     ./persistence.nix
+    ./secrets.nix
   ];
 
   nixpkgs.hostPlatform = "aarch64-linux";

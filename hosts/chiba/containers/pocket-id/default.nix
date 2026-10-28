@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 {
   containers.pocket-id = {
     ephemeral = true;
@@ -8,15 +8,18 @@
       directory = "/persist/pocket-id";
       directories = [
         "/var/lib/pocket-id"
-        "/var/lib/pocket-id-secrets"
       ];
     };
-    config = { lib, pkgs, ... }: {
+    bindMounts."/run/secrets" = {
+      hostPath = builtins.dirOf config.age.secrets.pocket-id-encryption-key.path;
+      isReadOnly = true;
+    };
+    config = { pkgs, ... }: {
       networking.firewall.enable = false;
 
       services.pocket-id = {
         enable = true;
-        credentials.ENCRYPTION_KEY = "/var/lib/pocket-id-secrets/encryption-key";
+        credentials.ENCRYPTION_KEY = "/run/secrets/encryption-key";
         settings = {
           APP_URL = "https://id.teiss.org";
           HOST = "127.0.0.1";
@@ -37,30 +40,14 @@
       };
       environment.systemPackages = [ pkgs.pocket-id ];
 
-      systemd.services.pocket-id-secrets = {
-        requiredBy = [ "pocket-id.service" ];
-        before = [ "pocket-id.service" ];
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          StateDirectory = "pocket-id-secrets";
-          StateDirectoryMode = "0700";
-          UMask = "0077";
-        };
-        script = ''
-          file=/var/lib/pocket-id-secrets/encryption-key
-          if [ ! -s "$file" ]; then
-            temporary=$(mktemp "$file.XXXXXX")
-            ${lib.getExe pkgs.openssl} rand -hex 32 | tr -d '\n' > "$temporary"
-            mv "$temporary" "$file"
-          fi
-        '';
-      };
-
       system.stateVersion = "26.05";
     };
   };
 
+  # Reload systemd credentials when the encrypted secret changes.
+  systemd.services."container@pocket-id".restartTriggers = [
+    config.age.secrets.pocket-id-encryption-key.file
+  ];
   systemd.services."container@pocket-id".serviceConfig = {
     MemoryHigh = "384M";
     MemoryMax = "512M";
