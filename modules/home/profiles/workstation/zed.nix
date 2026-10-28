@@ -8,6 +8,7 @@
     };
     extensions = [
       "git-firefly"
+      "just"
       "nix"
       "toml"
     ];
