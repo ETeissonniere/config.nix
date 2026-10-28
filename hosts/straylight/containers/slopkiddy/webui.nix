@@ -1,6 +1,5 @@
-{ lib, pkgs, ... }:
+{ lib, ... }:
 let
-  secretsFile = "/var/lib/slopkiddy-secrets/environment";
   turboWorkflow = builtins.fromJSON (builtins.readFile ./workflows/qwen-image-2.1-turbo.json);
   editWorkflow = lib.recursiveUpdate turboWorkflow {
     "4".inputs = {
@@ -58,11 +57,14 @@ in
   };
   services.open-webui = {
     enable = true;
-    host = "0.0.0.0";
+    host = "127.0.0.1";
     port = 8080;
-    openFirewall = true;
-    environmentFile = secretsFile;
+    environmentFile = "/run/secrets/webui-environment";
     managedSettings = {
+      "ui.enable_signup" = false;
+      "ui.enable_login_form" = false;
+      "ui.default_user_role" = "user";
+      "webui.url" = "https://openwebui.teiss.org";
       "code_execution.enable" = true;
       "code_execution.engine" = "pyodide";
       "code_interpreter.enable" = true;
@@ -116,10 +118,27 @@ in
     };
 
     environment = {
-      WEBUI_URL = "http://slopkiddy.local:8080";
+      WEBUI_URL = "https://openwebui.teiss.org";
       WEBUI_AUTH = "True";
-      # The first account can still bootstrap the administrator; further signup is closed.
+      WEBUI_SESSION_COOKIE_SECURE = "True";
+      WEBUI_AUTH_COOKIE_SECURE = "True";
+      OPENID_PROVIDER_URL = "https://auth.teiss.org/.well-known/openid-configuration";
+      OPENID_REDIRECT_URI = "https://openwebui.teiss.org/oauth/oidc/callback";
+      OAUTH_PROVIDER_NAME = "Pocket ID";
+      OAUTH_SCOPES = "openid profile email groups";
+      OAUTH_CODE_CHALLENGE_METHOD = "S256";
+      ENABLE_OAUTH_PERSISTENT_CONFIG = "False";
+      # Provision local records only after an authorized Pocket ID login.
+      ENABLE_OAUTH_SIGNUP = "True";
+      ENABLE_OAUTH_ROLE_MANAGEMENT = "True";
+      OAUTH_ROLES_CLAIM = "groups";
+      OAUTH_ALLOWED_ROLES = "*";
+      OAUTH_ADMIN_ROLES = "homelab-admins";
+      DEFAULT_USER_ROLE = "user";
+      # Pocket ID controls email identities; link existing chats to their SSO owner.
+      OAUTH_MERGE_ACCOUNTS_BY_EMAIL = "True";
       ENABLE_SIGNUP = "False";
+      ENABLE_LOGIN_FORM = "False";
       ENABLE_OLLAMA_API = "False";
       OPENAI_API_BASE_URL = "http://127.0.0.1:8082/upstream/text/v1";
       OPENAI_API_KEY = "local";
@@ -155,7 +174,7 @@ in
 
   services.searx = {
     enable = true;
-    environmentFile = secretsFile;
+    environmentFile = "/run/secrets/searx-environment";
     settings = {
       server = {
         bind_address = "127.0.0.1";
@@ -167,34 +186,6 @@ in
     };
   };
 
-  systemd.services.slopkiddy-secrets = {
-    description = "Create persistent local application secrets";
-    requiredBy = [
-      "open-webui.service"
-      "searx-init.service"
-    ];
-    before = [
-      "open-webui.service"
-      "searx-init.service"
-    ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      UMask = "0077";
-      StateDirectory = "slopkiddy-secrets";
-      StateDirectoryMode = "0700";
-    };
-    script = ''
-      if [ ! -s ${secretsFile} ]; then
-        temporary=$(mktemp /var/lib/slopkiddy-secrets/environment.XXXXXX)
-        trap 'rm -f "$temporary"' EXIT
-        printf 'WEBUI_SECRET_KEY=%s\nSEARX_SECRET_KEY=%s\n' \
-          "$(${lib.getExe pkgs.openssl} rand -hex 32)" \
-          "$(${lib.getExe pkgs.openssl} rand -hex 32)" > "$temporary"
-        mv "$temporary" ${secretsFile}
-      fi
-    '';
-  };
   systemd.services.open-webui = {
     # DynamicUser would relocate StateDirectory beneath /var/lib/private,
     # which cannot move this container's persistent bind mount.

@@ -15,6 +15,7 @@
     ./containers
     ./disko.nix
     ./persistence.nix
+    ./secrets.nix
   ];
 
   containerHost.network.mainNetworkInterface = "enp12s0";

@@ -34,8 +34,9 @@
           ttl = 0;
           # Open WebUI holds /upstream/images/ws through generation and history lookup.
           compat.ignoreWebsockets = false;
-          # Permit nested prompt/history requests while the job's socket is open.
-          concurrencyLimit = 16;
+          # UI assets share this limit with API requests and long-lived WebSockets.
+          # Match llama-swap's ComfyUI limit to avoid HTTP 429s during page load.
+          concurrencyLimit = 999;
         };
       };
       groups.gpu = {
@@ -61,6 +62,7 @@
       checkpoints = "checkpoints";
       loras = "loras";
     };
+    # Share one profile behind OAuth; consider an OIDC-native replacement for personal accounts.
     extraArgs = [
       "--lowvram"
       "--reserve-vram"
@@ -70,13 +72,12 @@
       "--disable-partner-nodes"
     ];
   };
-  networking.firewall.allowedTCPPorts = [ 8188 ];
   services.nginx = {
     enable = true;
     virtualHosts.comfyui = {
       listen = [
         {
-          addr = "0.0.0.0";
+          addr = "127.0.0.1";
           port = 8188;
         }
       ];
@@ -85,7 +86,7 @@
         proxyWebsockets = true;
         extraConfig = ''
           # ComfyUI compares Host and Origin for browser requests.
-          proxy_set_header Host $host:$server_port;
+          proxy_set_header Host comfy.teiss.org;
           client_max_body_size 100m;
           proxy_read_timeout 3600s;
           proxy_send_timeout 3600s;

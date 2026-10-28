@@ -10,11 +10,15 @@ in
       directory = "/data/slopkiddy";
       directories = [
         "/var/lib/slopkiddy"
-        "/var/lib/slopkiddy-secrets"
+        "/var/lib/caddy"
         "/var/lib/open-webui"
         "/var/lib/docling-serve"
       ];
     };
+    # Match the container's private UID mapping, including root-owned secret files.
+    extraFlags = [
+      "--bind-ro=${builtins.dirOf config.age.secrets.webui-environment.path}:/run/secrets:idmap"
+    ];
     # Manually populated SSD storage; model weights never enter the Nix store.
     bindMounts."/models" = {
       hostPath = "${storage}/models";
@@ -26,7 +30,7 @@ in
         ./services/comfyui
         ./services/llama-cpp
         ./services/llama-swap
-        ./dashboard.nix
+        ./auth.nix
         ./inference.nix
         ./webui.nix
         ./documents.nix
@@ -37,6 +41,15 @@ in
       system.stateVersion = "26.05";
     };
   };
+
+  systemd.services."container@slopkiddy".restartTriggers =
+    map (name: config.age.secrets.${name}.file)
+      [
+        "webui-environment"
+        "searx-environment"
+        "comfyui-oauth-environment"
+        "slopkiddy-caddy-environment"
+      ];
 
   systemd.tmpfiles.rules = [
     # Reach models without granting directory listing access to container state.

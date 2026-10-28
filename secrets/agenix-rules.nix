@@ -1,11 +1,22 @@
 # All keys and all secrets should be post quantum compliant. This file enforces this.
 
 let
-  recipients = map (path: builtins.replaceStrings [ "\n" ] [ "" ] (builtins.readFile path)) [
-    ./recipients/chiba.pub
+  readRecipient = path: builtins.replaceStrings [ "\n" ] [ "" ] (builtins.readFile path);
+  recoveryRecipients = map readRecipient [
     ./recipients/wintermute.pub
     ./recipients/recovery.pub
   ];
+  recipientsFor =
+    name:
+    recoveryRecipients
+    ++ [
+      (readRecipient (
+        if builtins.match "straylight/.*" name != null then
+          ./recipients/straylight.pub
+        else
+          ./recipients/chiba.pub
+      ))
+    ];
   secretFiles =
     directory: prefix:
     let
@@ -27,10 +38,16 @@ let
     ++ (if builtins.match ".*\\.age" requestedFile != null then [ requestedFile ] else [ ]);
 in
 # No classical fallback: every secret uses only post-quantum recipients.
-assert builtins.all (recipient: builtins.substring 0 7 recipient == "age1pq1") recipients;
 builtins.listToAttrs (
-  map (name: {
-    inherit name;
-    value.publicKeys = recipients;
-  }) files
+  map (
+    name:
+    let
+      recipients = recipientsFor name;
+    in
+    assert builtins.all (recipient: builtins.substring 0 7 recipient == "age1pq1") recipients;
+    {
+      inherit name;
+      value.publicKeys = recipients;
+    }
+  ) files
 )
