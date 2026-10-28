@@ -29,6 +29,7 @@
           DB_CONNECTION_STRING = "/var/lib/pocket-id/pocket-id.db";
           UI_CONFIG_DISABLED = true;
           APP_NAME = "B&E Auth";
+          HOME_PAGE_URL = "/settings/apps";
           ALLOW_USER_SIGNUPS = "disabled";
           EMAIL_VERIFICATION = "disabled";
           WEBAUTHN_USER_VERIFICATION = "required";
