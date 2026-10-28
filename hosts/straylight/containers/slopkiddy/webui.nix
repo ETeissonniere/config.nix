@@ -74,13 +74,16 @@ in
       "models.default_metadata" = {
         capabilities.builtin_tools = true;
         capabilities.code_interpreter = true;
+        capabilities.image_generation = true;
         capabilities.web_search = true;
         defaultFeatureIds = [
           "web_search"
           "code_interpreter"
+          "image_generation"
         ];
         builtinTools.time = true;
         builtinTools.code_interpreter = true;
+        builtinTools.image_generation = true;
         builtinTools.web_search = true;
         builtinTools.files = true;
         builtinTools.knowledge = true;
