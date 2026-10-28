@@ -34,7 +34,7 @@
             resolvers 1.1.1.1 1.0.0.1
           }
         '';
-        virtualHosts."id.teiss.org".extraConfig = ''
+        virtualHosts."auth.teiss.org".extraConfig = ''
           reverse_proxy 127.0.0.1:1411
         '';
       };

@@ -33,7 +33,7 @@ in
               ${nasAddress} qbit.teiss.org
               ${nasAddress} jellyfin.teiss.org
               ${nasAddress} bazarr.teiss.org
-              ${chibaAddress} id.teiss.org
+              ${chibaAddress} auth.teiss.org
               fallthrough
             }
             log

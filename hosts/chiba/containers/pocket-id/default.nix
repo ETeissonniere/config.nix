@@ -21,7 +21,7 @@
         enable = true;
         credentials.ENCRYPTION_KEY = "/run/secrets/encryption-key";
         settings = {
-          APP_URL = "https://id.teiss.org";
+          APP_URL = "https://auth.teiss.org";
           HOST = "127.0.0.1";
           PORT = 1411;
           ACTORS_HOST = "127.0.0.1";
