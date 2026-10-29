@@ -1,4 +1,8 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
+let
+  readRecipient =
+    name: lib.removeSuffix "\n" (builtins.readFile (../../secrets/recipients + "/${name}.pub"));
+in
 {
   imports = [
     inputs.agenix.darwinModules.default
@@ -13,14 +17,14 @@
       intermediary = true;
     };
     rekey = {
-      hostPubkey = builtins.readFile ../../secrets/recipients/wintermute.pub;
+      hostPubkey = readRecipient "wintermute";
       masterIdentities = [
         {
           identity = "\"\${AGENIX_IDENTITY:-$HOME/.config/age/identity.key}\"";
-          pubkey = builtins.readFile ../../secrets/recipients/wintermute.pub;
+          pubkey = readRecipient "wintermute";
         }
       ];
-      extraEncryptionPubkeys = [ (builtins.readFile ../../secrets/recipients/recovery.pub) ];
+      extraEncryptionPubkeys = [ (readRecipient "recovery") ];
     };
   };
 }
