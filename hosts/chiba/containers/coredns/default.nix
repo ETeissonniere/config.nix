@@ -8,7 +8,6 @@ let
   nasAliases = [
     "grimmory"
     "shelfmark"
-    "home"
     "dockhand"
     "nas"
     "immich"
