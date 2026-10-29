@@ -6,6 +6,13 @@
 
   services.openssh.hostKeys = [ ];
 
+  networking.applicationFirewall = {
+    enable = true;
+    blockAllIncoming = false;
+    allowSigned = true;
+    allowSignedApp = true;
+  };
+
   nix-homebrew = {
     enable = true;
     autoMigrate = true;
