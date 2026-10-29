@@ -17,6 +17,7 @@
 
   nixpkgs.hostPlatform = "aarch64-darwin";
   nix.settings.trusted-users = lib.mkForce [ "root" ];
+  nix.settings.sandbox = true;
   system.activationScripts.preActivation.text = ''
     if [ ! -e /etc/nix/straylight_builder_ed25519 ]; then
       ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -N "" \
