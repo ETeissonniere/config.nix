@@ -109,7 +109,7 @@ in
 
   agenix-rekey = inputs.agenix-rekey.configure {
     userFlake = inputs.self;
-    inherit (inputs.self) nixosConfigurations;
+    inherit (inputs.self) nixosConfigurations darwinConfigurations;
     # Use Go age for the post-quantum recipients used throughout this repo.
     agePackage = pkgs: pkgs.age;
   };

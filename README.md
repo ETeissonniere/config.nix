@@ -25,36 +25,9 @@ This installs `nh` and `just`; restart your terminal afterward.
 Homebrew is managed automatically; activation
 upgrades declared packages and removes unlisted packages and associated cask data.
 
-Each Mac provisions a `default` key for SSH and Git signing. Wintermute requires
-Touch ID. Use `scauth pubkey default` to retrieve its public key
+Each Mac provisions a `default` key for SSH and Git signing.
+Use `scauth pubkey default` to retrieve its public key
 for your servers, and save it on GitHub as both an authentication and signing key.
-
-## macOS post-install steps
-
-After activation, connect to the NAS network and grant your terminal Full Disk
-Access in System Settings → Privacy & Security. Run `just postinstall` without sudo.
-
-On Wintermute, this also opens `smb://Eliott@nas.teiss.org/personal_folder` in Finder.
-If prompted, enter the NAS password and save it in Keychain for future connections.
-Run `just postinstall` again to reconnect after a restart; the share is not mounted
-automatically at login.
-
-This registers `nas.teiss.org` for Time Machine using a password prompt, excludes
-`~/Developer` and `~/Downloads`, and enables backups. Configure backup encryption
-or adoption of an older Mac's backups separately in macOS.
-
-Existing backup destinations are preserved. The setup script runs only when
-invoked, independently of Nix rebuilds.
-
-Nix installs these apps; open each one after setup to configure it individually:
-
-- **Stats:** Choose the metrics and widgets to show in the menu bar, and enable
-  **Start at login**.
-- **MonitorControl:** Configure display controls, enable its menu bar icon and
-  **Start at login**, and grant Accessibility access when prompted for keyboard
-  controls.
-- **Logi Options+:** Complete onboarding, grant the requested macOS permissions,
-  and configure Logitech devices, button mappings, and scrolling preferences.
 
 ## Usage
 
@@ -69,7 +42,6 @@ becomes `wintermute`); override it before the recipe: `just host=wintermute chec
 | `just deploy [host]` | Deploy NixOS updates with deploy-rs |
 | `just install [host] [user@address]` | Install NixOS; erases the host's configured disks |
 | `just switch` | Build and apply this Mac's configuration with `nh` |
-| `just postinstall` | Connect Wintermute's NAS share and set up Time Machine |
 | `just update` | Update pinned dependencies without applying |
 | `just format` | Format Nix files and recipes |
 
