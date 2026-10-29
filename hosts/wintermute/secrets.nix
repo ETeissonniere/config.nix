@@ -17,6 +17,8 @@ in
       intermediary = true;
     };
     rekey = {
+      storageMode = "local";
+      localStorageDir = inputs.self.outPath + "/secrets/rekeyed/wintermute";
       hostPubkey = readRecipient "wintermute";
       masterIdentities = [
         {
