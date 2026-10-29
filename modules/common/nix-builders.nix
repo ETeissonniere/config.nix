@@ -1,13 +1,4 @@
-{ config, ... }:
 {
-  home-manager.users.${config.me.username} = {
-    imports = [ ../home/sshkey.nix ];
-    sshKey = {
-      enable = true;
-      path = "${config.users.users.${config.me.username}.home}/.ssh/nix_builder_ed25519";
-    };
-  };
-
   nix.distributedBuilds = true;
   nix.settings.builders-use-substitutes = true;
   nix.buildMachines = [
@@ -15,7 +6,7 @@
       hostName = "straylight.local";
       protocol = "ssh-ng";
       sshUser = "nix-ssh";
-      sshKey = config.home-manager.users.${config.me.username}.sshKey.path;
+      sshKey = "/etc/nix/straylight_builder_ed25519";
       systems = [ "x86_64-linux" ];
       maxJobs = 4;
       speedFactor = 10;

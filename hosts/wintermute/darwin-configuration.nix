@@ -3,6 +3,7 @@
   inputs,
   hostName,
   lib,
+  pkgs,
   ...
 }:
 {
@@ -15,6 +16,15 @@
   ];
 
   nixpkgs.hostPlatform = "aarch64-darwin";
+  nix.settings.trusted-users = lib.mkForce [ "root" ];
+  system.activationScripts.preActivation.text = ''
+    if [ ! -e /etc/nix/straylight_builder_ed25519 ]; then
+      ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -N "" \
+        -C wintermute-builder -f /etc/nix/straylight_builder_ed25519
+    fi
+    chown root:wheel /etc/nix/straylight_builder_ed25519
+    chmod 600 /etc/nix/straylight_builder_ed25519
+  '';
   nix.linux-builder.enable = true; # For Raspberry Pi hosts.
   nix.linux-builder.config.virtualisation = {
     darwin-builder.diskSize = 64 * 1024;
