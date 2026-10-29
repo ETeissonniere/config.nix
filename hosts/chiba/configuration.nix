@@ -5,6 +5,7 @@
     inputs.self.nixosModules.container-host
     inputs.self.nixosModules.ephemeral-root
     inputs.nixos-hardware.nixosModules.raspberry-pi-5
+    ./backup.nix
     ./containers
     ./sd-image.nix
     ./persistence.nix
