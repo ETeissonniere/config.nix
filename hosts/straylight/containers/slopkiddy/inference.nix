@@ -1,13 +1,67 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  parallel = 2;
+  modelPresets =
+    {
+      name,
+      directory,
+      model,
+      mmproj,
+    }:
+    lib.concatMapStringsSep "\n"
+      (context: ''
+        [${name}-${toString context}K]
+        model = /models/text/${directory}/${model}
+        mmproj = /models/text/${directory}/${mmproj}
+        ctx-size = ${toString (context * 1024 * parallel)}
+      '')
+      [
+        32
+        128
+      ];
+in
 {
   services.llama-cpp.settings = {
     host = "127.0.0.1";
     port = 8081;
-    models-dir = "/models/text";
+    # Explicit presets give models short names; context in each name is per slot.
+    models-preset = pkgs.writeText "slopkiddy-models.ini" ''
+      version = 1
+
+      ${modelPresets {
+        name = "Gemma-4-31B";
+        directory = "Gemma-4-31B-Q5_K_M";
+        model = "gemma-4-31B-it-Q5_K_M.gguf";
+        mmproj = "mmproj-F16.gguf";
+      }}
+      ${modelPresets {
+        name = "Nemotron-3.5-Bolt-74B";
+        directory = "Nemotron-3.5-Bolt-74B-A9B";
+        model = "NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf";
+        mmproj = "mmproj-NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf";
+      }}
+      ${modelPresets {
+        name = "Qwen3.8-27B-Q4";
+        directory = "Qwen3.8-27B-Uncensored-Q4_K_M";
+        model = "Qwen3.8-27B-Uncensored-Q4_K_M.gguf";
+        mmproj = "mmproj-f16.gguf";
+      }}
+      ${modelPresets {
+        name = "Qwen3.8-27B-Q3";
+        directory = "Qwen3.8-27B-Uncensored-Q3_K_M";
+        model = "Qwen3.8-27B-Uncensored-Q3_K_M.gguf";
+        mmproj = "mmproj-f16.gguf";
+      }}
+    '';
     models-max = 1;
     jinja = true;
-    parallel = 2;
-    # Let fitting size context per model, offloading to RAM to retain at least 32K per slot.
+    inherit parallel;
+    # Keep preset context sizes fixed while auto-fitting GPU offloading.
     fit = "on";
     fit-ctx = 32768;
     fit-target = 2048;
