@@ -28,9 +28,12 @@ in
 
   config = lib.mkIf cfg.enable {
     services.open-webui.package = lib.mkDefault (
-      pkgs.open-webui.override {
+      (pkgs.open-webui.override {
         python3Packages = webuiPython;
-      }
+      }).overrideAttrs
+        (old: {
+          patches = (old.patches or [ ]) ++ [ ./image-review.patch ];
+        })
     );
     # A separate command runs after the upstream data migration, which exits early.
     systemd.services.open-webui.serviceConfig.ExecStartPre = lib.mkIf (cfg.managedSettings != { }) (

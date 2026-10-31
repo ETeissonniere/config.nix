@@ -1,0 +1,67 @@
+--- a/backend/open_webui/utils/middleware.py
++++ b/backend/open_webui/utils/middleware.py
+@@ -839,6 +839,23 @@
+ 
+     tool_result_files = []
+ 
++    # Generated files must reach both the vision model and subsequent delegations.
++    if tool_type == 'builtin' and tool_function_name in ('generate_image', 'edit_image'):
++        result = JSONCodec.loads(tool_result) if isinstance(tool_result, str) else tool_result
++        if isinstance(result, dict) and result.get('status') == 'success':
++            for generated in result.get('images', []):
++                image_file = {'type': 'image', **generated}
++                tool_result_files.append(image_file)
++                if metadata is not None:
++                    attached = metadata['files'] = metadata.get('files') or []
++                    if not any(file.get('id') == image_file.get('id') for file in attached):
++                        attached.append(image_file)
++            result['message'] = (
++                'The images are displayed to the user and attached for visual review. '
++                'Use their IDs in file_ids when delegating a review.'
++            )
++            tool_result = result
++
+     # Detect base64 image data URIs from tool results (e.g. binary image
+     # responses from execute_tool_server).  Move the data URI to
+     # tool_result_files and replace tool_result with a text summary.
+--- a/backend/open_webui/tools/builtin.py
++++ b/backend/open_webui/tools/builtin.py
+@@ -2767,6 +2767,7 @@
+ ) -> str:
+     """
+     Get the content of a file by its ID. Supports pagination for large files.
++    Image files are returned as image inputs for visual inspection, rather than text.
+ 
+     :param file_id: The ID of the file to retrieve
+     :param offset: Character offset to start reading from (default: 0)
+@@ -2807,6 +2808,14 @@
+ 
+         if not await _has_read_access_to_file(file, __user__, __model_knowledge__):
+             return JSONCodec.dumps({'error': 'File not found'})
++
++        if (file.meta or {}).get('content_type', '').startswith('image/'):
++            from open_webui.utils.files import get_image_base64_from_file_id
++
++            image = await get_image_base64_from_file_id(file.id, user=UserModel(**__user__))
++            if image:
++                return image
++            return JSONCodec.dumps({'error': 'Image content unavailable'})
+ 
+         content = ''
+         if file.data:
+--- a/backend/open_webui/utils/tools.py
++++ b/backend/open_webui/utils/tools.py
+@@ -820,6 +820,13 @@
+     ):
+         builtin_functions.append(edit_image)
+ 
++    if (
++        is_builtin_tool_enabled('files')
++        and (generate_image in builtin_functions or edit_image in builtin_functions)
++        and view_file not in builtin_functions
++    ):
++        builtin_functions.append(view_file)
++
+     # Add code interpreter tool if builtin category enabled,
+     # globally enabled, and allowed by model capability.
+     if (
