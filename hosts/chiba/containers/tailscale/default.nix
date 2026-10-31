@@ -21,6 +21,10 @@ in
   };
 
   containers.tailscale = {
+    limits = {
+      MemoryMax = "256M";
+      TasksMax = 128;
+    };
     ephemeral = true;
     privateNetwork = false;
     # Managing the host's tunnel and routes requires capabilities in its user namespace.
@@ -42,9 +46,5 @@ in
       };
       system.stateVersion = "26.05";
     };
-  };
-  systemd.services."container@tailscale".serviceConfig = {
-    MemoryMax = "256M";
-    TasksMax = 128;
   };
 }

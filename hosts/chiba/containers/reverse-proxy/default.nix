@@ -6,6 +6,10 @@
   ];
 
   containers.reverse-proxy = {
+    limits = {
+      MemoryMax = "256M";
+      TasksMax = 128;
+    };
     ephemeral = true;
     privateNetwork = false;
     privateUsers = "no";
@@ -44,8 +48,4 @@
   systemd.services."container@reverse-proxy".restartTriggers = [
     config.age.secrets.caddy-environment.file
   ];
-  systemd.services."container@reverse-proxy".serviceConfig = {
-    MemoryMax = "256M";
-    TasksMax = 128;
-  };
 }

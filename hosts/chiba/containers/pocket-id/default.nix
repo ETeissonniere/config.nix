@@ -1,6 +1,10 @@
 { config, ... }:
 {
   containers.pocket-id = {
+    limits = {
+      MemoryMax = "512M";
+      TasksMax = 256;
+    };
     ephemeral = true;
     privateNetwork = false;
     privateUsers = "no";
@@ -49,9 +53,4 @@
   systemd.services."container@pocket-id".restartTriggers = [
     config.age.secrets.pocket-id-encryption-key.file
   ];
-  systemd.services."container@pocket-id".serviceConfig = {
-    MemoryHigh = "384M";
-    MemoryMax = "512M";
-    TasksMax = 256;
-  };
 }

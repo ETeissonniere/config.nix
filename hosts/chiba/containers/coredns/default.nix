@@ -38,6 +38,10 @@ in
   };
 
   containers.coredns = {
+    limits = {
+      MemoryMax = "256M";
+      TasksMax = 128;
+    };
     ephemeral = true;
     privateNetwork = false;
     # Binding port 53 on the host network requires capabilities in its user namespace.
@@ -94,9 +98,5 @@ in
   systemd.services."container@coredns" = {
     wants = [ "systemd-resolved.service" ];
     after = [ "systemd-resolved.service" ];
-    serviceConfig = {
-      MemoryMax = "256M";
-      TasksMax = 128;
-    };
   };
 }

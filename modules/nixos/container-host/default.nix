@@ -9,6 +9,7 @@ let
 in
 {
   imports = [
+    ./limits.nix
     ./persistence.nix
     ./nvidia.nix
   ];
