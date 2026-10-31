@@ -45,13 +45,14 @@ format:
 install target address *args:
     {{ nix }} run "{{ flake }}#nixos-anywhere" -- --build-on local --flake "{{ flake }}#{{ target }}" --target-host "{{ address }}" {{ args }}
 
+# Check only the selected host; CI runs the full flake checks and VM tests.
 # Build on the target and deploy with automatic rollback
-deploy target *args:
-    {{ nix }} run "{{ flake }}#deploy" -- "{{ flake }}#{{ target }}" --remote-build {{ args }}
+deploy target *args: (check target)
+    {{ nix }} run "{{ flake }}#deploy-rs" -- "{{ flake }}#{{ target }}" --remote-build --skip-checks {{ args }}
 
 # Build using the local Nix builders and deploy with automatic rollback
-deploy-local target *args:
-    {{ nix }} run "{{ flake }}#deploy" -- "{{ flake }}#{{ target }}" {{ args }}
+deploy-local target *args: (check target)
+    {{ nix }} run "{{ flake }}#deploy-rs" -- "{{ flake }}#{{ target }}" --skip-checks {{ args }}
 
 # Edit a secret with $EDITOR (defaults to nvim)
 secret name:
