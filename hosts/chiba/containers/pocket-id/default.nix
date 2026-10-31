@@ -1,33 +1,33 @@
 { config, ... }:
+let
+  port = 1411;
+in
 {
   containers.pocket-id = {
     limits = {
-      MemoryMax = "512M";
-      TasksMax = 256;
+      MemoryMax = "384M";
+      TasksMax = 128;
     };
     ephemeral = true;
-    privateNetwork = false;
-    privateUsers = "no";
     persistence = {
       directory = "/persist/pocket-id";
       directories = [
         "/var/lib/pocket-id"
       ];
     };
-    bindMounts."/run/secrets" = {
-      hostPath = builtins.dirOf config.age.secrets.pocket-id-encryption-key.path;
-      isReadOnly = true;
-    };
+    extraFlags = [
+      "--bind-ro=${builtins.dirOf config.age.secrets.pocket-id-encryption-key.path}:/run/secrets:idmap"
+    ];
     config = { pkgs, ... }: {
-      networking.firewall.enable = false;
+      networking.firewall.allowedTCPPorts = [ port ];
 
       services.pocket-id = {
         enable = true;
         credentials.ENCRYPTION_KEY = "/run/secrets/encryption-key";
         settings = {
           APP_URL = "https://auth.teiss.org";
-          HOST = "127.0.0.1";
-          PORT = 1411;
+          HOST = "::";
+          PORT = port;
           ACTORS_HOST = "127.0.0.1";
           TRUST_PROXY = true;
           DB_CONNECTION_STRING = "/var/lib/pocket-id/pocket-id.db";
