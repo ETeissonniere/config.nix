@@ -8,6 +8,11 @@ let
 in
 {
   containers.slopcannon = {
+    limits = {
+      MemoryMax = "16G";
+      CPUQuota = "800%";
+      TasksMax = 4096;
+    };
     ephemeral = true;
     nvidia.enable = true;
     persistence = {
@@ -61,12 +66,5 @@ in
       };
       system.stateVersion = "26.05";
     };
-  };
-
-  # These limits can be tuned, but are reasonable defaults for now.
-  systemd.services."container@slopcannon".serviceConfig = {
-    MemoryMax = "16G";
-    CPUQuota = "800%";
-    TasksMax = 4096;
   };
 }
