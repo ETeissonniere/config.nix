@@ -4,9 +4,6 @@
     80
     443
   ];
-  # Do not export link-local IPv6 addresses into unicast DNS without a scope ID.
-  services.avahi.settings.server.use-ipv6 = false;
-
   services.caddy = {
     enable = true;
     package = pkgs.caddy.withPlugins {
