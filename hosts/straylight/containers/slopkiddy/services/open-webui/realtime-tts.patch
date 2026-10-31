@@ -1,0 +1,38 @@
+--- a/backend/open_webui/routers/audio/__init__.py
++++ b/backend/open_webui/routers/audio/__init__.py
+@@ -539,22 +539,27 @@
+                             }
+                         )
+                     elif event_type == 'session.updated':
++                        # A fresh socket already isolates each synthesis request.
++                        # Send the message explicitly for providers such as llama.cpp
++                        # that do not implement response.create's inline input.
+                         await ws.send_json(
+                             {
++                                'type': 'conversation.item.create',
++                                'item': {
++                                    'type': 'message',
++                                    'role': 'user',
++                                    'content': [{'type': 'input_text', 'text': payload['input']}],
++                                },
++                            }
++                        )
++                        await ws.send_json(
++                            {
+                                 'type': 'response.create',
+                                 'response': {
+-                                    'conversation': 'none',
+                                     'output_modalities': ['audio'],
+                                     'tools': [],
+                                     'tool_choice': 'none',
+                                     'instructions': payload['instructions'],
+-                                    'input': [
+-                                        {
+-                                            'type': 'message',
+-                                            'role': 'user',
+-                                            'content': [{'type': 'input_text', 'text': payload['input']}],
+-                                        }
+-                                    ],
+                                 },
+                             }
+                         )

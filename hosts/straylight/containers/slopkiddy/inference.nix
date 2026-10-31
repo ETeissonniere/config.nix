@@ -12,18 +12,19 @@ let
       directory,
       model,
       mmproj,
-    }:
-    lib.concatMapStringsSep "\n"
-      (context: ''
-        [${name}-${toString context}K]
-        model = /models/text/${directory}/${model}
-        mmproj = /models/text/${directory}/${mmproj}
-        ctx-size = ${toString (context * 1024 * parallel)}
-      '')
-      [
+      settings ? "",
+      contexts ? [
         32
         128
-      ];
+      ],
+    }:
+    lib.concatMapStringsSep "\n" (context: ''
+      [${name}-${toString context}K]
+      model = /models/text/${directory}/${model}
+      mmproj = /models/text/${directory}/${mmproj}
+      ctx-size = ${toString (context * 1024 * parallel)}
+      ${settings}
+    '') contexts;
 in
 {
   services.llama-cpp.settings = {
@@ -33,6 +34,31 @@ in
     models-preset = pkgs.writeText "slopkiddy-models.ini" ''
       version = 1
 
+      ${modelPresets {
+        name = "LFM3-Omni-2B";
+        directory = "LFM3-Omni-2B-Q8_0";
+        model = "LFM3-Omni-2B-Q8_0.gguf";
+        mmproj = "mmproj-LFM3-Omni-2B-Q8_0.gguf";
+        contexts = [ 32 ];
+        settings = ''
+          temp = 0
+          reasoning = off
+        '';
+      }}
+      ${modelPresets {
+        name = "LFM3-VL-2B";
+        directory = "LFM3-VL-2B-Q8_0";
+        model = "LFM3-VL-2B-Q8_0.gguf";
+        mmproj = "mmproj-LFM3-VL-2B-Q8_0.gguf";
+        settings = ''
+          temp = 0.1
+          top-p = 1.0
+          top-k = 50
+          min-p = 0.0
+          repeat-penalty = 1.1
+          no-reasoning-preserve = true
+        '';
+      }}
       ${modelPresets {
         name = "Gemma-4-31B";
         directory = "Gemma-4-31B-Q5_K_M";
@@ -79,6 +105,8 @@ in
           unlisted = true;
           cmd = config.services.llama-cpp.command;
           proxy = "http://127.0.0.1:8081";
+          # Speech synthesis uses a WebSocket and must reserve the GPU too.
+          compat.ignoreWebsockets = false;
         };
         images = {
           unlisted = true;

@@ -32,7 +32,10 @@ in
         python3Packages = webuiPython;
       }).overrideAttrs
         (old: {
-          patches = (old.patches or [ ]) ++ [ ./image-review.patch ];
+          patches = (old.patches or [ ]) ++ [
+            ./image-review.patch
+            ./realtime-tts.patch
+          ];
         })
     );
     # A separate command runs after the upstream data migration, which exits early.

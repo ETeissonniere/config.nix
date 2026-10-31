@@ -61,6 +61,21 @@ in
     port = 8080;
     environmentFile = "/run/secrets/webui-environment";
     managedSettings = {
+      # Standard voice calls use Omni for recognition and speech, with the selected
+      # chat model in between. Realtime call mode requires server-side VAD.
+      "audio.realtime.enabled" = false;
+      "audio.stt.engine" = "openai";
+      "audio.stt.model" = "LFM3-Omni-2B-32K";
+      "audio.stt.openai.api_base_url" = "http://127.0.0.1:8082/upstream/text/v1";
+      "audio.stt.openai.api_key" = "local";
+      "audio.tts.engine" = "openai-realtime";
+      "audio.tts.model" = "LFM3-Omni-2B-32K";
+      "audio.tts.voice" = "female";
+      "audio.tts.openai.api_base_url" = "http://127.0.0.1:8082/upstream/text/v1";
+      "audio.tts.openai.api_key" = "local";
+      "audio.tts.realtime.prompt_template" = "Perform TTS in American English using a female voice.";
+      # Finish chat generation before switching the GPU to speech synthesis.
+      "audio.tts.split_on" = "none";
       "ui.enable_signup" = false;
       "ui.enable_login_form" = false;
       "ui.default_user_role" = "user";
