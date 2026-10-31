@@ -17,17 +17,9 @@
   hardware.raspberry-pi.firmware.uboot.enable = true;
   # Chiba has no TPM; the Pi kernel does not provide the default TPM CRB driver.
   boot.initrd.systemd.tpm2.enable = false;
-  containerHost.network.enable = false;
+  containerHost.network.mainNetworkInterface = "eth0";
   networking = {
-    useDHCP = lib.mkForce false;
     usePredictableInterfaceNames = false;
-    interfaces.eth0.ipv4.addresses = [
-      {
-        address = "192.168.86.51";
-        prefixLength = 24;
-      }
-    ];
-    defaultGateway = "192.168.86.1";
     # Keep host resolution independent of the DNS service it runs.
     nameservers = [
       "1.1.1.1"

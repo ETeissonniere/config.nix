@@ -1,28 +1,33 @@
 { config, ... }:
+let
+  pocketIdPort = config.containers.pocket-id.config.services.pocket-id.settings.PORT;
+in
 {
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
-  ];
-
   containers.reverse-proxy = {
     limits = {
       MemoryMax = "256M";
       TasksMax = 128;
     };
     ephemeral = true;
-    privateNetwork = false;
-    privateUsers = "no";
     persistence = {
       directory = "/persist/reverse-proxy";
       directories = [ "/var/lib/caddy" ];
     };
-    bindMounts."/run/secrets" = {
-      hostPath = builtins.dirOf config.age.secrets.caddy-environment.path;
-      isReadOnly = true;
-    };
+    extraFlags = [
+      "--bind-ro=${builtins.dirOf config.age.secrets.caddy-environment.path}:/run/secrets:idmap"
+    ];
     config = { pkgs, ... }: {
-      networking.firewall.enable = false;
+      networking.firewall.allowedTCPPorts = [
+        80
+        443
+      ];
+      services.resolved = {
+        enable = true;
+        settings.Resolve = {
+          MulticastDNS = "resolve";
+          LLMNR = false;
+        };
+      };
       services.caddy = {
         enable = true;
         package = pkgs.caddy.withPlugins {
@@ -39,7 +44,7 @@
           }
         '';
         virtualHosts."auth.teiss.org".extraConfig = ''
-          reverse_proxy 127.0.0.1:1411
+          reverse_proxy pocket-id.local:${toString pocketIdPort}
         '';
       };
       system.stateVersion = "26.05";
