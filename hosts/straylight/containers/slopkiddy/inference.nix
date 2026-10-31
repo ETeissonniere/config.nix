@@ -11,7 +11,8 @@ let
       name,
       directory,
       model,
-      mmproj,
+      mmproj ? null,
+      slots ? parallel,
       settings ? "",
       contexts ? [
         32
@@ -21,8 +22,9 @@ let
     lib.concatMapStringsSep "\n" (context: ''
       [${name}-${toString context}K]
       model = /models/text/${directory}/${model}
-      mmproj = /models/text/${directory}/${mmproj}
-      ctx-size = ${toString (context * 1024 * parallel)}
+      ${lib.optionalString (mmproj != null) "mmproj = /models/text/${directory}/${mmproj}"}
+      parallel = ${toString slots}
+      ctx-size = ${toString (context * 1024 * slots)}
       ${settings}
     '') contexts;
 in
@@ -34,6 +36,18 @@ in
     models-preset = pkgs.writeText "slopkiddy-models.ini" ''
       version = 1
 
+      ${modelPresets {
+        name = "LFM2.5-24B-A2B-QAD";
+        directory = "LFM2.5-24B-A2B-QAD-Q4_0";
+        model = "LFM2.5-24B-A2B-QAD-Q4_0.gguf";
+        slots = 1;
+        settings = ''
+          temp = 0.1
+          top-k = 50
+          repeat-penalty = 1.05
+          flash-attn = on
+        '';
+      }}
       ${modelPresets {
         name = "LFM3-Omni-2B";
         directory = "LFM3-Omni-2B-Q8_0";
@@ -58,12 +72,6 @@ in
           repeat-penalty = 1.1
           no-reasoning-preserve = true
         '';
-      }}
-      ${modelPresets {
-        name = "Gemma-4-31B";
-        directory = "Gemma-4-31B-Q5_K_M";
-        model = "gemma-4-31B-it-Q5_K_M.gguf";
-        mmproj = "mmproj-F16.gguf";
       }}
       ${modelPresets {
         name = "Nemotron-3.5-Bolt-74B";
@@ -105,8 +113,6 @@ in
           unlisted = true;
           cmd = config.services.llama-cpp.command;
           proxy = "http://127.0.0.1:8081";
-          # Speech synthesis uses a WebSocket and must reserve the GPU too.
-          compat.ignoreWebsockets = false;
         };
         images = {
           unlisted = true;
