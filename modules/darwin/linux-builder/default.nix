@@ -28,7 +28,7 @@ in
     };
     idleTimeout = lib.mkOption {
       type = lib.types.ints.positive;
-      default = 600;
+      default = 180;
       description = "Idle seconds before shutdown, checked once per minute. SSH connections and build processes keep the VM awake.";
     };
   };
