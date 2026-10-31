@@ -1,6 +1,10 @@
 { inputs }:
 let
   lib = inputs.nixpkgs.lib;
+  systems = [
+    "aarch64-darwin"
+    "x86_64-linux"
+  ];
 
   directories = path: lib.filterAttrs (_: type: type == "directory") (builtins.readDir path);
 
@@ -46,6 +50,13 @@ let
       }) entries;
     in
     modules;
+
+  tests = lib.genAttrs systems (
+    system:
+    lib.mapAttrs (_: path: import path { pkgs = inputs.nixpkgs.legacyPackages.${system}; }) (
+      discoverModules ../tests
+    )
+  );
 
 in
 {
@@ -105,7 +116,27 @@ in
     };
   }) inputs.self.nixosConfigurations;
 
-  checks.x86_64-linux = inputs.deploy-rs.lib.x86_64-linux.deployChecks inputs.self.deploy;
+  checks = lib.mapAttrs (
+    system: tests: tests // inputs.deploy-rs.lib.${system}.deployChecks inputs.self.deploy
+  ) tests;
+
+  packages =
+    lib.mapAttrs
+      (
+        system: tools:
+        {
+          agenix-edit-view = tools.edit-view;
+          agenix-rekey = tools.rekey;
+        }
+        // lib.optionalAttrs (builtins.elem system systems) {
+          deploy = inputs.nixpkgs.legacyPackages.${system}.deploy-rs;
+          nixos-anywhere = inputs.nixos-anywhere.packages.${system}.default;
+          tests = inputs.nixpkgs.legacyPackages.${system}.linkFarm "tests" tests.${system};
+        }
+      )
+      (
+        lib.filterAttrs (system: _: builtins.elem system lib.systems.flakeExposed) inputs.self.agenix-rekey
+      );
 
   agenix-rekey = inputs.agenix-rekey.configure {
     userFlake = inputs.self;
@@ -114,19 +145,18 @@ in
     agePackage = pkgs: pkgs.age;
   };
 
-  apps = lib.genAttrs [ "aarch64-darwin" "x86_64-linux" ] (system: {
+  apps = lib.genAttrs systems (system: {
     deploy = {
       type = "app";
       meta.description = "Deploy NixOS configurations with automatic rollback";
-      program = "${inputs.nixpkgs.legacyPackages.${system}.deploy-rs}/bin/deploy";
+      program = "${inputs.self.packages.${system}.deploy}/bin/deploy";
     };
     nixos-anywhere = {
       type = "app";
       meta.description = "Install NixOS on a remote machine";
-      program = "${inputs.nixos-anywhere.packages.${system}.default}/bin/nixos-anywhere";
+      program = "${inputs.self.packages.${system}.nixos-anywhere}/bin/nixos-anywhere";
     };
   });
 
-  formatter.aarch64-darwin = inputs.nixpkgs.legacyPackages.aarch64-darwin.nixfmt-tree;
-  formatter.x86_64-linux = inputs.nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
+  formatter = lib.genAttrs systems (system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree);
 }
