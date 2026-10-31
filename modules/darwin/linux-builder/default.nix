@@ -36,29 +36,10 @@ in
   config = lib.mkIf cfg.enable {
     nix.linux-builder = {
       enable = true;
-      config = { pkgs, ... }: {
-        imports = [ cfg.config ];
-        systemd.services.builder-idle-shutdown = {
-          description = "Shut down the Linux builder when idle";
-          serviceConfig.Type = "oneshot";
-          environment.IDLE_TIMEOUT = toString cfg.idleTimeout;
-          path = [
-            pkgs.coreutils
-            pkgs.iproute2
-            pkgs.procps
-            pkgs.gnugrep
-            pkgs.systemd
-          ];
-          script = builtins.readFile ./idle-shutdown.sh;
-        };
-        systemd.timers.builder-idle-shutdown = {
-          wantedBy = [ "timers.target" ];
-          timerConfig = {
-            OnBootSec = "1min";
-            OnUnitActiveSec = "1min";
-          };
-        };
-      };
+      config.imports = [
+        cfg.config
+        (import ./guest.nix { inherit (cfg) idleTimeout; })
+      ];
     };
     environment.etc."ssh/ssh_config.d/100-linux-builder.conf".text = lib.mkAfter ''
       ProxyCommand ${lib.getExe connect}
