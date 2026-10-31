@@ -1,5 +1,19 @@
+{ config, ... }:
+let
+  chibaAddress = (builtins.head config.networking.interfaces.eth0.ipv4.addresses).address;
+in
 {
   networking.firewall.allowedUDPPorts = [ 41641 ];
+  networking.nat = {
+    enable = true;
+    # Forward tailnet IPv4 DNS to CoreDNS without intercepting queries routed to other hosts.
+    extraCommands = ''
+      for protocol in tcp udp; do
+        iptables -w -t nat -A nixos-nat-pre -i tailscale0 -m addrtype --dst-type LOCAL \
+          -p "$protocol" --dport 53 -j DNAT --to-destination ${chibaAddress}:53
+      done
+    '';
+  };
   # The container shares the host network, so forwarding must be enabled here.
   boot.kernel.sysctl = {
     "net.ipv4.conf.all.forwarding" = true;
