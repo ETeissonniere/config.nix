@@ -15,7 +15,7 @@ check-all:
     {{ nix }} eval --json "{{ flake }}#configurationPaths"
     {{ nix }} flake check --no-build --all-systems "{{ flake }}"
 
-# Run discovered VM tests on this platform (on macOS, start the Linux builder first)
+# Run discovered VM tests on this platform
 test:
     {{ nix }} build "{{ flake }}#tests" --no-link -L
 
@@ -30,14 +30,6 @@ build target=host:
 # Build and activate with nh
 switch:
     nh darwin switch "{{ flake }}" --hostname "{{ host }}"
-
-# Start the local ARM Linux builder (off by default)
-builder-start:
-    sudo launchctl kickstart system/org.nixos.linux-builder
-
-# Shut down the builder gracefully; finish any builds first
-builder-stop:
-    sudo ssh -o ConnectTimeout=5 builder@linux-builder shutdown -h now
 
 # Update pinned dependencies without applying
 update:

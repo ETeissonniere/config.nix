@@ -13,6 +13,7 @@
     inputs.self.darwinModules.nas
     inputs.self.darwinModules.time-machine
     ./secrets.nix
+    inputs.self.darwinModules.linux-builder
   ];
 
   nixpkgs.hostPlatform = "aarch64-darwin";
@@ -26,14 +27,14 @@
     chown root:wheel /etc/nix/straylight_builder_ed25519
     chmod 600 /etc/nix/straylight_builder_ed25519
   '';
-  nix.linux-builder.enable = true; # For Raspberry Pi hosts.
-  nix.linux-builder.config.virtualisation = {
-    darwin-builder.diskSize = 64 * 1024;
-    fileSystems."/".autoResize = true;
-  };
-  launchd.daemons.linux-builder.serviceConfig = {
-    RunAtLoad = lib.mkForce false;
-    KeepAlive = lib.mkForce false;
+  services.linux-builder = {
+    enable = true; # For Raspberry Pi hosts.
+    config.virtualisation = {
+      cores = 6;
+      memorySize = lib.mkForce (6 * 1024);
+      darwin-builder.diskSize = 64 * 1024;
+      fileSystems."/".autoResize = true;
+    };
   };
   networking = {
     inherit hostName;
