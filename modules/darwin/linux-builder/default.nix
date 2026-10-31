@@ -36,6 +36,7 @@ in
   config = lib.mkIf cfg.enable {
     nix.linux-builder = {
       enable = true;
+      ephemeral = true;
       config.imports = [
         cfg.config
         (import ./guest.nix { inherit (cfg) idleTimeout; })
