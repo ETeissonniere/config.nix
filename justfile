@@ -15,6 +15,10 @@ check-all:
     {{ nix }} eval --json "{{ flake }}#configurationPaths"
     {{ nix }} flake check --no-build --all-systems "{{ flake }}"
 
+# Run discovered VM tests on this platform (on macOS, start the Linux builder first)
+test:
+    {{ nix }} build "{{ flake }}#tests" --no-link -L
+
 # Build the deployment closure without activating (NixOS), or the Darwin system
 build target=host:
     if [ -f "{{ justfile_directory() }}/hosts/{{ target }}/configuration.nix" ]; then \
@@ -42,7 +46,7 @@ update:
 # Format Nix files and recipes
 format:
     just --fmt
-    {{ nix }} run "{{ flake }}#formatter.$({{ nix }} eval --impure --raw --expr builtins.currentSystem)" -- --tree-root "{{ justfile_directory() }}"
+    {{ nix }} fmt -- --tree-root "{{ justfile_directory() }}"
 
 # Install on an empty machine; this ERASES the disks configured for the host
 [confirm('This erases the target disks. Have you checked the address and host disk configuration?')]
@@ -59,8 +63,8 @@ deploy-local target *args:
 
 # Edit a secret with $EDITOR (defaults to nvim)
 secret name:
-    EDITOR="${EDITOR:-nvim}" {{ nix }} run "{{ flake }}#agenix-rekey.$({{ nix }} eval --impure --raw --expr builtins.currentSystem).edit-view" -- edit "secrets/{{ name }}.age"
+    EDITOR="${EDITOR:-nvim}" {{ nix }} run "{{ flake }}#agenix-edit-view" -- edit "secrets/{{ name }}.age"
 
 # Refresh host ciphertext after editing secrets or changing host recipients
 secrets-rekey identity="$HOME/.config/age/identity.key":
-    AGENIX_IDENTITY="{{ identity }}" {{ nix }} run "{{ flake }}#agenix-rekey.$({{ nix }} eval --impure --raw --expr builtins.currentSystem).rekey"
+    AGENIX_IDENTITY="{{ identity }}" {{ nix }} run "{{ flake }}#agenix-rekey"
