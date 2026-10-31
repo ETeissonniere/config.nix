@@ -15,7 +15,7 @@ check-all:
     {{ nix }} eval --json "{{ flake }}#configurationPaths"
     {{ nix }} flake check --no-build --all-systems "{{ flake }}"
 
-# Run discovered VM tests on this platform (on macOS, start the Linux builder first)
+# Run discovered VM tests on this platform
 test:
     {{ nix }} build "{{ flake }}#tests" --no-link -L
 
@@ -31,14 +31,6 @@ build target=host:
 switch:
     nh darwin switch "{{ flake }}" --hostname "{{ host }}"
 
-# Start the local ARM Linux builder (off by default)
-builder-start:
-    sudo launchctl kickstart system/org.nixos.linux-builder
-
-# Shut down the builder gracefully; finish any builds first
-builder-stop:
-    sudo ssh -o ConnectTimeout=5 builder@linux-builder shutdown -h now
-
 # Update pinned dependencies without applying
 update:
     {{ nix }} flake update --flake "{{ flake }}"
@@ -53,13 +45,14 @@ format:
 install target address *args:
     {{ nix }} run "{{ flake }}#nixos-anywhere" -- --build-on local --flake "{{ flake }}#{{ target }}" --target-host "{{ address }}" {{ args }}
 
+# Check only the selected host; CI runs the full flake checks and VM tests.
 # Build on the target and deploy with automatic rollback
-deploy target *args:
-    {{ nix }} run "{{ flake }}#deploy" -- "{{ flake }}#{{ target }}" --remote-build {{ args }}
+deploy target *args: (check target)
+    {{ nix }} run "{{ flake }}#deploy-rs" -- "{{ flake }}#{{ target }}" --remote-build --skip-checks {{ args }}
 
 # Build using the local Nix builders and deploy with automatic rollback
-deploy-local target *args:
-    {{ nix }} run "{{ flake }}#deploy" -- "{{ flake }}#{{ target }}" {{ args }}
+deploy-local target *args: (check target)
+    {{ nix }} run "{{ flake }}#deploy-rs" -- "{{ flake }}#{{ target }}" --skip-checks {{ args }}
 
 # Edit a secret with $EDITOR (defaults to nvim)
 secret name:

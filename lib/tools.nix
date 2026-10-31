@@ -34,7 +34,7 @@ in
       agenix-rekey = tools.rekey;
     }
     // lib.optionalAttrs (builtins.elem system systems) {
-      deploy = pkgs.deploy-rs;
+      deploy-rs = pkgs.deploy-rs;
       nixos-anywhere = inputs.nixos-anywhere.packages.${system}.default;
       tests = pkgs.linkFarm "tests" tests.${system};
     }
