@@ -18,6 +18,8 @@ in
   boot.kernel.sysctl = {
     "net.ipv4.conf.all.forwarding" = true;
     "net.ipv6.conf.all.forwarding" = true;
+    # This allows AAAA resolution for CoreDNS without breaking the Tailscale entrypoint
+    "net.ipv6.conf.eth0.accept_ra" = 2;
   };
 
   containers.tailscale = {
