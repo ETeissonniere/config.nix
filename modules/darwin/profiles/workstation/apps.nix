@@ -42,7 +42,6 @@
   homebrew.casks = [
     "bambu-studio"
     "chatgpt"
-    "logi-options+"
     "monitorcontrol"
   ];
 

@@ -13,6 +13,7 @@
     inputs.self.darwinModules.nas
     inputs.self.darwinModules.time-machine
     ./secrets.nix
+    inputs.self.darwinModules.linearmouose
     inputs.self.darwinModules.linux-builder
   ];
 
@@ -43,6 +44,8 @@
   };
 
   users.users.${config.me.username}.uid = 501;
+
+  services.linearmouose.enable = true;
 
   services.nas = {
     enable = true;
