@@ -1,15 +1,12 @@
 {
-  config,
   inputs,
   hostName,
   lib,
   ...
 }:
 let
-  recipientPath = name: ../../../../secrets/recipients + "/${name}.pub";
+  recipientPath = name: ../../secrets/recipients + "/${name}.pub";
   readRecipient = name: lib.trim (builtins.readFile (recipientPath name));
-  backup = config.workstation.timeMachine;
-  backupPassword = ../../../../secrets + "/${hostName}/time-machine-password.age";
 in
 {
   imports = [
@@ -21,22 +18,12 @@ in
     # Enclave key. Keep the secret registered here, but skip agenix's installer:
     # for an intermediary secret, it would only install a dummy file.
     enable = false;
-    secrets.personal-nas-password = lib.mkIf config.services.nas.enable {
-      rekeyFile = ../../../../secrets/shared/personal-nas-password.age;
-      intermediary = true;
-    };
-    secrets.time-machine-password =
-      lib.mkIf (backup.enable && (backup.generatePassword || builtins.pathExists backupPassword))
-        {
-          # Retained for recovery; macOS manages backup encryption.
-          rekeyFile = backupPassword;
-          intermediary = true;
-          generator = lib.mkIf backup.generatePassword { script = "alnum"; };
-        };
     rekey = {
       storageMode = "local";
       localStorageDir = inputs.self.outPath + "/secrets/rekeyed/${hostName}";
       hostPubkey = readRecipient hostName;
+      # Shared source secrets are encrypted for Wintermute. hostPubkey above
+      # selects the Mac that receives rekeyed secrets; it is not the master key.
       masterIdentities = [
         {
           identity = "\"\${AGENIX_IDENTITY:-$HOME/.config/age/identity.key}\"";
