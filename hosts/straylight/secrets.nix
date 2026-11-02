@@ -1,11 +1,9 @@
 {
   config,
-  inputs,
   lib,
   ...
 }:
 {
-  imports = [ inputs.self.nixosModules.secrets ];
   age.secrets =
     lib.genAttrs
       [

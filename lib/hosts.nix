@@ -39,11 +39,14 @@ in
     inputs.nix-darwin.lib.darwinSystem {
       specialArgs = { inherit inputs hostName; };
       modules = [
+        inputs.agenix.darwinModules.default
+        inputs.agenix-rekey.darwinModules.default
         inputs.self.lib.commonModules.profiles.base
         inputs.self.darwinModules.profiles.base
         (../hosts + "/${hostName}/darwin-configuration.nix")
         inputs.home-manager.darwinModules.home-manager
         (homeManagerConfig hostName)
+        inputs.self.lib.commonModules.secrets
       ];
     }
   ) darwinHosts;
@@ -53,10 +56,13 @@ in
     inputs.nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs hostName; };
       modules = [
+        inputs.agenix.nixosModules.default
+        inputs.agenix-rekey.nixosModules.default
         inputs.self.lib.commonModules.profiles.base
         (../hosts + "/${hostName}/configuration.nix")
         inputs.home-manager.nixosModules.home-manager
         (homeManagerConfig hostName)
+        inputs.self.lib.commonModules.secrets
       ];
     }
   ) nixosHosts;
