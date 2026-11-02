@@ -17,6 +17,8 @@ let
     "-r"
     "smb "
   ];
+  # Save the NAS password in the user's login Keychain so the login agent can
+  # mount shares without asking for it again.
   installPassword = pkgs.writeShellScript "nas-install-password" ''
     set -euo pipefail
     export PATH=/usr/bin:/bin
@@ -39,9 +41,11 @@ let
     mkdir -p "$stateDir"
     printf '%s\n' "$0" > "$stateDir/credential-revision"
   '';
+  # Run once at login to mount the configured NAS shares.
   mountShares = pkgs.writeShellScript "nas-mount" ''
     set -euo pipefail
-    # Login can precede network availability. Leave offline mounts to Finder.
+    # Skip mounting if the NAS is unreachable or its password hasn't been saved.
+    # Connect through Finder later when the NAS is available.
     /usr/bin/nc -z -G 3 ${lib.escapeShellArg cfg.smbServerHost} 445 >/dev/null 2>&1 || exit 0
     /usr/bin/security find-internet-password ${keychainArgs} >/dev/null 2>&1 || exit 0
     ${lib.concatMapStringsSep "\n" (share: ''
