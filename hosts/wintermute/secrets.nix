@@ -16,11 +16,6 @@ in
       rekeyFile = ../../secrets/wintermute/nas-password.age;
       intermediary = true;
     };
-    secrets.time-machine-password = {
-      # Retained for recovery; macOS manages the existing backup's encryption.
-      rekeyFile = ../../secrets/wintermute/time-machine-password.age;
-      intermediary = true;
-    };
     rekey = {
       storageMode = "local";
       localStorageDir = inputs.self.outPath + "/secrets/rekeyed/wintermute";

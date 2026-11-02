@@ -1,3 +1,11 @@
+# One-time setup on each new Mac, before activation:
+# In System Settings > General > Time Machine, add the configured network share
+# and enable Encrypt Backups. Save the encryption password securely; macOS owns
+# the backup and its encryption credential in Keychain. Keep existing backups
+# and their encryption settings unchanged.
+# Give the activation terminal Full Disk Access. This module maintains the
+# configured destination, SMB authentication, and exclusions; it neither creates
+# encrypted backups nor verifies that the selected destination is encrypted.
 {
   config,
   lib,
@@ -31,7 +39,7 @@ in
     share = lib.mkOption { type = lib.types.str; };
     passwordCommand = lib.mkOption {
       type = lib.types.str;
-      description = "Command that supplies the destination password on stdout at activation.";
+      description = "Command that supplies the SMB authentication password on stdout at activation, not the backup encryption password.";
     };
     credentialRevision = lib.mkOption {
       type = lib.types.str;

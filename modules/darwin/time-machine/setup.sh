@@ -7,8 +7,8 @@ destinations=$(tmutil destinationinfo -X 2>&1) || {
 }
 destinations=$(printf '%s' "$destinations" | plutil -convert json -o - -- -)
 
-# tmutil cannot configure backup encryption. Never start a new, potentially
-# unencrypted backup automatically; adopt a destination configured in macOS.
+# Adopt a destination configured in System Settings; matching its URL does not
+# verify encryption. tmutil cannot configure backup encryption.
 if ! printf '%s' "$destinations" | jq -e --arg url "$destination" --arg raw "$rawDestination" \
         'any(.Destinations[]?; .URL == $url or .URL == $raw)' >/dev/null; then
     echo >&2 "Configure this Time Machine destination and backup encryption in System Settings before switching."
