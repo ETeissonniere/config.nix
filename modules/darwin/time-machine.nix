@@ -32,8 +32,8 @@ let
       exit 1
     fi
 
-    # Keep macOS's credentials on first adoption. Refresh them only after a
-    # recorded SMB password revision changes.
+    # On the first run, use the password already saved by macOS. On later runs,
+    # update it only if the encrypted SMB password file has changed.
     if [ -f "$stateDir/credential-revision" ] &&
         [ "$(cat "$stateDir/credential-revision")" != "$credentialRevision" ]; then
       ${

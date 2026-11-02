@@ -23,7 +23,8 @@ let
     set -euo pipefail
     export PATH=/usr/bin:/bin
     stateDir=${lib.escapeShellArg "${user.home}/Library/Application Support/nix-nas"}
-    # The installer path changes with either the secret or the Keychain policy.
+    # Reuse the saved password if it is still in Keychain and this installer
+    # hasn't changed. Updating the password file or allowed apps makes it run again.
     if [ "$(cat "$stateDir/credential-revision" 2>/dev/null || true)" = "$0" ] &&
         /usr/bin/security find-internet-password ${keychainArgs} >/dev/null 2>&1; then
       exit 0
