@@ -8,8 +8,6 @@
 let
   recipientPath = name: ../../../../secrets/recipients + "/${name}.pub";
   readRecipient = name: lib.trim (builtins.readFile (recipientPath name));
-  backup = config.workstation.timeMachine;
-  backupPassword = ../../../../secrets + "/${hostName}/time-machine-password.age";
 in
 {
   imports = [
@@ -25,14 +23,6 @@ in
       rekeyFile = ../../../../secrets/shared/personal-nas-password.age;
       intermediary = true;
     };
-    secrets.time-machine-password =
-      lib.mkIf (backup.enable && (backup.generatePassword || builtins.pathExists backupPassword))
-        {
-          # Retained for recovery; macOS manages backup encryption.
-          rekeyFile = backupPassword;
-          intermediary = true;
-          generator = lib.mkIf backup.generatePassword { script = "alnum"; };
-        };
     rekey = {
       storageMode = "local";
       localStorageDir = inputs.self.outPath + "/secrets/rekeyed/${hostName}";

@@ -1,8 +1,27 @@
-{ config, inputs, ... }:
+{
+  config,
+  inputs,
+  hostName,
+  lib,
+  ...
+}:
 {
   imports = [
     inputs.nix-homebrew.darwinModules.nix-homebrew
   ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "aarch64-darwin";
+
+  nix.settings = {
+    trusted-users = lib.mkForce [ "root" ];
+    sandbox = true;
+  };
+
+  networking = {
+    inherit hostName;
+    computerName = lib.strings.toSentenceCase hostName;
+    localHostName = hostName;
+  };
 
   services.openssh.hostKeys = [ ];
 
