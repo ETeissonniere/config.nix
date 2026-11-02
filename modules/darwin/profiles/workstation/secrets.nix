@@ -21,8 +21,8 @@ in
     # Enclave key. Keep the secret registered here, but skip agenix's installer:
     # for an intermediary secret, it would only install a dummy file.
     enable = false;
-    secrets.nas-password = lib.mkIf config.services.nas.enable {
-      rekeyFile = ../../../../secrets/shared/nas-password.age;
+    secrets.personal-nas-password = lib.mkIf config.services.nas.enable {
+      rekeyFile = ../../../../secrets/shared/personal-nas-password.age;
       intermediary = true;
     };
     secrets.time-machine-password =

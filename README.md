@@ -36,7 +36,7 @@ Time Machine requires NAS support; the two builders can be enabled independently
 The local builder defaults to 6 cores, 6 GiB RAM, and a 64 GiB disk, configurable
 through `workstation.linuxBuilder.cores`, `memoryGiB`, and `diskGiB`.
 
-NAS mounts and Time Machine share `secrets/shared/nas-password.age` for
+NAS mounts and Time Machine share `secrets/shared/personal-nas-password.age` for
 authentication. Backups use the same `Eliott's Time Machine` SMB share on
 `nas.teiss.org`; macOS manages each machine's backup identity and naming.
 `workstation.timeMachine.generatePassword` defaults to false: keep it disabled

@@ -70,13 +70,13 @@ assert !disabled.config.services.nas.enable;
 assert !disabled.config.services.time-machine.enable;
 assert !disabled.config.services.linux-builder.enable;
 assert disabled.config.nix.buildMachines == [ ];
-assert !(disabled.config.age.secrets ? nas-password);
+assert !(disabled.config.age.secrets ? personal-nas-password);
 assert !(disabled.config.age.secrets ? time-machine-password);
 assert !(disabled.config.programs.ssh.knownHosts ? straylight);
 assert nasOnly.config.services.nas.enable && !nasOnly.config.services.time-machine.enable;
 assert
-  toString nasOnly.config.age.secrets.nas-password.rekeyFile
-  == inputs.self.outPath + "/secrets/shared/nas-password.age";
+  toString nasOnly.config.age.secrets.personal-nas-password.rekeyFile
+  == inputs.self.outPath + "/secrets/shared/personal-nas-password.age";
 assert
   localOnly.config.services.linux-builder.enable
   && !(localOnly.config.programs.ssh.knownHosts ? straylight);
