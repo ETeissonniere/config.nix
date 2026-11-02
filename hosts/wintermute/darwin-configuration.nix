@@ -3,6 +3,7 @@
   imports = [
     inputs.self.darwinModules.profiles.workstation
     inputs.self.darwinModules.linearmouse
+    ./secrets.nix
   ];
 
   workstation = {

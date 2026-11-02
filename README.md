@@ -29,7 +29,8 @@ Each Mac provisions a `default` key for SSH and Git signing.
 Use `scauth pubkey default` to retrieve its public key
 for your servers, and save it on GitHub as both an authentication and signing key.
 
-Macs use the Darwin `workstation` profile for their apps, settings, and secrets.
+Macs use the Darwin `workstation` profile for their apps and settings.
+Each machine declares its secrets in `hosts/<host>/secrets.nix`.
 Each host enables the features it uses: `workstation.nas.enable`,
 `workstation.timeMachineOnNAS.enable`, `workstation.linuxBuilder.enable`, and
 `workstation.nixRemoteBuilders.enable`. Time Machine on the NAS requires NAS

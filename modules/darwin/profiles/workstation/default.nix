@@ -13,7 +13,6 @@ in
     ./dock.nix
     ./system-defaults.nix
     ./wallpaper.nix
-    ./secrets.nix
     inputs.self.darwinModules.nas
     inputs.self.darwinModules.time-machine
     inputs.self.darwinModules.linux-builder

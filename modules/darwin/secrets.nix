@@ -1,12 +1,11 @@
 {
-  config,
   inputs,
   hostName,
   lib,
   ...
 }:
 let
-  recipientPath = name: ../../../../secrets/recipients + "/${name}.pub";
+  recipientPath = name: ../../secrets/recipients + "/${name}.pub";
   readRecipient = name: lib.trim (builtins.readFile (recipientPath name));
 in
 {
@@ -19,10 +18,6 @@ in
     # Enclave key. Keep the secret registered here, but skip agenix's installer:
     # for an intermediary secret, it would only install a dummy file.
     enable = false;
-    secrets.personal-nas-password = lib.mkIf config.services.nas.enable {
-      rekeyFile = ../../../../secrets/shared/personal-nas-password.age;
-      intermediary = true;
-    };
     rekey = {
       storageMode = "local";
       localStorageDir = inputs.self.outPath + "/secrets/rekeyed/${hostName}";
