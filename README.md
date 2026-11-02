@@ -46,6 +46,9 @@ NAS mounts and Time Machine use the personal NAS account password in
 Time Machine and turn on Encrypt Backups. macOS manages the backup encryption
 password and each Mac's backup name; `tmutil` cannot enable encryption.
 
+Each Mac uses its host-encrypted NAS password under `secrets/rekeyed/<host>/`.
+After editing the shared password, run `just secrets-rekey` before switching.
+
 ## Usage
 
 `host` defaults to this machine's hostname, lowercased (for example, `Wintermute`
