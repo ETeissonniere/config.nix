@@ -76,123 +76,85 @@ host/module layout.
 
 ## Adding another Mac
 
-Armitage uses the shared workstation profile with NAS, Time Machine, a local ARM
-Linux builder, and Straylight for x86 Linux builds. The local VM keeps the default
-6 virtual CPUs, 6 GiB RAM, and 64 GiB disk; 32 GB of host RAM does not require a
-larger allocation. Configure its keys and backup before the first activation.
-Missing enrollment files are errors; services are not silently disabled.
+Armitage uses NAS, Time Machine, a local ARM Linux builder (6 virtual CPUs,
+6 GiB RAM, 64 GiB disk), and Straylight for x86 Linux builds. Its 32 GB of RAM
+does not require a larger VM allocation.
 
 Create the `eliottteissonniere` admin account with UID 501, install Apple's
 command-line tools and Nix, sign into the App Store, and transfer this checkout.
-Do not copy private identities from another Mac or use the NixOS-only `just install`.
+Provision and activate the Mac locally; Remote Login is not required.
 
-### Register keys before activation
+### Create and register the keys
 
-On the new Mac, as the normal logged-in user, provision the same `default`
-SSH/signing identity that Home Manager will later manage. This bootstrap config
-is for a fresh user with no other scauth-managed identities:
+Run on Armitage as the normal logged-in user:
 
 ```fish
-nix --extra-experimental-features 'nix-command flakes' shell --inputs-from . nixpkgs#fish nixpkgs#just --command fish
+nix --extra-experimental-features 'nix-command flakes' shell --inputs-from . nixpkgs#fish nixpkgs#just nixpkgs#nh --command fish
 sudo /usr/sbin/scutil --set LocalHostName armitage
 sudo /usr/sbin/scutil --set ComputerName Armitage
-set scauth_config (mktemp)
-printf '%s\n' '{"user":"eliottteissonniere","identities":{"default":{"protection":"none"}}}' > "$scauth_config"
-nix --extra-experimental-features 'nix-command flakes' run --inputs-from . scauth#default -- reconcile "$scauth_config"
-rm "$scauth_config"
-
-if not test -e /etc/nix/straylight_builder_ed25519
-    sudo /usr/bin/ssh-keygen -t ed25519 -N '' -C armitage-builder -f /etc/nix/straylight_builder_ed25519
-end
-
-just mac-keys
+just mac-keys armitage
 ```
 
-`mac-keys` creates the post-quantum Secure Enclave age identity if absent and
-exports its public recipient. Back up the identity file: recovery requires that
-file and this Mac's hardware. Later activation adopts these existing SSH and
-builder keys rather than generating replacements.
+`mac-keys` reuses Home Manager's scauth declaration to create the SSH/signing
+identity, creates the builder key if absent, and creates the post-quantum Secure
+Enclave age identity if absent. It does not activate the system. This key-only
+step is needed because the full configuration requires registered public keys
+and a NAS password encrypted for Armitage. Later activation reuses these identities.
 
-Enable Remote Login on Armitage for your account. Allow password authentication
-or install Wintermute's public SSH key. Check Armitage's SSH host fingerprint on
-Armitage before accepting it on Wintermute. From Wintermute:
+Transfer only the printed public values to Wintermute:
 
-```fish
-just mac-enroll armitage eliottteissonniere@armitage.local
-```
+- Add `armitage-ssh` and `armitage-builder` to `modules/common/keys.nix`.
+- Save the printed age recipient as `secrets/recipients/armitage.pub`.
 
-The first run prints any missing SSH key entries and stops. Paste those entries
-into `modules/common/keys.nix`, then rerun the same command. Enrollment checks that the
-catalog matches Armitage's keys before saving its age recipient and rekeying.
-After it succeeds:
+Keep private identities on Armitage. Back up its age identity file separately;
+recovery requires that file and the same Mac's hardware. On Wintermute, run:
 
 ```fish
+just secrets-rekey
 just check-all
 just deploy chiba
 just deploy straylight
 ```
 
-Enrollment fetches only public keys, refuses an existing age recipient or
-different catalog entries, and rekeys
-`secrets/shared/personal-nas-password.age` for Armitage. It checks that the enrolled
-configuration can read its ciphertext before reporting success. The source remains
-encrypted for Wintermute and recovery; host ciphertext is under `secrets/rekeyed/`.
-Review and commit the public keys and ciphertext, then transfer the updated
-checkout to Armitage. The server deployments authorize its SSH and builder keys;
+Review and commit the public keys and `secrets/rekeyed/armitage/` ciphertext,
+then transfer the updated checkout back to Armitage. The Linux deployments
+above authorize its SSH and builder keys; they do not provision the Mac.
 Armitage does not become a master identity for editing fleet secrets.
 
-Public SSH keys are inline values in `modules/common/keys.nix`; private keys
-stay on their owning machines.
-GitHub separately receives each Mac's SSH/signing public key.
+Public SSH keys are inline in `modules/common/keys.nix`:
 
-| Catalog entries | Purpose |
+| Entries | Purpose |
 | --- | --- |
-| `wintermute-ssh`, `armitage-ssh` | Let each Mac's user log into fleet machines |
-| `wintermute-builder`, `armitage-builder` | Let each Mac's Nix daemon authenticate to Straylight |
-| `straylight-host` | Let the Macs verify Straylight's SSH server identity before sending builds |
+| `wintermute-ssh`, `armitage-ssh` | User access to fleet machines and GitHub |
+| `wintermute-builder`, `armitage-builder` | Each Mac's Nix daemon authenticating to Straylight |
+| `straylight-host` | The Macs verifying Straylight's SSH server identity |
 
-AGE public recipients remain in `secrets/recipients/`. They encrypt secrets for
-each machine and are separate from SSH keys. Time Machine's backup encryption
-password is managed in macOS, not stored or applied by this configuration.
+AGE public recipients remain in `secrets/recipients/`; private identities remain
+outside the repository and Nix store.
 
-### Activate the Mac
+### Activate locally
 
-Before switching, configure a **new encrypted** backup in System Settings on
-Armitage using `Eliott's Time Machine` on `nas.teiss.org`. Use the shared NAS
-account password for SMB authentication. Create a separate backup; do not inherit
-Wintermute's backup. macOS names it using this Mac's computer name. Choose and
-retain the backup encryption password yourself; Nix does not generate, import,
-or apply it. Give the activation terminal Full Disk Access.
+Before switching, configure a **new encrypted** backup in System Settings using
+`Eliott's Time Machine` on `nas.teiss.org`. Use the shared NAS account password
+for SMB authentication. Do not inherit Wintermute's backup. Choose and retain
+the backup encryption password yourself; Nix does not manage it. Give the local
+activation terminal Full Disk Access.
 
 The first build needs a working ARM Linux builder for uncached guest dependencies;
-Armitage does not have its configured local VM yet. Builds on Wintermute can use
-its builders. Copying those closures to Armitage requires trusted Nix signatures
-or importing them as root; this repository does not grant that trust automatically.
-Prepare these prerequisites before the first build.
+Armitage does not have its configured local VM yet. Wintermute can prebuild with
+its builders, but importing those closures requires trusted signatures or root.
+The repository does not grant that trust automatically.
 
-Use the bootstrap shell from the macOS setup section with `host=armitage`: run
-`check`, `build`, and `switch`, then restart the terminal. Register the SSH key
-with GitHub using `fish scripts/postinstall/github-setup.fish`.
-
-For later updates, transfer the updated checkout and run `just host=armitage switch`
-on Armitage, or run that same command over interactive SSH from Wintermute:
+On Armitage, use the bootstrap shell above and run:
 
 ```fish
-ssh -t eliottteissonniere@armitage.local 'cd /path/to/config.nix && just host=armitage switch'
+just host=armitage check
+just host=armitage build
+just host=armitage switch
 ```
 
-Replace `/path/to/config.nix` with the checkout location on Armitage. `nh` builds
-on Armitage using its configured builders and prompts for sudo. Keep the Mac
-logged into its desktop for Keychain and Secure Enclave approvals. For Time Machine
-activation over SSH, enable Remote Login's “Allow full disk access for remote
-users”; granting it to the local terminal does not authorize SSH. Otherwise,
-activate locally. Mac updates
-have no automatic connection-confirmation rollback; if needed, run
-`sudo darwin-rebuild --rollback` on the Mac or over SSH while it is reachable.
-Keep local access available for recovery. Disable Remote Login afterward if unused.
-NixOS deployments continue to use `just deploy` and deploy-rs.
-
-To update the SMB password, run `just secret shared/personal-nas-password` and
-`just secrets-rekey` on Wintermute, then switch both Macs. This updates NAS
-credentials, not backup encryption. Transfer local-only work separately:
-Time Machine excludes `Developer` and `Downloads`.
+Restart the terminal and run `fish scripts/postinstall/github-setup.fish` to
+register the SSH/signing key with GitHub. For later updates, update the checkout
+and run `just switch` locally. Use `sudo darwin-rebuild --rollback` locally if
+needed. Keep `stateVersion` unchanged. Time Machine excludes `Developer` and
+`Downloads`, so transfer that work separately.
