@@ -61,3 +61,7 @@ secret name:
 # Refresh host ciphertext after editing secrets or changing host recipients
 secrets-rekey identity="$HOME/.config/age/identity.key":
     AGENIX_IDENTITY="{{ identity }}" {{ nix }} run "{{ flake }}#agenix-rekey"
+
+# Save an existing backup encryption password without printing it
+time-machine-import target=host:
+    {{ nix }} shell --inputs-from "{{ flake }}" nixpkgs#age --command bash "{{ justfile_directory() }}/scripts/provision/import-time-machine-password.sh" "{{ target }}"

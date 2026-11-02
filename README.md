@@ -49,6 +49,20 @@ Run `just` to list recipes. Run `just check` and `just build` before switching.
 Automatic Nix garbage collection runs weekly with 30-day retention. Keep
 `stateVersion` values unchanged.
 
+## Retaining wintermute's existing Time Machine password
+
+Run `just time-machine-import wintermute` from this checkout and enter the
+existing backup encryption password at the hidden prompt. It is encrypted
+directly for wintermute and recovery in
+`secrets/wintermute/time-machine-password.age`. Review and commit that encrypted
+file to retain it. The command refuses to overwrite a saved password and does
+not modify the backup. Wintermute has no password generator; never generate a
+replacement password for its existing backup.
+
+The actual password has **not been imported**. Keychain export attempts failed;
+the existing backup remains unchanged. Enter the known existing password manually
+when available.
+
 ## Acknowledgments
 
 [Anna's nixos-config](https://github.com/anna-oake/nixos-config) inspired the

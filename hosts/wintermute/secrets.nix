@@ -16,6 +16,12 @@ in
       rekeyFile = ../../secrets/wintermute/nas-password.age;
       intermediary = true;
     };
+    secrets.time-machine-password =
+      lib.mkIf (builtins.pathExists ../../secrets/wintermute/time-machine-password.age)
+        {
+          rekeyFile = ../../secrets/wintermute/time-machine-password.age;
+          intermediary = true;
+        };
     rekey = {
       storageMode = "local";
       localStorageDir = inputs.self.outPath + "/secrets/rekeyed/wintermute";
