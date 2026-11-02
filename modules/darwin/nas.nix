@@ -35,7 +35,7 @@ let
         inherit (cfg) agePasswordFile ageIdentityFile;
       }
     } |
-      /usr/bin/expect -N -n ${./password-prompt.exp} /usr/bin/security add-internet-password \
+      /usr/bin/expect -N -n ${./nas-password-prompt.exp} /usr/bin/security add-internet-password \
         -U ${keychainArgs} -T "" \
         -T /System/Library/CoreServices/NetAuthAgent.app \
         -T /System/Library/CoreServices/Finder.app -w

@@ -42,7 +42,7 @@ let
           inherit (cfg) agePasswordFile ageIdentityFile;
         }
       } |
-        /usr/bin/expect -N -n ${./password-prompt.exp} /usr/bin/tmutil setdestination -a -p "$destination"
+        /usr/bin/expect -N -n ${./nas-password-prompt.exp} /usr/bin/tmutil setdestination -a -p "$destination"
     fi
     ${lib.optionalString (cfg.exclusions != [ ]) ''
       tmutil addexclusion -p ${lib.escapeShellArgs cfg.exclusions}
