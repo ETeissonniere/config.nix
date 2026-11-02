@@ -49,16 +49,20 @@
 
   services.nas = {
     enable = true;
-    server = "nas.teiss.org";
-    account = "Eliott";
-    shares = [ "personal_folder" ];
-    encryptedPasswordFile = config.age.secrets.nas-password.rekeyFile;
+    smbServerHost = "nas.teiss.org";
+    smbAccount = "Eliott";
+    smbShares = [ "personal_folder" ];
+    agePasswordFile = config.age.secrets.nas-password.rekeyFile;
   };
   services.time-machine = {
     enable = true;
-    inherit (config.services.nas) server account passwordCommand;
-    share = "Eliott's Time Machine";
-    credentialRevision = builtins.hashFile "sha256" config.services.nas.encryptedPasswordFile;
+    inherit (config.services.nas)
+      smbServerHost
+      smbAccount
+      agePasswordFile
+      ageIdentityFile
+      ;
+    smbShare = "Eliott's Time Machine";
     exclusions = map (path: "${config.users.users.${config.me.username}.home}/${path}") [
       "Developer"
       "Downloads"

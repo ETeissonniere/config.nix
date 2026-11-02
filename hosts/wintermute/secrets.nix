@@ -9,8 +9,9 @@ in
     inputs.agenix-rekey.darwinModules.default
   ];
   age = {
-    # Keychain owns the runtime credential. Decrypt as the logged-in user during
-    # NAS setup, rather than asking a root boot daemon to use the Secure Enclave.
+    # The NAS module decrypts the password when needed, using the user's Secure
+    # Enclave key. Keep the secret registered here, but skip agenix's installer:
+    # for an intermediary secret, it would only install a dummy file.
     enable = false;
     secrets.nas-password = {
       rekeyFile = ../../secrets/wintermute/nas-password.age;
