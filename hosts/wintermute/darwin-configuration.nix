@@ -56,9 +56,7 @@
   };
   services.time-machine = {
     enable = true;
-    inherit (config.services.nas) server account passwordCommand;
     share = "Eliott's Time Machine";
-    credentialRevision = builtins.hashFile "sha256" config.services.nas.encryptedPasswordFile;
     exclusions = map (path: "${config.users.users.${config.me.username}.home}/${path}") [
       "Developer"
       "Downloads"

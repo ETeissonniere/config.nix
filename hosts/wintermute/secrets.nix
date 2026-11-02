@@ -9,8 +9,9 @@ in
     inputs.agenix-rekey.darwinModules.default
   ];
   age = {
-    # Intermediary secrets substitute dummy files; skip their agenix installation.
-    # The NAS module decrypts its rekeyFile as the primary user for Keychain setup.
+    # agenix-rekey substitutes dummy files for intermediary secrets. The NAS
+    # module decrypts the real file as the primary user with their Secure Enclave
+    # identity, so disable agenix's dummy installation.
     enable = false;
     secrets.nas-password = {
       rekeyFile = ../../secrets/wintermute/nas-password.age;
