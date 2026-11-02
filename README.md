@@ -29,6 +29,21 @@ Each Mac provisions a `default` key for SSH and Git signing.
 Use `scauth pubkey default` to retrieve its public key
 for your servers, and save it on GitHub as both an authentication and signing key.
 
+The Darwin `workstation` profile owns Mac setup and secret declarations. Hosts
+opt into `workstation.nas.enable`, `workstation.timeMachine.enable`,
+`workstation.linuxBuilder.enable`, and `workstation.nixRemoteBuilders.enable`.
+Time Machine requires NAS support; the two builders can be enabled independently.
+The local builder defaults to 6 cores, 6 GiB RAM, and a 64 GiB disk, configurable
+through `workstation.linuxBuilder.cores`, `memoryGiB`, and `diskGiB`.
+
+NAS mounts and Time Machine share `secrets/shared/nas-password.age` for
+authentication. Backups use the same `Eliott's Time Machine` SMB share on
+`nas.teiss.org`; macOS manages each machine's backup identity and naming.
+`workstation.timeMachine.generatePassword` defaults to false: keep it disabled
+for existing backups and import their actual encryption password. New backups
+can opt into password generation. The profile registers an imported
+`secrets/<host>/time-machine-password.age` only when it exists and backups are enabled.
+
 ## Usage
 
 `host` defaults to this machine's hostname, lowercased (for example, `Wintermute`
