@@ -20,7 +20,15 @@ let
 in
 {
   checks = lib.mapAttrs (
-    system: systemTests: systemTests // inputs.deploy-rs.lib.${system}.deployChecks inputs.self.deploy
+    system: systemTests:
+    systemTests
+    // {
+      workstation = import ./check-workstation.nix {
+        inherit inputs;
+        pkgs = inputs.nixpkgs.legacyPackages.${system};
+      };
+    }
+    // inputs.deploy-rs.lib.${system}.deployChecks inputs.self.deploy
   ) tests;
 
   packages = lib.genAttrs packageSystems (
