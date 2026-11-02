@@ -65,7 +65,7 @@ in
       smbServerHost = "nas.teiss.org";
       smbAccount = "Eliott";
       smbShares = [ "personal_folder" ];
-      agePasswordFile = lib.mkIf cfg.nas.enable config.age.secrets.personal-nas-password.rekeyFile;
+      agePasswordFile = lib.mkIf cfg.nas.enable config.age.secrets.personal-nas-password.file;
     };
     services.time-machine = {
       enable = cfg.timeMachineOnNAS.enable && config.services.nas.enable;
