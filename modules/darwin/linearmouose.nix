@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.linearmouose;
 in
@@ -8,7 +13,16 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    homebrew.casks = [ "linearmouse" ];
+    environment.systemPackages = [ pkgs.linearmouse ];
+    launchd.user.agents.linearmouse.serviceConfig = {
+      ProgramArguments = [
+        "${pkgs.linearmouse}/Applications/LinearMouse.app/Contents/MacOS/LinearMouse"
+      ];
+      RunAtLoad = true;
+      KeepAlive = true;
+      ProcessType = "Interactive";
+      ThrottleInterval = 5;
+    };
     home-manager.sharedModules = [
       {
         xdg.configFile."linearmouse/linearmouse.json".text = builtins.toJSON {
@@ -106,6 +120,23 @@ in
                 reverse = {
                   vertical = true;
                 };
+              };
+            }
+            {
+              "if" = {
+                app = "com.apple.iCal";
+                device = {
+                  category = "mouse";
+                  productID = "0xc548";
+                  productName = "USB Receiver";
+                  vendorID = "0x46d";
+                };
+              };
+              scrolling.smoothed.horizontal = {
+                enabled = true;
+                speed = 20;
+                # Preserve trackpad-style scroll phases for Calendar's horizontal navigation.
+                bouncing = true;
               };
             }
           ];
