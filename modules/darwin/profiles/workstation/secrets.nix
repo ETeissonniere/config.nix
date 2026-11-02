@@ -27,6 +27,8 @@ in
       storageMode = "local";
       localStorageDir = inputs.self.outPath + "/secrets/rekeyed/${hostName}";
       hostPubkey = readRecipient hostName;
+      # Shared source secrets are encrypted for Wintermute. hostPubkey above
+      # selects the Mac that receives rekeyed secrets; it is not the master key.
       masterIdentities = [
         {
           identity = "\"\${AGENIX_IDENTITY:-$HOME/.config/age/identity.key}\"";
