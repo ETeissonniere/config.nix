@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -13,10 +12,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.linearmouse ];
+    homebrew.casks = [ "linearmouse" ];
     launchd.user.agents.linearmouse.serviceConfig = {
       ProgramArguments = [
-        "${pkgs.linearmouse}/Applications/LinearMouse.app/Contents/MacOS/LinearMouse"
+        "/Applications/LinearMouse.app/Contents/MacOS/LinearMouse"
       ];
       RunAtLoad = true;
       KeepAlive = true;
