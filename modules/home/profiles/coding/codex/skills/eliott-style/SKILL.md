@@ -9,6 +9,7 @@ Use these preferences to make engineering choices and communicate them. They are
 
 ## Implement
 
+- Write all code and comments for human readers. Use descriptive names, straightforward control flow, and plain language; make intent easy to follow and explain non-obvious reasons in comments.
 - Start from the observed failure, user-visible need, or operational cost. Trace the affected path and its existing contract before editing. If the cause is uncertain, name the hypothesis and check it.
 - For a bug fix, inspect callers and fix the verified cause where the affected paths converge. A smaller diff that only hides one symptom leaves the work unfinished.
 - Keep runtime and operations in view: error propagation, concurrency, migrations, CI time, cache behavior, CPU and memory, deployment effects, and recovery. Investigate the ones the change actually touches; quantify meaningful performance claims when practical.
