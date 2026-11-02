@@ -31,7 +31,7 @@ in
 
     programs.ssh.knownHosts.straylight = {
       hostNames = [ "straylight.local" ];
-      publicKeyFile = ../common/keys/straylight-host.pub;
+      publicKey = (import ../common/keys.nix).straylight-host;
     };
 
     programs.ssh.extraConfig = ''
