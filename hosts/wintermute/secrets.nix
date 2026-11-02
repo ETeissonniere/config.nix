@@ -9,14 +9,15 @@ in
     inputs.agenix-rekey.darwinModules.default
   ];
   age = {
-    # Keychain owns the runtime credential. Decrypt as the logged-in user during
-    # NAS setup, rather than asking a root boot daemon to use the Secure Enclave.
+    # Intermediary secrets substitute dummy files; skip their agenix installation.
+    # The NAS module decrypts its rekeyFile as the primary user for Keychain setup.
     enable = false;
     secrets.nas-password = {
       rekeyFile = ../../secrets/wintermute/nas-password.age;
       intermediary = true;
     };
     secrets.time-machine-password = {
+      # Retained for recovery; macOS manages the existing backup's encryption.
       rekeyFile = ../../secrets/wintermute/time-machine-password.age;
       intermediary = true;
     };
