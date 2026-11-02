@@ -7,10 +7,12 @@
 let
   lib = pkgs.lib;
 in
-# Return a runtime script whose stdout is piped directly to a password consumer.
+# Decrypt the password when this script runs and send it straight to the command
+# that needs it, without saving a plaintext file.
 pkgs.writeShellScript "decrypt-age-se-password" ''
   set -euo pipefail
-  # launchctl selects the login session; sudo changes the process credentials.
+  # If we're not already running as this user, restart in their login session
+  # so they can approve access to their Secure Enclave key.
   if [ "$(/usr/bin/id -u)" != "${toString user.uid}" ]; then
     exec /bin/launchctl asuser ${toString user.uid} \
       /usr/bin/sudo -H -u ${lib.escapeShellArg user.name} "$0"
