@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.services.linearmouose;
+  cfg = config.services.linearmouse;
 in
 {
-  options.services.linearmouose = {
+  options.services.linearmouse = {
     enable = lib.mkEnableOption "mouse configuration with LinearMouse";
   };
 
