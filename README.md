@@ -46,6 +46,12 @@ NAS mounts and Time Machine use the personal NAS account password in
 Time Machine and turn on Encrypt Backups. macOS manages the backup encryption
 password and each Mac's backup name; `tmutil` cannot enable encryption.
 
+Host public keys live in `secrets/recipients/<host>.pub`; private identities stay
+outside the repository. The shared secrets module uses each host's public key
+when rekeying. Wintermute's identity currently manages the source secrets, with
+recovery as another recipient. Adding another master requires re-encrypting the
+existing source secrets for its public key as well as updating `masterIdentities`.
+
 ## Usage
 
 `host` defaults to this machine's hostname, lowercased (for example, `Wintermute`

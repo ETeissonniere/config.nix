@@ -1,11 +1,8 @@
 {
   config,
-  inputs,
   ...
 }:
 {
-  imports = [ inputs.self.nixosModules.secrets ];
-
   age.secrets = {
     nas-backup-creds.rekeyFile = ../../secrets/chiba/nas-backup-creds.age;
     restic-password.rekeyFile = ../../secrets/chiba/restic-password.age;
