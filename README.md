@@ -59,10 +59,6 @@ file to retain it. The command refuses to overwrite a saved password and does
 not modify the backup. Wintermute has no password generator; never generate a
 replacement password for its existing backup.
 
-The actual password has **not been imported**. Keychain export attempts failed;
-the existing backup remains unchanged. Enter the known existing password manually
-when available.
-
 ## Acknowledgments
 
 [Anna's nixos-config](https://github.com/anna-oake/nixos-config) inspired the
