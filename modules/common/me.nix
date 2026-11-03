@@ -12,8 +12,8 @@ in
     type = lib.types.listOf lib.types.str;
     default = [
       keys.wintermute-ssh
-      keys.armitage-ssh
-    ];
+    ]
+    ++ lib.optional (keys ? armitage-ssh) keys.armitage-ssh;
     description = "Public SSH keys trusted for the primary user.";
   };
 }

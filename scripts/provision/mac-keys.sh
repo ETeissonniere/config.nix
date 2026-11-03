@@ -13,21 +13,12 @@ cd "$(dirname "$0")/../.."
 test -f "hosts/$host/darwin-configuration.nix"
 umask 077
 
-# Reuse Home Manager's actual declaration instead of maintaining a bootstrap copy.
-scauth_config=$(mktemp)
-trap 'rm -f "$scauth_config"' EXIT
-nix --extra-experimental-features 'nix-command flakes' eval --raw \
-    "path:$PWD#darwinConfigurations.$host.config" \
-    --apply 'config: (builtins.getAttr config.me.username config.home-manager.users).xdg.configFile."scauth/config.json".text' \
-    > "$scauth_config"
-scauth reconcile "$scauth_config"
-
+# Home Manager and Darwin activation already provision these two identities.
 builder=/etc/nix/straylight_builder_ed25519
-if [ ! -e "$builder" ]; then
-    sudo /usr/bin/ssh-keygen -t ed25519 -N "" -C "$host-builder" -f "$builder"
+if [ ! -s "$HOME/.ssh/scauth/default/id_ecdsa_sk.pub" ] || [ ! -s "$builder.pub" ]; then
+    echo "Run just host=$host switch locally first to create the SSH and builder keys." >&2
+    exit 1
 fi
-test -s "$HOME/.ssh/scauth/default/id_ecdsa_sk.pub"
-test -s "$builder.pub"
 mkdir -p "$HOME/.config/age"
 identity="$HOME/.config/age/identity.key"
 if [ ! -e "$identity" ]; then

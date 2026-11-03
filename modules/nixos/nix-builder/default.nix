@@ -1,3 +1,4 @@
+{ lib, ... }:
 let
   keys = import ../../common/keys.nix;
 in
@@ -9,7 +10,7 @@ in
     trusted = true;
     keys = [
       keys.wintermute-builder
-      keys.armitage-builder
-    ];
+    ]
+    ++ lib.optional (keys ? armitage-builder) keys.armitage-builder;
   };
 }

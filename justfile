@@ -67,6 +67,6 @@ secret name:
 secrets-rekey identity="$HOME/.config/age/identity.key":
     AGENIX_IDENTITY="{{ identity }}" {{ nix }} run "{{ flake }}#agenix-rekey"
 
-# Create the configured Mac identities locally and print their public values
+# After first activation, create the age identity and print the public keys
 mac-keys target=host:
-    {{ nix }} shell --inputs-from "{{ flake }}" scauth#default nixpkgs#age-plugin-se --command bash "{{ justfile_directory() }}/scripts/provision/mac-keys.sh" "{{ target }}"
+    {{ nix }} shell --inputs-from "{{ flake }}" nixpkgs#age-plugin-se --command bash "{{ justfile_directory() }}/scripts/provision/mac-keys.sh" "{{ target }}"

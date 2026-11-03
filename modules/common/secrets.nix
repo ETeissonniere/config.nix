@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   hostName,
   lib,
@@ -22,7 +23,8 @@ in
   config = {
     age = {
       rekey = {
-        hostPubkey = readRecipient hostName;
+        # A first activation without secrets does not need a registered recipient.
+        hostPubkey = lib.mkIf (config.age.secrets != { }) (readRecipient hostName);
         # Source secrets use Wintermute's master key. hostPubkey selects the
         # recipient when a secret is rekeyed for a host.
         masterIdentities = [

@@ -76,38 +76,51 @@ host/module layout.
 
 ## Adding another Mac
 
-Armitage uses NAS, Time Machine, a local ARM Linux builder (6 virtual CPUs,
-6 GiB RAM, 64 GiB disk), and Straylight for x86 Linux builds. Its 32 GB of RAM
-does not require a larger VM allocation.
+Armitage uses a local ARM Linux builder (6 virtual CPUs, 6 GiB RAM, 64 GiB disk)
+and Straylight for x86 Linux builds. NAS and Time Machine start disabled for the
+first activation. Its 32 GB of RAM does not require a larger VM allocation.
+
+### First local activation
 
 Create the `eliottteissonniere` admin account with UID 501, install Apple's
 command-line tools and Nix, sign into the App Store, and transfer this checkout.
-Provision and activate the Mac locally; Remote Login is not required.
+The first build needs a working ARM Linux builder for uncached guest dependencies;
+Armitage does not have its configured local VM yet. Wintermute can prebuild with
+its builders, but importing those closures requires trusted signatures or root.
+The repository does not grant that trust automatically.
 
-### Create and register the keys
-
-Run on Armitage as the normal logged-in user:
+Run locally on Armitage:
 
 ```fish
 nix --extra-experimental-features 'nix-command flakes' shell --inputs-from . nixpkgs#fish nixpkgs#just nixpkgs#nh --command fish
-sudo /usr/sbin/scutil --set LocalHostName armitage
-sudo /usr/sbin/scutil --set ComputerName Armitage
+just host=armitage check
+just host=armitage build
+just host=armitage switch
+```
+
+Home Manager creates the configured SSH/signing identity; Darwin activation
+creates the builder key. No NAS secret or Armitage recipient is needed yet.
+Activation also sets the computer name to Armitage. Restart the terminal, then run:
+
+```fish
 just mac-keys armitage
 ```
 
-`mac-keys` reuses Home Manager's scauth declaration to create the SSH/signing
-identity, creates the builder key if absent, and creates the post-quantum Secure
-Enclave age identity if absent. It does not activate the system. This key-only
-step is needed because the full configuration requires registered public keys
-and a NAS password encrypted for Armitage. Later activation reuses these identities.
+This creates the post-quantum Secure Enclave age identity if absent and prints
+all three public values. Keep private identities on Armitage. Back up its age
+identity file separately; recovery requires that file and the same Mac's hardware.
+
+### Register and prepare NAS access
 
 Transfer only the printed public values to Wintermute:
 
 - Add `armitage-ssh` and `armitage-builder` to `modules/common/keys.nix`.
-- Save the printed age recipient as `secrets/recipients/armitage.pub`.
+- Save the age recipient as `secrets/recipients/armitage.pub`.
 
-Keep private identities on Armitage. Back up its age identity file separately;
-recovery requires that file and the same Mac's hardware. On Wintermute, run:
+In `hosts/armitage/darwin-configuration.nix`, set `workstation.nas.enable` and
+`workstation.timeMachineOnNAS.enable` to `true`. This declares the desired setup
+for rekeying; it does not start either service until the next activation. Then,
+on Wintermute:
 
 ```fish
 just secrets-rekey
@@ -116,10 +129,11 @@ just deploy chiba
 just deploy straylight
 ```
 
-Review and commit the public keys and `secrets/rekeyed/armitage/` ciphertext,
-then transfer the updated checkout back to Armitage. The Linux deployments
-above authorize its SSH and builder keys; they do not provision the Mac.
-Armitage does not become a master identity for editing fleet secrets.
+Rekeying prepares Armitage's encrypted NAS password. The Linux deployments
+authorize its SSH and builder keys; they do not provision the Mac. Review and
+commit the public keys, host settings, and `secrets/rekeyed/armitage/` ciphertext,
+then transfer the updated checkout back to Armitage. Armitage does not become a
+master identity for editing fleet secrets.
 
 Public SSH keys are inline in `modules/common/keys.nix`:
 
@@ -129,32 +143,20 @@ Public SSH keys are inline in `modules/common/keys.nix`:
 | `wintermute-builder`, `armitage-builder` | Each Mac's Nix daemon authenticating to Straylight |
 | `straylight-host` | The Macs verifying Straylight's SSH server identity |
 
+Unregistered Armitage keys are omitted from fleet authorization until added.
 AGE public recipients remain in `secrets/recipients/`; private identities remain
 outside the repository and Nix store.
 
-### Activate locally
+### Activate NAS and Time Machine
 
-Before switching, configure a **new encrypted** backup in System Settings using
-`Eliott's Time Machine` on `nas.teiss.org`. Use the shared NAS account password
-for SMB authentication. Do not inherit Wintermute's backup. Choose and retain
-the backup encryption password yourself; Nix does not manage it. Give the local
-activation terminal Full Disk Access.
+Before the second switch, configure a **new encrypted** backup in System Settings
+using `Eliott's Time Machine` on `nas.teiss.org`. Use the shared NAS account password
+for SMB authentication. Do not inherit Wintermute's backup. Choose and retain the
+backup encryption password yourself; Nix does not manage it. Give the local
+activation terminal Full Disk Access, then run `just host=armitage switch` locally.
 
-The first build needs a working ARM Linux builder for uncached guest dependencies;
-Armitage does not have its configured local VM yet. Wintermute can prebuild with
-its builders, but importing those closures requires trusted signatures or root.
-The repository does not grant that trust automatically.
-
-On Armitage, use the bootstrap shell above and run:
-
-```fish
-just host=armitage check
-just host=armitage build
-just host=armitage switch
-```
-
-Restart the terminal and run `fish scripts/postinstall/github-setup.fish` to
-register the SSH/signing key with GitHub. For later updates, update the checkout
-and run `just switch` locally. Use `sudo darwin-rebuild --rollback` locally if
-needed. Keep `stateVersion` unchanged. Time Machine excludes `Developer` and
-`Downloads`, so transfer that work separately.
+Run `fish scripts/postinstall/github-setup.fish` to register the SSH/signing key
+with GitHub. For later updates, update the checkout and run `just switch` locally.
+Use `sudo darwin-rebuild --rollback` locally if needed. Keep `stateVersion`
+unchanged. Time Machine excludes `Developer` and `Downloads`, so transfer that
+work separately. Remote Login is not required for Mac provisioning.
