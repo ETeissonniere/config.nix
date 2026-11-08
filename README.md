@@ -74,11 +74,17 @@ Automatic Nix garbage collection runs weekly with 30-day retention. Keep
 [Anna's nixos-config](https://github.com/anna-oake/nixos-config) inspired the
 host/module layout.
 
-## Adding another Mac
+## Armitage provisioning
 
 Armitage uses a local ARM Linux builder (6 virtual CPUs, 6 GiB RAM, 64 GiB disk)
 and Straylight for x86 Linux builds. Its 32 GB of RAM does not require a larger
-VM allocation. Armitage is enrolled; the steps below describe enrolling a fresh Mac.
+VM allocation. Armitage is enrolled; its existing installation can use `just switch`.
+The steps below describe provisioning Armitage on fresh hardware.
+
+For an additional Mac, create its host and user configurations under a distinct
+`hosts/<name>/` directory and substitute that name throughout these steps. Add its
+SSH and builder catalog entries to the trust lists in `modules/common/me.nix` and
+`modules/nixos/nix-builder/default.nix`; preserve existing hosts' keys and recipients.
 
 ### First local activation
 
