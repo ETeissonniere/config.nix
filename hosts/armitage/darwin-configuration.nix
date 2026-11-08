@@ -6,9 +6,8 @@
   ];
 
   workstation = {
-    # Enable after registering the keys and rekeying the NAS password.
-    nas.enable = false;
-    timeMachineOnNAS.enable = false;
+    nas.enable = true;
+    timeMachineOnNAS.enable = true;
     linuxBuilder.enable = true;
     nixRemoteBuilders.enable = true;
   };

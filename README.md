@@ -77,10 +77,13 @@ host/module layout.
 ## Adding another Mac
 
 Armitage uses a local ARM Linux builder (6 virtual CPUs, 6 GiB RAM, 64 GiB disk)
-and Straylight for x86 Linux builds. NAS and Time Machine start disabled for the
-first activation. Its 32 GB of RAM does not require a larger VM allocation.
+and Straylight for x86 Linux builds. Its 32 GB of RAM does not require a larger
+VM allocation. Armitage is enrolled; the steps below describe enrolling a fresh Mac.
 
 ### First local activation
+
+For a fresh Mac, set its `workstation.nas.enable` and
+`workstation.timeMachineOnNAS.enable` to `false` until its keys are registered.
 
 Create the `eliottteissonniere` admin account with UID 501, install Apple's
 command-line tools and Nix, sign into the App Store, and transfer this checkout.
