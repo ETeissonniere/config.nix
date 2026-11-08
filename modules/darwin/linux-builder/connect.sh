@@ -1,7 +1,8 @@
 # Distributed builds connect as root through the Nix daemon.
 while [ "$SECONDS" -lt "$STARTUP_TIMEOUT" ]; do
   /bin/launchctl kickstart system/org.nixos.linux-builder
-  if ssh -o ProxyCommand=none -o BatchMode=yes -o ConnectTimeout=2 builder@linux-builder true </dev/null 2>/dev/null; then
+  # Nix supplies host-key verification to the outer SSH connection, not this probe.
+  if ssh-keyscan -T 2 -t ed25519 -p 31022 127.0.0.1 >/dev/null 2>&1; then
     exec /usr/bin/nc 127.0.0.1 31022
   fi
   sleep 1
