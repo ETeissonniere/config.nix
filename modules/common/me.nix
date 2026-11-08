@@ -1,4 +1,7 @@
 { lib, ... }:
+let
+  keys = import ./keys.nix;
+in
 {
   options.me.username = lib.mkOption {
     type = lib.types.str;
@@ -7,7 +10,10 @@
   };
   options.me.sshKeys = lib.mkOption {
     type = lib.types.listOf lib.types.str;
-    default = [ (lib.trim (builtins.readFile ./keys/wintermute.pub)) ];
+    default = [
+      keys.wintermute-ssh
+      keys.armitage-ssh
+    ];
     description = "Public SSH keys trusted for the primary user.";
   };
 }

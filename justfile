@@ -51,11 +51,11 @@ install target address *args:
     {{ nix }} run "{{ flake }}#nixos-anywhere" -- --build-on local --flake "{{ flake }}#{{ target }}" --target-host "{{ address }}" {{ args }}
 
 # Check only the selected host; CI runs the full flake checks and VM tests.
-# Build on the target and deploy with automatic rollback
+# Build NixOS on the target and deploy with automatic rollback
 deploy target *args: (check target)
     {{ nix }} run "{{ flake }}#deploy-rs" -- "{{ flake }}#{{ target }}" --remote-build --skip-checks {{ args }}
 
-# Build using the local Nix builders and deploy with automatic rollback
+# Build NixOS using the local Nix builders and deploy with automatic rollback
 deploy-local target *args: (check target)
     {{ nix }} run "{{ flake }}#deploy-rs" -- "{{ flake }}#{{ target }}" --skip-checks {{ args }}
 
@@ -66,3 +66,7 @@ secret name:
 # Refresh host ciphertext after editing secrets or changing host recipients
 secrets-rekey identity="$HOME/.config/age/identity.key":
     AGENIX_IDENTITY="{{ identity }}" {{ nix }} run "{{ flake }}#agenix-rekey"
+
+# After first activation, create the age identity and print the public keys
+mac-keys target=host:
+    {{ nix }} shell --inputs-from "{{ flake }}" nixpkgs#age-plugin-se --command bash "{{ justfile_directory() }}/scripts/provision/mac-keys.sh" "{{ target }}"

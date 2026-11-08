@@ -1,10 +1,15 @@
-{ lib, ... }:
+let
+  keys = import ../../common/keys.nix;
+in
 {
   nix.sshServe = {
     enable = true;
     protocol = "ssh-ng";
     write = true;
     trusted = true;
-    keys = [ (lib.trim (builtins.readFile ../../common/keys/wintermute-builder.pub)) ];
+    keys = [
+      keys.wintermute-builder
+      keys.armitage-builder
+    ];
   };
 }
