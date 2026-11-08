@@ -24,7 +24,10 @@ identity="$HOME/.config/age/identity.key"
 if [ ! -e "$identity" ]; then
     age-plugin-se keygen --pq --access-control any-biometry-or-passcode -o "$identity"
 fi
-age-plugin-se recipients --pq -i "$identity" -o "$HOME/.config/age/recipient.pub"
+# age-plugin-se 0.2.1 ignores --pq in its recipients command.
+# Key generation saves the post-quantum public recipient alongside the identity.
+recipient=$(awk '/^# public key \(post-quantum\): age1tagpq1/ { print $5; count++ } END { if (count != 1) exit 1 }' "$identity")
+printf '%s\n' "$recipient" > "$HOME/.config/age/recipient.pub"
 
 public_key() {
     if ! awk -v type="$2" 'NR != 1 || $1 != type { exit 1 } END { if (NR != 1) exit 1 }' "$1"; then
