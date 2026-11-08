@@ -1,23 +1,9 @@
-{ pkgs, ... }:
+{ inputs, ... }:
 {
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
-  ];
+  imports = [ inputs.self.nixosModules.profiles.reverse-proxy ];
+
   services.caddy = {
-    enable = true;
-    package = pkgs.caddy.withPlugins {
-      plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
-      hash = "sha256-tubXIDCJnO2mvdnPlZclwDhNGaeeYLSt7lnni3+pXDo=";
-    };
     environmentFile = "/run/secrets/slopkiddy-caddy-environment";
-    globalConfig = ''
-      email {$ACME_EMAIL}
-      cert_issuer acme {
-        dns cloudflare {env.CF_API_TOKEN}
-        resolvers 1.1.1.1 1.0.0.1
-      }
-    '';
     virtualHosts."openwebui.teiss.org".extraConfig = ''
       reverse_proxy 127.0.0.1:8080
     '';

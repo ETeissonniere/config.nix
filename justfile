@@ -35,6 +35,11 @@ switch:
 update:
     {{ nix }} flake update --flake "{{ flake }}"
 
+    # Caddy uses the cloudflare plugin, which we refer to
+    # by its hash for determinism. We need to update it
+    # after a nix flake update too.
+    {{ nix }} run --inputs-from "{{ flake }}" nixpkgs#nix-update -- --flake --version=skip --src-only --override-filename packages/caddy-cloudflare/default.nix caddy-cloudflare
+
 # Format Nix files and recipes
 format:
     just --fmt

@@ -3,12 +3,9 @@ let
   lib = inputs.nixpkgs.lib;
   systems = [
     "aarch64-darwin"
+    "aarch64-linux"
     "x86_64-linux"
   ];
-  # Secret tools support additional platforms, subject to the pinned Nixpkgs support.
-  packageSystems = lib.intersectLists lib.systems.flakeExposed (
-    builtins.attrNames inputs.self.agenix-rekey
-  );
 
   tests = lib.genAttrs systems (
     system:
@@ -23,7 +20,7 @@ in
     system: systemTests: systemTests // inputs.deploy-rs.lib.${system}.deployChecks inputs.self.deploy
   ) tests;
 
-  packages = lib.genAttrs packageSystems (
+  packages = lib.genAttrs systems (
     system:
     let
       pkgs = inputs.nixpkgs.legacyPackages.${system};
@@ -32,12 +29,11 @@ in
     {
       agenix-edit-view = tools.edit-view;
       agenix-rekey = tools.rekey;
-    }
-    // lib.optionalAttrs (builtins.elem system systems) {
       deploy-rs = pkgs.deploy-rs;
       nixos-anywhere = inputs.nixos-anywhere.packages.${system}.default;
       tests = pkgs.linkFarm "tests" tests.${system};
     }
+    // lib.mapAttrs (_: path: pkgs.callPackage path { }) (discoverModules ../packages)
   );
 
   agenix-rekey = inputs.agenix-rekey.configure {
