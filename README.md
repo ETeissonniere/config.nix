@@ -59,7 +59,7 @@ becomes `wintermute`); override it before the recipe: `just host=wintermute chec
 | `just check [host]` | Evaluate a host; defaults to this machine |
 | `just check-all` | Evaluate all Darwin and NixOS configurations |
 | `just build [host]` | Build a host without applying; defaults to this machine |
-| `just deploy [host]` | Deploy NixOS with deploy-rs |
+| `just deploy [host]` | Deploy NixOS updates with deploy-rs |
 | `just install [host] [user@address]` | Install NixOS; erases the host's configured disks |
 | `just switch` | Build and apply this Mac's configuration with `nh` |
 | `just update` | Update pinned dependencies without applying |
@@ -142,11 +142,10 @@ Public SSH keys are inline in `modules/common/keys.nix`:
 
 | Entries | Purpose |
 | --- | --- |
-| `wintermute-ssh`, `armitage-ssh` | User access to fleet machines and GitHub |
+| `wintermute-ssh`, `armitage-ssh` | User access to fleet machines; registered separately with GitHub |
 | `wintermute-builder`, `armitage-builder` | Each Mac's Nix daemon authenticating to Straylight |
 | `straylight-host` | The Macs verifying Straylight's SSH server identity |
 
-Unregistered Armitage keys are omitted from fleet authorization until added.
 AGE public recipients remain in `secrets/recipients/`; private identities remain
 outside the repository and Nix store.
 

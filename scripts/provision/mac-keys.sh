@@ -9,6 +9,11 @@ if [ "$(uname -s)" != Darwin ] || [ "$(id -u)" = 0 ]; then
     echo 'Run this on the new Mac as your normal logged-in user.' >&2
     exit 1
 fi
+local_host=$(/usr/sbin/scutil --get LocalHostName | tr '[:upper:]' '[:lower:]')
+if [ "$host" != "$local_host" ]; then
+    echo "Run this on $host; this Mac is $local_host." >&2
+    exit 1
+fi
 cd "$(dirname "$0")/../.."
 test -f "hosts/$host/darwin-configuration.nix"
 umask 077
@@ -34,7 +39,7 @@ public_key() {
         echo "Expected one $2 public key." >&2
         return 1
     fi
-    /usr/bin/ssh-keygen -lf "$1" >&2
+    /usr/bin/ssh-keygen -lf "$1" >&2 || return 1
     awk '{print $1 " " $2}' "$1"
 }
 ssh_public=$(public_key "$HOME/.ssh/scauth/default/id_ecdsa_sk.pub" sk-ecdsa-sha2-nistp256@openssh.com)
