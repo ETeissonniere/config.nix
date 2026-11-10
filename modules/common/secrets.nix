@@ -26,13 +26,16 @@ in
         # A first activation without secrets does not need a registered recipient.
         hostPubkey = lib.mkIf (config.age.secrets != { }) (readRecipient hostName);
         # Each Mac keeps its own master identity at the same local path.
-        masterIdentities = map (name: {
-          identity = "\"\${AGENIX_IDENTITY:-$HOME/.config/age/identity.key}\"";
-          pubkey = readRecipient name;
-        }) [
-          "wintermute"
-          "armitage"
-        ];
+        masterIdentities =
+          map
+            (name: {
+              identity = "\"\${AGENIX_IDENTITY:-$HOME/.config/age/identity.key}\"";
+              pubkey = readRecipient name;
+            })
+            [
+              "wintermute"
+              "armitage"
+            ];
         extraEncryptionPubkeys = [ (readRecipient "recovery") ];
         storageMode = "local";
         localStorageDir = inputs.self.outPath + "/secrets/rekeyed/${hostName}";
