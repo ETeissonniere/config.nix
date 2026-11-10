@@ -71,8 +71,6 @@ in
       inherit (config.services.nas)
         smbServerHost
         smbAccount
-        agePasswordFile
-        ageIdentityFile
         ;
       smbShare = "Eliott's Time Machine";
       exclusions = map (path: "${config.users.users.${config.me.username}.home}/${path}") [
