@@ -24,7 +24,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     deploy-rs = {
-      url = "github:serokell/deploy-rs";
+      # Stay before the Darwin watcher regressions; revisit this pin after:
+      # https://github.com/serokell/deploy-rs/pull/406 (notification test timing)
+      # https://github.com/serokell/deploy-rs/pull/404 (canonical macOS watcher paths)
+      url = "github:serokell/deploy-rs/16901271e5b30b591e56f7a84f25f186fb20f3e1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-anywhere = {
