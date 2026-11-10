@@ -41,6 +41,10 @@ in
     inherit (inputs.self) nixosConfigurations darwinConfigurations;
     # Use Go age for the post-quantum recipients used throughout this repo.
     agePackage = pkgs: pkgs.age;
+    extraDecryptionArgs = [
+      "-i"
+      "/Users/eliottteissonniere/.config/age/identity.key"
+    ];
   };
 
   formatter = lib.genAttrs systems (system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree);
