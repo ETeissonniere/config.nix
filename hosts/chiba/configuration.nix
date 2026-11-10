@@ -4,6 +4,7 @@
     inputs.self.nixosModules.profiles.server
     inputs.self.nixosModules.container-host
     inputs.self.nixosModules.ephemeral-root
+    inputs.self.nixosModules.nas-backups
     inputs.nixos-hardware.nixosModules.raspberry-pi-5
     ./backup.nix
     ./containers
