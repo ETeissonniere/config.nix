@@ -68,7 +68,9 @@ in
         "d ${stateDirectory}/etc 0755 root root -"
       ]
       ++ map (
-        directory: "d ${stateDirectory}${directory} 0755 root root -"
+        # The ':' prefix sets mode and ownership only on creation, so host
+        # activations preserve permissions assigned by the guest service.
+        directory: "d ${stateDirectory}${directory} :0755 :root :root -"
       ) container.persistence.directories
     ) (builtins.attrValues containersWithPersistence);
 

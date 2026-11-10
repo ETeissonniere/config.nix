@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  pocketIdPort = config.containers.pocket-id.config.services.pocket-id.settings.PORT;
+  pocketId = config.containers.pocket-id.config.services.pocket-id.settings;
 in
 {
   containers.reverse-proxy = {
@@ -18,17 +18,11 @@ in
     ];
     config = { inputs, ... }: {
       imports = [ inputs.self.nixosModules.profiles.reverse-proxy ];
-      services.resolved = {
-        enable = true;
-        settings.Resolve = {
-          MulticastDNS = "resolve";
-          LLMNR = false;
-        };
-      };
+      services.avahi.settings.server.allow-interfaces = [ "eth0" ];
       services.caddy = {
         environmentFile = "/run/secrets/caddy.env";
         virtualHosts."auth.teiss.org".extraConfig = ''
-          reverse_proxy pocket-id.local:${toString pocketIdPort}
+          reverse_proxy ${pocketId.HOST}:${toString pocketId.PORT}
         '';
       };
       system.stateVersion = "26.05";

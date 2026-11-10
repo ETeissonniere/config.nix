@@ -15,15 +15,15 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install command-line tools
+      - name: Install just
         run: |
-          nix profile add --inputs-from . nixpkgs#just nixpkgs#nh
+          nix profile add --inputs-from . nixpkgs#just
           echo "$HOME/.nix-profile/bin" >> "$GITHUB_PATH"
-      - name: Check all host configurations
-        run: just check-all
-      - name: Run VM tests
-        run: just test
       - name: Check formatting
         run: |
           just format
           git diff --exit-code
+      - name: Check all host configurations
+        run: just check-all
+      - name: Run VM tests
+        run: just test

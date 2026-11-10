@@ -59,7 +59,6 @@ in
         fileSystems."/".autoResize = true;
       };
     };
-
     services.nas = {
       enable = cfg.nas.enable;
       smbServerHost = "nas.teiss.org";

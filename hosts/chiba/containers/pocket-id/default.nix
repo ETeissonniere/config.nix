@@ -19,14 +19,14 @@ in
       "--bind-ro=${builtins.dirOf config.age.secrets.pocket-id-encryption-key.path}:/run/secrets:idmap"
     ];
     config = { pkgs, ... }: {
-      networking.firewall.allowedTCPPorts = [ port ];
+      networking.firewall.interfaces.pocket-backend.allowedTCPPorts = [ port ];
+      services.avahi.settings.server.allow-interfaces = [ "eth0" ];
 
       services.pocket-id = {
         enable = true;
         credentials.ENCRYPTION_KEY = "/run/secrets/encryption-key";
         settings = {
           APP_URL = "https://auth.teiss.org";
-          HOST = "::";
           PORT = port;
           ACTORS_HOST = "127.0.0.1";
           TRUST_PROXY = true;
