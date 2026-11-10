@@ -15,7 +15,15 @@
       }
     ];
 
-    home.packages = [ pkgs.claude-code ];
+    programs.claude-code = {
+      enable = true;
+      mutableSettings = true;
+      settings.attribution = {
+        commit = "";
+        pr = "";
+        sessionUrl = false;
+      };
+    };
 
     programs.codex = {
       enable = true;
@@ -24,6 +32,8 @@
       settings = {
         approval_policy = lib.mkDefault "on-request";
         approvals_reviewer = lib.mkDefault "auto_review";
+        commit_attribution = "";
+        desktop.git-branch-prefix = "";
         sandbox_mode = lib.mkDefault "workspace-write";
       };
     };
