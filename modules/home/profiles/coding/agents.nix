@@ -15,6 +15,8 @@
       }
     ];
 
+    home.packages = [ pkgs.claude-code ];
+
     programs.codex = {
       enable = true;
       # Preserve settings written by Codex while applying shared defaults on activation.
@@ -26,7 +28,7 @@
       };
     };
     home.file = {
-      ".codex/AGENTS.md".text =
+      ".agents/AGENTS.md".text =
         builtins.replaceStrings
           [ "@shellInstructions@\n" ]
           [
@@ -37,8 +39,15 @@
 
             '')
           ]
-          (builtins.readFile ./AGENTS.md);
-      ".agents/skills/eliott-style".source = ./skills/eliott-style;
+          (builtins.readFile ./agents/AGENTS.md);
+      ".codex/AGENTS.md".source = config.home.file.".agents/AGENTS.md".source;
+      ".claude/CLAUDE.md".source = config.home.file.".agents/AGENTS.md".source;
+      ".agents/skills" = {
+        source = ./agents/skills;
+        recursive = true;
+      };
+      ".claude/skills".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
     };
 
     systemd.user.services.codex-remote-control = lib.mkIf config.services.codex-remote-control.enable {

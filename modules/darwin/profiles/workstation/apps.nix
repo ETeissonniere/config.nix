@@ -42,6 +42,7 @@
   homebrew.casks = [
     "bambu-studio"
     "chatgpt"
+    "claude"
     "monitorcontrol"
   ];
 
