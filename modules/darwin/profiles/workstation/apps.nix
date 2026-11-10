@@ -10,7 +10,6 @@
     ghostty-bin
     google-chrome
     orbstack
-    stats
     zed-editor
   ];
 
@@ -29,7 +28,6 @@
           SUEnableAutomaticChecks = false;
           SUAutomaticallyUpdate = false;
         };
-        "eu.exelban.Stats"."update-interval" = "Never";
       };
     }
   ];
