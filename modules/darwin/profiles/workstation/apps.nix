@@ -14,6 +14,27 @@
   ];
 
   home-manager.sharedModules = [
+    (
+      { config, lib, ... }:
+      {
+        programs.codex.settings.desktop.mac-menu-bar-enabled = false;
+
+        # One more store path for this JSON exceeds Armitage's Darwin sandbox profile limit.
+        home.activation.claudeMenuBar = lib.hm.dag.entryAfter [ "linkGeneration" ] (
+          "("
+          + lib.hm.generators.mkImpureConfigMerger {
+            inherit pkgs;
+            format = "json";
+            empty = "{}";
+            path = "${config.home.homeDirectory}/Library/Application Support/Claude/claude_desktop_config.json";
+            staticSettings = "/dev/stdin";
+            jqOperation = "$dynamic * $static";
+            mode = "600";
+          }
+          + '') <<< '{"preferences":{"menuBarEnabled":false}}' ''
+        );
+      }
+    )
     {
       programs.ghostty.package = null;
       programs.zed-editor.package = null;

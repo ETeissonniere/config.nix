@@ -1,5 +1,11 @@
 { ... }:
 {
+  home-manager.sharedModules = [
+    {
+      targets.darwin.currentHostDefaults."com.apple.controlcenter".TimeMachine = 8;
+    }
+  ];
+
   system.defaults = {
     NSGlobalDomain = {
       AppleMeasurementUnits = "Centimeters";
@@ -27,6 +33,7 @@
     };
 
     CustomUserPreferences = {
+      "com.apple.Siri".StatusMenuVisible = false;
       NSGlobalDomain = {
         AppleLocale = "en_US@currency=usd";
         AppleFirstWeekday.gregorian = 2;
