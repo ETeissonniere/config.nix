@@ -32,6 +32,8 @@
       settings = {
         approval_policy = lib.mkDefault "on-request";
         approvals_reviewer = lib.mkDefault "auto_review";
+        commit_attribution = "";
+        desktop.git-branch-prefix = "";
         sandbox_mode = lib.mkDefault "workspace-write";
       };
     };
