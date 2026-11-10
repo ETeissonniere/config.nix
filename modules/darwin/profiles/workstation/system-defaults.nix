@@ -27,6 +27,8 @@
     };
 
     CustomUserPreferences = {
+      "com.apple.Siri".StatusMenuVisible = false;
+      "com.apple.systemuiserver"."NSStatusItem VisibleCC com.apple.menuextra.TimeMachine" = false;
       NSGlobalDomain = {
         AppleLocale = "en_US@currency=usd";
         AppleFirstWeekday.gregorian = 2;

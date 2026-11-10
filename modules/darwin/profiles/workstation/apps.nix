@@ -14,6 +14,26 @@
   ];
 
   home-manager.sharedModules = [
+    (
+      { config, lib, ... }:
+      {
+        programs.codex.settings.desktop.mac-menu-bar-enabled = false;
+
+        home.activation.claudeMenuBar = lib.hm.dag.entryAfter [ "linkGeneration" ] (
+          lib.hm.generators.mkImpureConfigMerger {
+            inherit pkgs;
+            format = "json";
+            empty = "{}";
+            path = "${config.home.homeDirectory}/Library/Application Support/Claude/claude_desktop_config.json";
+            staticSettings = (pkgs.formats.json { }).generate "claude-desktop-preferences.json" {
+              preferences.menuBarEnabled = false;
+            };
+            jqOperation = "$dynamic * $static";
+            mode = "600";
+          }
+        );
+      }
+    )
     {
       programs.ghostty.package = null;
       programs.zed-editor.package = null;
