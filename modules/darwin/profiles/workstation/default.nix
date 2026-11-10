@@ -59,12 +59,6 @@ in
         fileSystems."/".autoResize = true;
       };
     };
-    # Drop this override once the fleet pin includes both fixes in https://discourse.nixos.org/t/81001
-    # https://nixpk.gs/pr-tracker.html?pr=582262 (keeping the private key out of the store)
-    # https://nixpk.gs/pr-tracker.html?pr=582263 (binding the SSH port to loopback)
-    nix.linux-builder.package =
-      inputs.nixpkgs-linux-builder.legacyPackages.${config.nixpkgs.hostPlatform.system}.darwin.linux-builder;
-
     services.nas = {
       enable = cfg.nas.enable;
       smbServerHost = "nas.teiss.org";
