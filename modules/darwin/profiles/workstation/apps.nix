@@ -8,7 +8,6 @@
   environment.systemPackages = with pkgs; [
     appcleaner
     ghostty-bin
-    google-chrome
     orbstack
     zed-editor
   ];
@@ -62,6 +61,7 @@
     "bambu-studio"
     "chatgpt"
     "claude"
+    "google-chrome"
     "monitorcontrol"
   ];
 
