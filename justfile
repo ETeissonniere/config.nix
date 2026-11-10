@@ -64,8 +64,8 @@ secret name:
     EDITOR="${EDITOR:-nvim}" {{ nix }} run "{{ flake }}#agenix-edit-view" -- edit "secrets/{{ name }}.age"
 
 # Refresh host ciphertext after editing secrets or changing host recipients
-secrets-rekey identity="$HOME/.config/age/identity.key":
-    AGENIX_IDENTITY="{{ identity }}" {{ nix }} run "{{ flake }}#agenix-rekey"
+secrets-rekey:
+    {{ nix }} run "{{ flake }}#agenix-rekey"
 
 # After first activation, create the age identity and print the public keys
 mac-keys target=host:

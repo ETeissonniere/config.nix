@@ -39,17 +39,12 @@ in
   agenix-rekey = inputs.agenix-rekey.configure {
     userFlake = inputs.self;
     inherit (inputs.self) nixosConfigurations darwinConfigurations;
-    # extraDecryptionArgs treats shell variables literally. Resolve the local
-    # identity at runtime so either Mac can use the same command.
-    agePackage =
-      pkgs:
-      pkgs.writeShellScriptBin "age" ''
-        if [[ "$1" == -d ]]; then
-          shift
-          set -- -d -i "''${AGENIX_IDENTITY:-$HOME/.config/age/identity.key}" "$@"
-        fi
-        exec ${lib.getExe pkgs.age} "$@"
-      '';
+    # Use Go age for the post-quantum recipients used throughout this repo.
+    agePackage = pkgs: pkgs.age;
+    extraDecryptionArgs = [
+      "-i"
+      "/Users/eliottteissonniere/.config/age/identity.key"
+    ];
   };
 
   formatter = lib.genAttrs systems (system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree);
