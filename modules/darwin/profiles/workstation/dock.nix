@@ -21,6 +21,7 @@
       "/System/Applications/Calendar.app"
       "/Applications/Nix Apps/Ghostty.app"
       "/Applications/ChatGPT.app"
+      "/Applications/Claude.app"
       "/Applications/Nix Apps/Zed.app"
       "/Applications/BambuStudio.app"
     ];
