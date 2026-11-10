@@ -25,11 +25,10 @@ in
       rekey = {
         # A first activation without secrets does not need a registered recipient.
         hostPubkey = lib.mkIf (config.age.secrets != { }) (readRecipient hostName);
-        extraEncryptionPubkeys = map readRecipient [
-          "wintermute"
-          "armitage"
-          "recovery"
-        ];
+        # Every Mac workstation can edit and rekey secrets, though the recovery key is kept offline.
+        extraEncryptionPubkeys = map readRecipient (
+          builtins.attrNames inputs.self.lib.keys.macs ++ [ "recovery" ]
+        );
         storageMode = "local";
         localStorageDir = inputs.self.outPath + "/secrets/rekeyed/${hostName}";
       };

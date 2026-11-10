@@ -14,7 +14,7 @@
     wvous-br-corner = 1;
 
     persistent-apps = [
-      "/Applications/Nix Apps/Google Chrome.app"
+      "/Applications/Google Chrome.app"
       "/System/Applications/Mail.app"
       "/System/Applications/Messages.app"
       "/System/Applications/Notes.app"

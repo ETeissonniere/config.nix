@@ -7,6 +7,13 @@
   ];
 
   system.defaults = {
+    screensaver = {
+      askForPassword = true;
+      askForPasswordDelay = 0;
+    };
+    loginwindow.GuestEnabled = false;
+    SoftwareUpdate.AutomaticallyInstallMacOSUpdates = true;
+
     NSGlobalDomain = {
       AppleMeasurementUnits = "Centimeters";
       AppleMetricUnits = 1;
@@ -44,6 +51,7 @@
       };
     };
   };
+  power.sleep.display = 10;
 
   # Cmd+Shift+S copies a screenshot selection to the clipboard.
   system.keyboard.symbolicHotkeys."31" = {

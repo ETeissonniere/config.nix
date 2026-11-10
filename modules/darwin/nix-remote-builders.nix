@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -31,7 +32,7 @@ in
 
     programs.ssh.knownHosts.straylight = {
       hostNames = [ "straylight.local" ];
-      publicKey = (import ../common/keys.nix).straylight-host;
+      publicKey = inputs.self.lib.keys.straylight-host;
     };
 
     programs.ssh.extraConfig = ''

@@ -3,19 +3,16 @@
   imports = [
     inputs.self.darwinModules.profiles.workstation
     inputs.self.darwinModules.linearmouse
-    ./secrets.nix
   ];
 
   workstation = {
     nas.enable = true;
     timeMachineOnNAS.enable = true;
-    linuxBuilder = {
-      enable = true;
-      cores = 6;
-      memoryGiB = 6;
-      diskGiB = 64;
-    };
+    linuxBuilder.enable = true;
     nixRemoteBuilders.enable = true;
   };
   services.linearmouse.enable = true;
+
+  # Compatibility baseline for this installation; do not bump during updates.
+  system.stateVersion = 6;
 }

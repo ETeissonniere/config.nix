@@ -2,7 +2,6 @@
 {
   imports = [
     inputs.self.darwinModules.profiles.workstation
-    ./secrets.nix
   ];
 
   workstation = {
@@ -11,4 +10,7 @@
     linuxBuilder.enable = true;
     nixRemoteBuilders.enable = true;
   };
+
+  # Compatibility baseline for this installation; do not bump during updates.
+  system.stateVersion = 6;
 }

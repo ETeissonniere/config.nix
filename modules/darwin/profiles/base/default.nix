@@ -1,9 +1,10 @@
+{ inputs, ... }:
 {
   imports = [
     ./darwin.nix
     ./user.nix
-    ../../mac-default-browser.nix
-    ../../mac-shortcuts.nix
-    ../../mac-wallpaper.nix
+    inputs.self.darwinModules.mac-default-browser
+    inputs.self.darwinModules.mac-shortcuts
+    inputs.self.darwinModules.mac-wallpaper
   ];
 }

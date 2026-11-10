@@ -34,7 +34,6 @@ in
         # so we need to enable a couple "hacks" it can work as expected.
         ./codex-fixes.nix
       ];
-      nixpkgs.config.allowUnfree = true;
       me = { inherit username sshKeys; };
       users.users.${username} = {
         isNormalUser = true;
@@ -54,15 +53,10 @@ in
       users.mutableUsers = false;
       users.allowNoPasswordLogin = true;
 
-      home-manager = {
-        useGlobalPkgs = true;
-        useUserPackages = true;
-        extraSpecialArgs = { inherit inputs; };
-        users.${username} = {
-          imports = [ inputs.self.homeModules.profiles.coding ];
-          services.codex-remote-control.enable = true;
-          home.stateVersion = "26.05";
-        };
+      home-manager.users.${username} = {
+        imports = [ inputs.self.homeModules.profiles.coding ];
+        services.codex-remote-control.enable = true;
+        home.stateVersion = "26.05";
       };
       system.stateVersion = "26.05";
     };

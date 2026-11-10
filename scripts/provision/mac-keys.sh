@@ -44,8 +44,7 @@ public_key() {
 }
 ssh_public=$(public_key "$HOME/.ssh/scauth/default/id_ecdsa_sk.pub" sk-ecdsa-sha2-nistp256@openssh.com)
 builder_public=$(public_key "$builder.pub" ssh-ed25519)
-echo 'Add these public SSH keys to modules/common/keys.nix:'
-printf '  "%s-ssh" = "%s";\n' "$host" "$ssh_public"
-printf '  "%s-builder" = "%s";\n' "$host" "$builder_public"
+echo 'Add this Mac to macs in lib/keys.nix:'
+printf '    %s = {\n      ssh = "%s";\n      builder = "%s";\n    };\n' "$host" "$ssh_public" "$builder_public"
 printf '\nSave this public age recipient as secrets/recipients/%s.pub:\n' "$host"
 cat "$HOME/.config/age/recipient.pub"

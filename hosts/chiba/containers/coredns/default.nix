@@ -74,6 +74,8 @@ in
               answer auto
             }
             forward local 127.0.0.53
+            # Names without a local alias still resolve publicly.
+            forward . 1.1.1.1 1.0.0.1
             log
           }
 

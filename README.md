@@ -26,11 +26,11 @@ Homebrew is managed automatically; activation
 upgrades declared packages and removes unlisted packages and associated cask data.
 
 Each Mac provisions a `default` key for SSH and Git signing.
-Use `scauth pubkey default` to retrieve its public key
-for your servers, and save it on GitHub as both an authentication and signing key.
+Run `just setup-github` to sign in to GitHub and register it there for
+authentication and signing. Run `just mac-keys` to print the keys a new Mac
+adds to `lib/keys.nix` and `secrets/recipients/`.
 
 Macs use the Darwin `workstation` profile for their apps and settings.
-Each machine declares its secrets in `hosts/<host>/secrets.nix`.
 Each host enables the features it uses: `workstation.nas.enable`,
 `workstation.timeMachineOnNAS.enable`, `workstation.linuxBuilder.enable`, and
 `workstation.nixRemoteBuilders.enable`. Time Machine on the NAS requires NAS
@@ -38,7 +38,7 @@ access. The local and remote builders can be enabled separately.
 
 Set the local builder's CPU, memory, and disk size in the host's
 `workstation.linuxBuilder` settings. `cores`, `memoryGiB`, and `diskGiB` default
-to 6 cores, 6 GiB RAM, and a 64 GiB disk. Wintermute sets these values explicitly.
+to 6 cores, 6 GiB RAM, and a 64 GiB disk.
 
 NAS mounts and Time Machine use the personal NAS account password in
 `secrets/shared/personal-nas-password.age`. Before enabling Time Machine, add
@@ -57,17 +57,27 @@ becomes `wintermute`); override it before the recipe: `just host=wintermute chec
 | Command | Purpose |
 | --- | --- |
 | `just check [host]` | Evaluate a host; defaults to this machine |
-| `just check-all` | Evaluate all Darwin and NixOS configurations |
 | `just build [host]` | Build a host without applying; defaults to this machine |
-| `just deploy [host]` | Deploy NixOS updates with deploy-rs |
-| `just install [host] [user@address]` | Install NixOS; erases the host's configured disks |
 | `just switch` | Build and apply this Mac's configuration with `nh` |
+| `just deploy <host>` | Deploy a NixOS host with deploy-rs |
 | `just update` | Update pinned dependencies without applying |
-| `just format` | Format Nix files and recipes |
+| `just secret <name>` | Edit `secrets/<name>.age`; follow with `just secrets-rekey` |
 
-Run `just` to list recipes. Run `just check` and `just build` before switching.
+Run `just` to list every recipe. Run `just check` and `just build` before switching.
 Automatic Nix garbage collection runs weekly with 30-day retention. Keep
 `stateVersion` values unchanged.
+
+## NixOS hosts
+
+Each host declares its secrets in `hosts/<host>/secrets.nix` and decrypts them
+with the age key at `/persist/agenix/<host>.key`; its public recipient lives in
+`secrets/recipients/<host>.pub`. See `hosts/<host>/README.md` for the host itself.
+
+- Straylight installs with `just install straylight <user@address>`. Disko
+  reads the disk password from `/tmp/straylight-disk-password` on the target
+  during installation only. Secure Boot keys live in `/var/lib/sbctl`.
+- Chiba boots from an SD image:
+  `nix build .#nixosConfigurations.chiba.config.system.build.sdImage`.
 
 ## Acknowledgments
 

@@ -22,16 +22,6 @@ let
     in
     lib.mapAttrs (username: _: usersPath + "/${username}/home-configuration.nix") users;
 
-  homeManagerConfig = hostName: {
-    nixpkgs.config.allowUnfree = true;
-    home-manager = {
-      useGlobalPkgs = true;
-      useUserPackages = true;
-      extraSpecialArgs = { inherit inputs; };
-      users = discoverUsers hostName;
-    };
-  };
-
 in
 {
   darwinConfigurations = lib.mapAttrs (
@@ -45,7 +35,7 @@ in
         inputs.self.darwinModules.profiles.base
         (../hosts + "/${hostName}/darwin-configuration.nix")
         inputs.home-manager.darwinModules.home-manager
-        (homeManagerConfig hostName)
+        { home-manager.users = discoverUsers hostName; }
         inputs.self.lib.commonModules.secrets
       ];
     }
@@ -61,7 +51,7 @@ in
         inputs.self.lib.commonModules.profiles.base
         (../hosts + "/${hostName}/configuration.nix")
         inputs.home-manager.nixosModules.home-manager
-        (homeManagerConfig hostName)
+        { home-manager.users = discoverUsers hostName; }
         inputs.self.lib.commonModules.secrets
       ];
     }

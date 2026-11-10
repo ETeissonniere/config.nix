@@ -1,15 +1,10 @@
-let
-  keys = import ../../common/keys.nix;
-in
+{ inputs, lib, ... }:
 {
   nix.sshServe = {
     enable = true;
     protocol = "ssh-ng";
     write = true;
     trusted = true;
-    keys = [
-      keys.wintermute-builder
-      keys.armitage-builder
-    ];
+    keys = lib.mapAttrsToList (_: mac: mac.builder) inputs.self.lib.keys.macs;
   };
 }
