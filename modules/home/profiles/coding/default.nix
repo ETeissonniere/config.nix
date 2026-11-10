@@ -6,7 +6,7 @@
 }:
 {
   imports = [
-    ./codex
+    ./agents.nix
     ./developer-folder.nix
     ./gh.nix
     ./git.nix

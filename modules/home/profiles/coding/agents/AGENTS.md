@@ -1,4 +1,4 @@
-# Global Codex Preferences
+# Global Agent Preferences
 
 ## Finish the requested work
 - Treat action requests as authorization to complete the task through validation and delivery. Reuse permission already given; stay within its scope.
