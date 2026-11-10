@@ -2,7 +2,6 @@
 {
   home-manager.sharedModules = [
     {
-      # System Settings writes 8 when the Time Machine menu bar control is off.
       targets.darwin.currentHostDefaults."com.apple.controlcenter".TimeMachine = 8;
     }
   ];
