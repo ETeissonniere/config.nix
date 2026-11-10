@@ -13,6 +13,8 @@ in
 
   config = lib.mkIf cfg.enable {
     homebrew.casks = [ "linearmouse" ];
+    system.defaults.CustomUserPreferences."com.lujjjh.LinearMouse".menuBarVisibilityMode =
+      builtins.toJSON "never";
     launchd.user.agents.linearmouse.serviceConfig = {
       ProgramArguments = [
         "/Applications/LinearMouse.app/Contents/MacOS/LinearMouse"
