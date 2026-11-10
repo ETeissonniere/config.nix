@@ -1,5 +1,12 @@
 { ... }:
 {
+  home-manager.sharedModules = [
+    {
+      # System Settings writes 8 when the Time Machine menu bar control is off.
+      targets.darwin.currentHostDefaults."com.apple.controlcenter".TimeMachine = 8;
+    }
+  ];
+
   system.defaults = {
     NSGlobalDomain = {
       AppleMeasurementUnits = "Centimeters";
@@ -28,7 +35,6 @@
 
     CustomUserPreferences = {
       "com.apple.Siri".StatusMenuVisible = false;
-      "com.apple.systemuiserver"."NSStatusItem VisibleCC com.apple.menuextra.TimeMachine" = false;
       NSGlobalDomain = {
         AppleLocale = "en_US@currency=usd";
         AppleFirstWeekday.gregorian = 2;
