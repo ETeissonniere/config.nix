@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -10,8 +11,8 @@
     ./developer-folder.nix
     ./gh.nix
     ./git.nix
-    ../../sshkey.nix
     ./scauth.nix
+    inputs.self.homeModules.sshkey
   ];
 
   home.packages = [ pkgs.python3Packages.huggingface-hub ];

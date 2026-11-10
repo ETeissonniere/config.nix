@@ -12,10 +12,7 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-darwin";
 
-  nix.settings = {
-    trusted-users = lib.mkForce [ "root" ];
-    sandbox = true;
-  };
+  nix.settings.sandbox = true;
 
   networking = {
     inherit hostName;

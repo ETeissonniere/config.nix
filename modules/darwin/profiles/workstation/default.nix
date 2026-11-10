@@ -59,6 +59,13 @@ in
         fileSystems."/".autoResize = true;
       };
     };
+    age = {
+      # NAS setup decrypts the host ciphertext as the user with its Secure Enclave key.
+      enable = false;
+      secrets.personal-nas-password = lib.mkIf cfg.nas.enable {
+        rekeyFile = ../../../../secrets/shared/personal-nas-password.age;
+      };
+    };
     services.nas = {
       enable = cfg.nas.enable;
       smbServerHost = "nas.teiss.org";
@@ -67,7 +74,7 @@ in
       agePasswordFile = lib.mkIf cfg.nas.enable config.age.secrets.personal-nas-password.file;
     };
     services.time-machine = {
-      enable = cfg.timeMachineOnNAS.enable && config.services.nas.enable;
+      enable = cfg.timeMachineOnNAS.enable;
       inherit (config.services.nas)
         smbServerHost
         smbAccount
@@ -78,8 +85,5 @@ in
         "Downloads"
       ];
     };
-
-    # Compatibility baseline for these installations; do not bump during updates.
-    system.stateVersion = 6;
   };
 }

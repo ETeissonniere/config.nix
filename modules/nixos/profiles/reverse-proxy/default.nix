@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 {
   networking.firewall.allowedTCPPorts = [
     80
@@ -7,7 +7,7 @@
 
   services.caddy = {
     enable = true;
-    package = pkgs.callPackage ../../../../packages/caddy-cloudflare { };
+    package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.caddy-cloudflare;
     globalConfig = ''
       email {$ACME_EMAIL}
       cert_issuer acme {

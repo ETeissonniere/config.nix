@@ -20,6 +20,7 @@
 
   containerHost.network.mainNetworkInterface = "enp12s0";
 
+  hardware.cpu.amd.updateMicrocode = true;
   boot.initrd.availableKernelModules = [
     "ahci"
     "nvme"

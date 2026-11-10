@@ -50,7 +50,6 @@ format:
 install target address *args:
     {{ nix }} run "{{ flake }}#nixos-anywhere" -- --build-on local --flake "{{ flake }}#{{ target }}" --target-host "{{ address }}" {{ args }}
 
-# Check only the selected host; CI runs the full flake checks and VM tests.
 # Build NixOS on the target and deploy with automatic rollback
 deploy target *args: (check target)
     {{ nix }} run "{{ flake }}#deploy-rs" -- "{{ flake }}#{{ target }}" --remote-build --skip-checks {{ args }}
@@ -66,6 +65,10 @@ secret name:
 # Refresh host ciphertext after editing secrets or changing host recipients
 secrets-rekey:
     {{ nix }} run "{{ flake }}#agenix-rekey"
+
+# Sign in to GitHub and register this Mac's SSH key for authentication and signing
+setup-github:
+    fish "{{ justfile_directory() }}/scripts/postinstall/github-setup.fish"
 
 # After first activation, create the age identity and print the public keys
 mac-keys target=host:

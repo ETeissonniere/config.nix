@@ -1,7 +1,4 @@
-{ lib, ... }:
-let
-  keys = import ./keys.nix;
-in
+{ inputs, lib, ... }:
 {
   options.me.username = lib.mkOption {
     type = lib.types.str;
@@ -10,10 +7,7 @@ in
   };
   options.me.sshKeys = lib.mkOption {
     type = lib.types.listOf lib.types.str;
-    default = [
-      keys.wintermute-ssh
-      keys.armitage-ssh
-    ];
+    default = lib.mapAttrsToList (_: mac: mac.ssh) inputs.self.lib.keys.macs;
     description = "Public SSH keys trusted for the primary user.";
   };
 }
