@@ -1,5 +1,5 @@
 host := lowercase(if os() == 'macos' { `scutil --get LocalHostName` } else { `hostname` })
-flake := 'path:' + justfile_directory()
+flake := justfile_directory()
 nix := "nix --extra-experimental-features 'nix-command flakes'"
 
 default:
