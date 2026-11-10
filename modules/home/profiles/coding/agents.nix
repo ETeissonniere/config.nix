@@ -15,7 +15,15 @@
       }
     ];
 
-    home.packages = [ pkgs.claude-code ];
+    programs.claude-code = {
+      enable = true;
+      mutableSettings = true;
+      settings.attribution = {
+        commit = "";
+        pr = "";
+        sessionUrl = false;
+      };
+    };
 
     programs.codex = {
       enable = true;
