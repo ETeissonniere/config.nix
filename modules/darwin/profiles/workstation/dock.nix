@@ -19,6 +19,7 @@
       "/System/Applications/Messages.app"
       "/System/Applications/Notes.app"
       "/System/Applications/Calendar.app"
+      "/System/Applications/Reminders.app"
       "/Applications/Nix Apps/Ghostty.app"
       "/Applications/ChatGPT.app"
       "/Applications/Claude.app"
