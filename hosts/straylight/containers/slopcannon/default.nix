@@ -15,6 +15,13 @@ in
     };
     ephemeral = true;
     nvidia.enable = true;
+    allowedDevices = [
+      {
+        node = "/dev/kvm";
+        modifier = "rw";
+      }
+    ];
+    bindMounts."/dev/kvm".isReadOnly = false;
     persistence = {
       directory = "/data/slopcannon";
       directories = [
