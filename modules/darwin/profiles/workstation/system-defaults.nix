@@ -1,11 +1,5 @@
 { ... }:
 {
-  home-manager.sharedModules = [
-    {
-      targets.darwin.currentHostDefaults."com.apple.controlcenter".TimeMachine = 8;
-    }
-  ];
-
   system.defaults = {
     screensaver = {
       askForPassword = true;
@@ -41,6 +35,10 @@
 
     CustomUserPreferences = {
       "com.apple.Siri".StatusMenuVisible = false;
+      "com.apple.systemuiserver" = {
+        menuExtras = [ ];
+        "NSStatusItem VisibleCC com.apple.menuextra.TimeMachine" = false;
+      };
       NSGlobalDomain = {
         AppleLocale = "en_US@currency=usd";
         AppleFirstWeekday.gregorian = 2;
