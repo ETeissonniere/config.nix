@@ -226,6 +226,26 @@
         "type": "github"
       }
     },
+    "fogline": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794597975,
+        "narHash": "sha256-SndCdCsepQNRFCRH/pgwj0WiIHPs2WutlvWJLoaJCn4=",
+        "owner": "ETeissonniere",
+        "repo": "fogline",
+        "rev": "2d2bd03122628f7fc825467b62abaaec30232b25",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ETeissonniere",
+        "repo": "fogline",
+        "type": "github"
+      }
+    },
     "gitignore": {
       "inputs": {
         "nixpkgs": [
@@ -555,6 +575,7 @@
         "agenix-rekey": "agenix-rekey",
         "deploy-rs": "deploy-rs",
         "disko": "disko",
+        "fogline": "fogline",
         "home-manager": "home-manager",
         "homebrew-cask": "homebrew-cask",
         "homebrew-core": "homebrew-core",
