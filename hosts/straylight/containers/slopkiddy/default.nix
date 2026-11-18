@@ -54,8 +54,9 @@ in
 
   systemd.tmpfiles.rules = [
     # Reach models without granting directory listing access to container state.
-    "a+ ${storage} - - - - u:${config.me.username}:--x"
-    "A+ ${storage}/models - - - - u:${config.me.username}:rwX,d:u:${config.me.username}:rwx"
+    # Set masks explicitly because the directory modes can narrow the existing masks.
+    "a+ ${storage} - - - - u:${config.me.username}:--x,m::--x"
+    "A+ ${storage}/models - - - - u:${config.me.username}:rwX,m::rwX,d:u:${config.me.username}:rwx,d:m::rwx"
     "d ${storage}/models 0755 root root -"
     "d ${storage}/models/text 0755 root root -"
     "d ${storage}/models/images 0755 root root -"

@@ -30,15 +30,16 @@ to GPU memory. llama-swap runs one GPU backend at a time, including the
 existing text and image backends, and unloads either Cyberfrost backend after
 two idle minutes.
 
-Before activating this configuration, download the models on Straylight as a
-user with write access to the persistent model directory. The two downloads
-need about 185 GB together.
+Download the models on Straylight as your normal user. The two downloads need
+about 185 GB together.
 
 ```fish
-hf download Shaeh/CYBER-FROST-3.8-GGUF CYBER-FROST-3.8-Q3_K_M.gguf \
+nix run nixpkgs#python3Packages.huggingface-hub -- download \
+  Shaeh/CYBER-FROST-3.8-GGUF CYBER-FROST-3.8-Q3_K_M.gguf \
   --revision 2d5a10f4154cc21b315b9692ffa637f9862fefd1 \
   --local-dir /data/slopkiddy/models/text/CYBER-FROST-3.8-GGUF
-hf download vcruz305/CYBER-FROST-3.8-EXL3-SAGE-3.35bpw \
+nix run nixpkgs#python3Packages.huggingface-hub -- download \
+  vcruz305/CYBER-FROST-3.8-EXL3-SAGE-3.35bpw \
   --revision 60a9f7250c8cb37f973bd393a4862037477f2329 \
   --local-dir /data/slopkiddy/models/text/CYBER-FROST-3.8-EXL3-SAGE-3.35bpw
 ```
