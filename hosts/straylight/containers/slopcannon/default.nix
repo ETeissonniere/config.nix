@@ -40,6 +40,7 @@ in
         # Codex CLI sandbox seem to have various issues in the systemd-nspawn container,
         # so we need to enable a couple "hacks" it can work as expected.
         ./codex-fixes.nix
+        ./microvm-network-tests.nix
       ];
       me = { inherit username sshKeys; };
       users.users.${username} = {
