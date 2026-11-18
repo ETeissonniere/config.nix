@@ -59,6 +59,7 @@
     "claude"
     "google-chrome"
     "monitorcontrol"
+    "t3-code"
   ];
 
   homebrew.masApps = {
