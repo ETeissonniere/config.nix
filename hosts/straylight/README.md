@@ -44,19 +44,49 @@ nix run nixpkgs#python3Packages.huggingface-hub -- download \
   --local-dir /data/slopkiddy/models/text/CYBER-FROST-3.8-EXL3-SAGE-3.35bpw
 ```
 
-Use `https://openwebui.teiss.org/inference/v1` as the OpenAI-compatible base URL
-on the home LAN, in Slopcannon, or through the Tailscale subnet route. Access
-is based on the source network. Agents that require a non-empty API key can use
-`local`. Both backends support Chat Completions. The GGUF backend also serves the
-Responses API.
+Use `https://llama.teiss.org/v1` for Cyberfrost and
+`https://llama.teiss.org/upstream/text/v1` for the existing llama-server models.
+Both OpenAI-compatible endpoints work on the home LAN, in Slopcannon, or
+through the Tailscale subnet route. Agents that require a non-empty API key
+can use `local`. Both Cyberfrost models support Chat Completions. The GGUF
+backend also serves the Responses API.
 
 ```fish
-curl -fsS https://openwebui.teiss.org/inference/v1/models
+curl -fsS https://llama.teiss.org/v1/models | jq -er '.data[].id'
+```
+
+To test tool calls with the Pi coding agent, merge this provider into
+`~/.pi/agent/models.json` on the machine running the agent.
+
+```json
+{
+  "providers": {
+    "cyberfrost": {
+      "baseUrl": "https://llama.teiss.org/v1",
+      "api": "openai-completions",
+      "apiKey": "local",
+      "models": [
+        { "id": "cyberfrost-gguf", "contextWindow": 262144, "maxTokens": 4096 },
+        { "id": "cyberfrost-exl3", "contextWindow": 262144, "maxTokens": 4096 }
+      ]
+    }
+  }
+}
+```
+
+Give both models a file whose contents are absent from the prompt. Each
+response should match the value printed at the end.
+
+```fish
+set -l probe (mktemp)
+random > "$probe"
 for model in cyberfrost-gguf cyberfrost-exl3
-    curl -fsS https://openwebui.teiss.org/inference/v1/chat/completions \
-      -H 'Content-Type: application/json' \
-      -d "{\"model\":\"$model\",\"messages\":[{\"role\":\"user\",\"content\":\"Name the capital of France.\"}],\"max_tokens\":128}"
+    nix run nixpkgs#pi-coding-agent -- \
+      --model cyberfrost/$model --print --no-session --tools read \
+      "Use the read tool on $probe and return the file contents exactly."
 end
+cat "$probe"
+rm -- "$probe"
 ```
 
 Check `nvidia-smi` on Straylight after two idle minutes to confirm VRAM is
