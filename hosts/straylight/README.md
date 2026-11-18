@@ -22,7 +22,7 @@ Containers use native NixOS containers. Manage them through systemd, for example
 
 ## Cyberfrost
 
-`cyberfrost-gguf` uses llama.cpp with the Q2_K quant. `cyberfrost-exl3` uses
+`cyberfrost-gguf` uses llama.cpp with the Q3_K_M quant. `cyberfrost-exl3` uses
 TabbyAPI with Vic's SAGE 3.35 bpw quant. Each has one 262,144-token slot for
 prompt and output combined. Both stream n-gram weights from the SSD. EXL3
 offloads most routed experts to the CPU and promotes frequently used experts
@@ -32,10 +32,10 @@ two idle minutes.
 
 Before activating this configuration, download the models on Straylight as a
 user with write access to the persistent model directory. The two downloads
-need about 177 GB together.
+need about 185 GB together.
 
 ```fish
-hf download Shaeh/CYBER-FROST-3.8-GGUF CYBER-FROST-3.8-Q2_K.gguf \
+hf download Shaeh/CYBER-FROST-3.8-GGUF CYBER-FROST-3.8-Q3_K_M.gguf \
   --revision 2d5a10f4154cc21b315b9692ffa637f9862fefd1 \
   --local-dir /data/slopkiddy/models/text/CYBER-FROST-3.8-GGUF
 hf download vcruz305/CYBER-FROST-3.8-EXL3-SAGE-3.35bpw \
@@ -43,22 +43,16 @@ hf download vcruz305/CYBER-FROST-3.8-EXL3-SAGE-3.35bpw \
   --local-dir /data/slopkiddy/models/text/CYBER-FROST-3.8-EXL3-SAGE-3.35bpw
 ```
 
-From a laptop, keep the SSH tunnel open while the agent uses the model.
+Use `https://openwebui.teiss.org/inference/v1` as the OpenAI-compatible base URL
+on the home LAN, in Slopcannon, or through the Tailscale subnet route. Access
+is based on the source network. Agents that require a non-empty API key can use
+`local`. Both backends support Chat Completions. The GGUF backend also serves the
+Responses API.
 
 ```fish
-ssh -N -o ExitOnForwardFailure=yes \
-  -L 127.0.0.1:8082:/run/slopkiddy-inference/api.sock straylight.local
-```
-
-Use `http://127.0.0.1:8082/v1` as the OpenAI-compatible base URL. The same URL
-works directly in Slopcannon. Agents that require a non-empty API key can use
-`local`. Both backends support Chat Completions. The GGUF backend also serves
-the Responses API.
-
-```fish
-curl -fsS http://127.0.0.1:8082/v1/models
+curl -fsS https://openwebui.teiss.org/inference/v1/models
 for model in cyberfrost-gguf cyberfrost-exl3
-    curl -fsS http://127.0.0.1:8082/v1/chat/completions \
+    curl -fsS https://openwebui.teiss.org/inference/v1/chat/completions \
       -H 'Content-Type: application/json' \
       -d "{\"model\":\"$model\",\"messages\":[{\"role\":\"user\",\"content\":\"Name the capital of France.\"}],\"max_tokens\":128}"
 end

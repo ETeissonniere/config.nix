@@ -1,11 +1,29 @@
-{ inputs, ... }:
+{ config, inputs, ... }:
 {
   imports = [ inputs.self.nixosModules.profiles.reverse-proxy ];
 
   services.caddy = {
     environmentFile = "/run/secrets/slopkiddy-caddy-environment";
     virtualHosts."openwebui.teiss.org".extraConfig = ''
-      reverse_proxy 127.0.0.1:8080
+      handle_path /inference/* {
+        @inference {
+          # Chiba's Tailscale subnet router presents routed clients with its LAN address.
+          remote_ip 192.168.86.0/24 fd13:78d2:adae:4243::/64
+          path /v1/models /v1/chat/completions /v1/completions /v1/responses
+        }
+        handle @inference {
+          reverse_proxy 127.0.0.1:${toString config.services.llama-swap.port} {
+            header_up -Authorization
+            header_up -Cookie
+          }
+        }
+        handle {
+          respond 404
+        }
+      }
+      handle {
+        reverse_proxy 127.0.0.1:8080
+      }
     '';
     virtualHosts."comfy.teiss.org".extraConfig = ''
       reverse_proxy 127.0.0.1:4180

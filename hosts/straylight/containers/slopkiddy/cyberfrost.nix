@@ -12,7 +12,7 @@ let
     inherit context;
     tools = true;
   };
-  ggufModel = "/models/text/CYBER-FROST-3.8-GGUF/CYBER-FROST-3.8-Q2_K.gguf";
+  ggufModel = "/models/text/CYBER-FROST-3.8-GGUF/CYBER-FROST-3.8-Q3_K_M.gguf";
   exl3Model = "CYBER-FROST-3.8-EXL3-SAGE-3.35bpw";
   tabby = import ./services/tabbyapi { inherit pkgs; };
   tabbyConfig = (pkgs.formats.yaml { }).generate "config.yml" {
@@ -118,24 +118,5 @@ in
       "cyberfrost-gguf"
       "cyberfrost-exl3"
     ];
-  };
-
-  services.nginx.virtualHosts.inference-api = {
-    listen = [
-      {
-        addr = "127.0.0.1";
-        port = 8083;
-      }
-    ];
-    # The SSH and container socket only expose inference, not llama-swap's management API.
-    locations."~ ^/v1/(models|chat/completions|completions|responses)$" = {
-      proxyPass = "http://127.0.0.1:${toString config.services.llama-swap.port}";
-      extraConfig = ''
-        client_max_body_size 8m;
-        proxy_buffering off;
-        proxy_read_timeout ${toString requestTimeout}s;
-      '';
-    };
-    locations."/".return = "404";
   };
 }
