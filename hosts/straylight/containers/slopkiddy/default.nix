@@ -32,6 +32,7 @@ in
         ./services/llama-swap
         ./auth.nix
         ./inference.nix
+        ./cyberfrost.nix
         ./webui.nix
         ./documents.nix
       ];
