@@ -5,6 +5,8 @@
   ...
 }:
 {
+  imports = [ ./t3-remote-control.nix ];
+
   options.services = {
     codex-remote-control.enable = lib.mkEnableOption "Codex remote control through a Linux user service";
     claude-remote-control.enable = lib.mkEnableOption "Claude Code Remote Control through a Linux user service";

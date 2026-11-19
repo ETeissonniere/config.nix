@@ -5,6 +5,7 @@ let
     "openwebui"
     "comfy"
   ];
+  slopcannonAliases = [ "t3" ];
   nasAliases = [
     "grimmory"
     "shelfmark"
@@ -63,6 +64,10 @@ in
             bind ${staticAddress} 127.0.0.1
             rewrite stop {
               name regex ^(${lib.concatStringsSep "|" slopkiddyAliases})[.]teiss[.]org[.]$ slopkiddy.local.
+              answer auto
+            }
+            rewrite stop {
+              name regex ^(${lib.concatStringsSep "|" slopcannonAliases})[.]teiss[.]org[.]$ slopcannon.local.
               answer auto
             }
             rewrite stop {
