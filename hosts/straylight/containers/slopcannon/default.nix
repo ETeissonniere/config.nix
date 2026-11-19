@@ -29,13 +29,19 @@ in
         "/etc/ssh"
         "/var/lib/nixos"
         "/var/lib/systemd"
+        "/var/lib/caddy"
         "/var/log"
       ];
     };
+    # Match the container's private UID mapping, including root-owned secret files.
+    extraFlags = [
+      "--bind-ro=${builtins.dirOf config.age.secrets.slopcannon-caddy-environment.path}:/run/secrets:idmap"
+    ];
     config = {
       imports = [
         inputs.self.lib.commonModules.profiles.base
         inputs.self.nixosModules.ssh-server
+        inputs.self.nixosModules.profiles.reverse-proxy
         inputs.home-manager.nixosModules.home-manager
         # Codex CLI sandbox seem to have various issues in the systemd-nspawn container,
         # so we need to enable a couple "hacks" it can work as expected.
@@ -52,6 +58,13 @@ in
       };
       # Agents do not need sudo; change the environment through a host Nix rebuild.
       security.sudo.enable = false;
+      services.caddy = {
+        environmentFile = "/run/secrets/slopcannon-caddy-environment";
+        virtualHosts."t3.teiss.org".extraConfig = ''
+          # T3's default port; the T3 user service listens only on loopback.
+          reverse_proxy 127.0.0.1:3773
+        '';
+      };
       # Let LAN clients reach development servers without per-project port rules.
       networking.firewall.trustedInterfaces = [ "eth0" ];
       # Prevent inadvertent access to the client laptop's SSH agent from the container.
@@ -65,9 +78,13 @@ in
         imports = [ inputs.self.homeModules.profiles.coding ];
         services.codex-remote-control.enable = true;
         services.claude-remote-control.enable = true;
+        services.t3-remote-control.enable = true;
         home.stateVersion = "26.05";
       };
       system.stateVersion = "26.05";
     };
   };
+  systemd.services."container@slopcannon".restartTriggers = [
+    config.age.secrets.slopcannon-caddy-environment.file
+  ];
 }

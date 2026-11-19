@@ -4,7 +4,15 @@
   ...
 }:
 {
-  age.secrets =
+  age.secrets = {
+    # Straylight's Cloudflare token, decrypted again so slopcannon gets none of slopkiddy's secrets.
+    slopcannon-caddy-environment = {
+      rekeyFile = ../../secrets/straylight/slopkiddy-caddy-environment.age;
+      path = "${config.age.secretsMountPoint}/services/slopcannon/slopcannon-caddy-environment";
+      symlink = false;
+    };
+  }
+  //
     lib.genAttrs
       [
         "webui-environment"
