@@ -18,6 +18,9 @@
       {
         programs.codex.settings.desktop.mac-menu-bar-enabled = false;
 
+        # GUI launches can lack NIX_SSL_CERT_FILE, which the nixpkgs wrapper uses for system roots.
+        programs.claude-code.settings.env.CLAUDE_CODE_CERT_STORE = "bundled";
+
         # One more store path for this JSON exceeds Armitage's Darwin sandbox profile limit.
         home.activation.claudeMenuBar = lib.hm.dag.entryAfter [ "linkGeneration" ] (
           "("
