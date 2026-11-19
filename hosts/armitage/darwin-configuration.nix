@@ -11,6 +11,8 @@
     nixRemoteBuilders.enable = true;
   };
 
+  services.tailscale.enable = true;
+
   # Compatibility baseline for this installation; do not bump during updates.
   system.stateVersion = 6;
 }
