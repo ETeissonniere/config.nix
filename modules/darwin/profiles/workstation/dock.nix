@@ -24,6 +24,7 @@
       "/Applications/ChatGPT.app"
       "/Applications/Claude.app"
       "/Applications/Nix Apps/Zed.app"
+      "/Applications/T3 Code (Beta).app"
       "/Applications/BambuStudio.app"
     ];
 
