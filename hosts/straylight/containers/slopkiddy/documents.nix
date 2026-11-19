@@ -2,10 +2,7 @@
 {
   services.docling-serve = {
     enable = true;
-    # Nixpkgs supplies websockets 17; the service still declares a <17 bound.
-    package = (pkgs.docling-serve.override { withTesserocr = true; }).overridePythonAttrs (old: {
-      pythonRelaxDeps = old.pythonRelaxDeps ++ [ "websockets" ];
-    });
+    package = pkgs.docling-serve.override { withTesserocr = true; };
     environment = {
       DOCLING_DEVICE = "cpu";
       DOCLING_NUM_THREADS = "4";
