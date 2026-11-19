@@ -13,6 +13,8 @@
 
   services.tailscale.enable = true;
 
+  homebrew.casks = [ "utm" ];
+
   # Compatibility baseline for this installation; do not bump during updates.
   system.stateVersion = 6;
 }
