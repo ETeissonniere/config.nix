@@ -27,7 +27,6 @@
     blockAllIncoming = false;
     allowSigned = true;
     allowSignedApp = true;
-    # Stealth mode prevents network access for containers or VMs
     enableStealthMode = false;
   };
 
