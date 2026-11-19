@@ -27,7 +27,7 @@
     blockAllIncoming = false;
     allowSigned = true;
     allowSignedApp = true;
-    enableStealthMode = true;
+    enableStealthMode = false;
   };
 
   nix-homebrew = {
