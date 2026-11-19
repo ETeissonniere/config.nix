@@ -5,25 +5,13 @@
   ...
 }:
 {
-  imports = [ ./t3-remote-control.nix ];
-
-  options.services = {
-    codex-remote-control.enable = lib.mkEnableOption "Codex remote control through a Linux user service";
-    claude-remote-control.enable = lib.mkEnableOption "Claude Code Remote Control through a Linux user service";
-  };
+  imports = [
+    ./claude-remote-control.nix
+    ./codex-remote-control.nix
+    ./t3-remote-control.nix
+  ];
 
   config = {
-    assertions = [
-      {
-        assertion = !config.services.codex-remote-control.enable || pkgs.stdenv.hostPlatform.isLinux;
-        message = "Codex remote control requires Linux.";
-      }
-      {
-        assertion = !config.services.claude-remote-control.enable || pkgs.stdenv.hostPlatform.isLinux;
-        message = "Claude Code Remote Control requires Linux.";
-      }
-    ];
-
     programs.claude-code = {
       enable = true;
       mutableSettings = true;
@@ -67,67 +55,6 @@
       };
       ".claude/skills".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
-    };
-
-    systemd.user.services.codex-remote-control = lib.mkIf config.services.codex-remote-control.enable {
-      Unit.Description = "Codex remote control";
-      Service = {
-        # Wait for one-time login without repeatedly failing on a fresh installation.
-        ExecCondition = "${pkgs.codex}/bin/codex login status";
-        # The shared local socket lets `codex remote-control pair` reach this process.
-        ExecStart = "${pkgs.codex}/bin/codex app-server --listen unix:// --remote-control --managed-daemon";
-        WorkingDirectory = "%h";
-        Environment = [
-          "PATH=%h/.local/bin:/run/wrappers/bin:/etc/profiles/per-user/${config.home.username}/bin:/run/current-system/sw/bin"
-        ];
-        Restart = "on-failure";
-        RestartSec = 15;
-        UMask = "0077";
-      };
-      Install.WantedBy = [ "default.target" ];
-    };
-
-    systemd.user.paths.codex-remote-control = lib.mkIf config.services.codex-remote-control.enable {
-      Unit.Description = "Start Codex remote control after login";
-      Path.PathChanged = "%h/.codex/auth.json";
-      Install.WantedBy = [ "default.target" ];
-    };
-
-    systemd.user.services.claude-remote-control =
-      lib.mkIf config.services.claude-remote-control.enable
-        {
-          Unit.Description = "Claude Code Remote Control";
-          Service = {
-            # Wait for one-time `claude auth login` without repeatedly failing on a fresh installation.
-            ExecCondition = "${config.programs.claude-code.finalPackage}/bin/claude auth status";
-            # Claude Code asks to enable Remote Control and to trust the folder on first run, and
-            # has no setting for either; without a terminal those prompts block the service forever.
-            ExecStartPre = pkgs.writeShellScript "claude-remote-control-accept-prompts" ''
-              set -euo pipefail
-              config="$HOME/.claude.json"
-              [ -e "$config" ] || echo '{}' > "$config"
-              ${lib.getExe pkgs.jq} --arg dir "$PWD" \
-                '.remoteDialogSeen = true | .projects[$dir].hasTrustDialogAccepted = true' \
-                "$config" > "$config.tmp"
-              mv "$config.tmp" "$config"
-            '';
-            # An explicit spawn mode skips the interactive spawn-mode prompt for the same reason.
-            ExecStart = "${config.programs.claude-code.finalPackage}/bin/claude remote-control --spawn=same-dir";
-            WorkingDirectory = "%h/Developer";
-            Environment = [
-              "PATH=%h/.local/bin:/run/wrappers/bin:/etc/profiles/per-user/${config.home.username}/bin:/run/current-system/sw/bin"
-            ];
-            Restart = "on-failure";
-            RestartSec = 15;
-            UMask = "0077";
-          };
-          Install.WantedBy = [ "default.target" ];
-        };
-
-    systemd.user.paths.claude-remote-control = lib.mkIf config.services.claude-remote-control.enable {
-      Unit.Description = "Start Claude Code Remote Control after login";
-      Path.PathChanged = "%h/.claude/.credentials.json";
-      Install.WantedBy = [ "default.target" ];
     };
   };
 }
