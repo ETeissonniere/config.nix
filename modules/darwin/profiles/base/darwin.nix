@@ -27,7 +27,8 @@
     blockAllIncoming = false;
     allowSigned = true;
     allowSignedApp = true;
-    enableStealthMode = true;
+    # Stealth mode prevents network access for containers or VMs
+    enableStealthMode = false;
   };
 
   nix-homebrew = {
