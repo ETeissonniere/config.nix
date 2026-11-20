@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -13,6 +14,7 @@ let
     in
     lib.all (component: component != "" && component != "." && component != "..") components
   );
+  scratch = inputs.self.lib.scratch;
   containersWithPersistence = lib.filterAttrs (
     _: container: container.persistence.directory != null
   ) config.containers;
@@ -37,26 +39,36 @@ in
               default = [ ];
               description = "Absolute container directories to preserve beneath the backing directory.";
             };
+            scratchOnDisk = lib.mkEnableOption "disk-backed /tmp and /var/tmp, emptied on each container start";
           };
 
-          config.extraFlags = lib.mkIf (persistence.directory != null) (
-            map (
-              directory:
-              # ID mapping keeps ownership independent of privateUsers=pick.
-              "--bind=${persistence.directory}${directory}:${directory}"
-              + lib.optionalString (config.privateUsers != "no") ":idmap"
-            ) (persistence.directories ++ [ "/etc/machine-id" ])
-          );
+          config = {
+            extraFlags = lib.mkIf (persistence.directory != null) (
+              map (
+                directory:
+                # ID mapping keeps ownership independent of privateUsers=pick.
+                "--bind=${persistence.directory}${directory}:${directory}"
+                + lib.optionalString (config.privateUsers != "no") ":idmap"
+              ) (persistence.directories ++ [ "/etc/machine-id" ])
+            );
+            persistence.directories = lib.mkIf persistence.scratchOnDisk scratch.directories;
+            config.systemd.tmpfiles.rules = lib.mkIf persistence.scratchOnDisk scratch.wipeRules;
+          };
         }
       )
     );
   };
 
   config = lib.mkIf config.boot.enableContainers {
-    assertions = lib.mapAttrsToList (name: container: {
-      assertion = container.ephemeral;
-      message = "containers.${name}.persistence requires ephemeral = true.";
-    }) containersWithPersistence;
+    assertions =
+      lib.mapAttrsToList (name: container: {
+        assertion = container.ephemeral;
+        message = "containers.${name}.persistence requires ephemeral = true.";
+      }) containersWithPersistence
+      ++ lib.mapAttrsToList (name: container: {
+        assertion = !container.persistence.scratchOnDisk || container.persistence.directory != null;
+        message = "containers.${name}.persistence.scratchOnDisk requires persistence.directory.";
+      }) config.containers;
 
     systemd.tmpfiles.rules = lib.concatMap (
       container:

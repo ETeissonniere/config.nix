@@ -31,10 +31,9 @@ in
         "/var/lib/systemd"
         "/var/lib/caddy"
         "/var/log"
-        # Useful for builds, discarded on container restarts.
-        "/tmp"
-        "/var/tmp"
       ];
+      # Useful for builds, discarded on container restarts.
+      scratchOnDisk = true;
     };
     # Match the container's private UID mapping, including root-owned secret files.
     extraFlags = [
@@ -74,12 +73,6 @@ in
       services.openssh.settings.AllowAgentForwarding = false;
       # Support Zed's downloaded language servers and other Linux binaries.
       programs.nix-ld.enable = true;
-      # Empty the disk-backed scratch directories on each container start. systemd's
-      # tmp.conf still removes files older than 10 days (/tmp) and 30 days (/var/tmp).
-      systemd.tmpfiles.rules = [
-        "D! /tmp 1777 root root"
-        "D! /var/tmp 1777 root root"
-      ];
       users.mutableUsers = false;
       users.allowNoPasswordLogin = true;
 
