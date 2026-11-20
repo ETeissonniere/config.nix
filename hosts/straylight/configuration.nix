@@ -20,6 +20,9 @@
 
   containerHost.network.mainNetworkInterface = "enp12s0";
 
+  # Give RAM-backed tmpfs pages somewhere to go under pressure instead of OOM kills.
+  zramSwap.enable = true;
+
   hardware.cpu.amd.updateMicrocode = true;
   boot.initrd.availableKernelModules = [
     "ahci"
