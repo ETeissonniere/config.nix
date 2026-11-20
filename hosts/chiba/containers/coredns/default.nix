@@ -4,6 +4,7 @@ let
   slopkiddyAliases = [
     "openwebui"
     "comfy"
+    "llama"
   ];
   slopcannonAliases = [ "t3" ];
   nasAliases = [

@@ -19,3 +19,76 @@ Containers use native NixOS containers. Manage them through systemd, for example
 | --- | --- | --- | --- |
 | `container@slopcannon` | Remote development in a native NixOS container. | Own LAN address and mDNS name: `ssh slopcannon.local`. T3 Code at `t3.teiss.org`. Home, SSH host keys, and credentials persist under `/data/slopcannon`. | Automatic |
 | `container@slopkiddy` | Local AI: Open WebUI, llama.cpp, and ComfyUI behind Caddy, signed in through Pocket ID. | `openwebui.teiss.org` and `comfy.teiss.org`. State and manually downloaded models persist under `/data/slopkiddy`. | Automatic |
+
+## Cyberfrost
+
+`cyberfrost-gguf` uses llama.cpp with the Q3_K_M quant. `cyberfrost-exl3` uses
+TabbyAPI with Vic's SAGE 3.35 bpw quant. Each has one 262,144-token slot for
+prompt and output combined. Both stream n-gram weights from the SSD. EXL3
+offloads most routed experts to the CPU and promotes frequently used experts
+to GPU memory. llama-swap runs one GPU backend at a time, including the
+existing text and image backends, and unloads either Cyberfrost backend after
+two idle minutes.
+
+Download the models on Straylight as your normal user. The two downloads need
+about 185 GB together.
+
+```fish
+nix run nixpkgs#python3Packages.huggingface-hub -- download \
+  Shaeh/CYBER-FROST-3.8-GGUF CYBER-FROST-3.8-Q3_K_M.gguf \
+  --revision 2d5a10f4154cc21b315b9692ffa637f9862fefd1 \
+  --local-dir /data/slopkiddy/models/text/CYBER-FROST-3.8-GGUF
+nix run nixpkgs#python3Packages.huggingface-hub -- download \
+  vcruz305/CYBER-FROST-3.8-EXL3-SAGE-3.35bpw \
+  --revision 60a9f7250c8cb37f973bd393a4862037477f2329 \
+  --local-dir /data/slopkiddy/models/text/CYBER-FROST-3.8-EXL3-SAGE-3.35bpw
+```
+
+Use `https://llama.teiss.org/v1` for Cyberfrost and
+`https://llama.teiss.org/upstream/text/v1` for the existing llama-server models.
+Both OpenAI-compatible endpoints work on the home LAN, in Slopcannon, or
+through the Tailscale subnet route. Agents that require a non-empty API key
+can use `local`. Both Cyberfrost models support Chat Completions. The GGUF
+backend also serves the Responses API.
+
+```fish
+curl -fsS https://llama.teiss.org/v1/models | jq -er '.data[].id'
+```
+
+To test tool calls with the Pi coding agent, merge this provider into
+`~/.pi/agent/models.json` on the machine running the agent.
+
+```json
+{
+  "providers": {
+    "cyberfrost": {
+      "baseUrl": "https://llama.teiss.org/v1",
+      "api": "openai-completions",
+      "apiKey": "local",
+      "models": [
+        { "id": "cyberfrost-gguf", "contextWindow": 262144, "maxTokens": 4096 },
+        { "id": "cyberfrost-exl3", "contextWindow": 262144, "maxTokens": 4096 }
+      ]
+    }
+  }
+}
+```
+
+Give both models a file whose contents are absent from the prompt. Each
+response should match the value printed at the end.
+
+```fish
+set -l probe (mktemp)
+random > "$probe"
+for model in cyberfrost-gguf cyberfrost-exl3
+    nix run nixpkgs#pi-coding-agent -- \
+      --model cyberfrost/$model --print --no-session --tools read \
+      "Use the read tool on $probe and return the file contents exactly."
+end
+cat "$probe"
+rm -- "$probe"
+```
+
+Check `nvidia-smi` on Straylight after two idle minutes to confirm VRAM is
+released. A long-context check should send a prompt close to 262,144 tokens,
+with room for output, and verify retrieval from the start and end of that prompt.
