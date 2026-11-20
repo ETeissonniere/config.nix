@@ -20,7 +20,7 @@
 
   containerHost.network.mainNetworkInterface = "enp12s0";
 
-  # Give RAM-backed tmpfs pages somewhere to go under pressure instead of OOM kills.
+  # Compress RAM if under pressure (for instance for tmpfs).
   zramSwap.enable = true;
 
   hardware.cpu.amd.updateMicrocode = true;

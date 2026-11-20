@@ -31,8 +31,7 @@ in
         "/var/lib/systemd"
         "/var/lib/caddy"
         "/var/log"
-        # Disk-backed so agents' scratch files neither fill nspawn's small /tmp tmpfs
-        # nor sit in host RAM; cleanOnBoot and systemd's age rules keep them temporary.
+        # Useful for builds, discarded on container restarts.
         "/tmp"
         "/var/tmp"
       ];
@@ -75,7 +74,12 @@ in
       services.openssh.settings.AllowAgentForwarding = false;
       # Support Zed's downloaded language servers and other Linux binaries.
       programs.nix-ld.enable = true;
-      boot.tmp.cleanOnBoot = true;
+      # Empty the disk-backed scratch directories on each container start. systemd's
+      # tmp.conf still removes files older than 10 days (/tmp) and 30 days (/var/tmp).
+      systemd.tmpfiles.rules = [
+        "D! /tmp 1777 root root"
+        "D! /var/tmp 1777 root root"
+      ];
       users.mutableUsers = false;
       users.allowNoPasswordLogin = true;
 

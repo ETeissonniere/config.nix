@@ -7,7 +7,7 @@ let
     passwordFile = "/tmp/straylight-disk-password";
     settings = {
       crypttabExtraOpts = [ "tpm2-device=auto" ];
-      # Let the weekly fstrim reach the SSDs; this reveals only which blocks are free.
+      # Allow fstrim to do its job.
       allowDiscards = true;
     };
     content = {
