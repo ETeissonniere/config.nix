@@ -31,6 +31,10 @@ in
         "/var/lib/systemd"
         "/var/lib/caddy"
         "/var/log"
+        # Disk-backed so agents' scratch files neither fill nspawn's small /tmp tmpfs
+        # nor sit in host RAM; cleanOnBoot and systemd's age rules keep them temporary.
+        "/tmp"
+        "/var/tmp"
       ];
     };
     # Match the container's private UID mapping, including root-owned secret files.
@@ -71,6 +75,7 @@ in
       services.openssh.settings.AllowAgentForwarding = false;
       # Support Zed's downloaded language servers and other Linux binaries.
       programs.nix-ld.enable = true;
+      boot.tmp.cleanOnBoot = true;
       users.mutableUsers = false;
       users.allowNoPasswordLogin = true;
 
