@@ -6,8 +6,6 @@
 }:
 {
   imports = [
-    ./claude-remote-control.nix
-    ./codex-remote-control.nix
     ./t3-remote-control.nix
   ];
 
