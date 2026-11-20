@@ -43,8 +43,7 @@ in
         inputs.self.nixosModules.ssh-server
         inputs.self.nixosModules.profiles.reverse-proxy
         inputs.home-manager.nixosModules.home-manager
-        # Codex CLI sandbox seem to have various issues in the systemd-nspawn container,
-        # so we need to enable a couple "hacks" it can work as expected.
+        # The Codex sandbox needs a workaround to run in the systemd-nspawn container.
         ./codex-fixes.nix
         ./microvm-network-tests.nix
       ];
@@ -53,7 +52,7 @@ in
         isNormalUser = true;
         uid = 1000;
         homeMode = "700";
-        # So Codex can run even without an SSH session.
+        # So the T3 Code server runs even without an SSH session.
         linger = true;
       };
       # Agents do not need sudo; change the environment through a host Nix rebuild.
@@ -76,8 +75,6 @@ in
 
       home-manager.users.${username} = {
         imports = [ inputs.self.homeModules.profiles.coding ];
-        services.codex-remote-control.enable = true;
-        services.claude-remote-control.enable = true;
         services.t3-remote-control.enable = true;
         home.stateVersion = "26.05";
       };
