@@ -29,29 +29,35 @@ let
     '') contexts;
 in
 {
-  # Inkling 2 Mini needs ggml-org/llama.cpp#32694, and its Unsloth NVFP4 quants
-  # need #32704 for correct output. Drop once nixpkgs ships a release with both.
-  services.llama-cpp.package = (pkgs.llama-cpp.override { cudaSupport = true; }).overrideAttrs (old: {
-    src = pkgs.fetchFromGitHub {
-      owner = "ggml-org";
-      repo = "llama.cpp";
-      rev = "29b52d398b294509746ec0a3f28948a3107c0213";
-      hash = "sha256-6CcMhIEw2JzuQgAZqk0RnGuIXZ7/g4ofjLbQu9LRQAE=";
-    };
-    patches = (old.patches or [ ]) ++ [
-      (pkgs.fetchpatch {
-        url = "https://github.com/ggml-org/llama.cpp/commit/2a28df0f9bd55c4975b6bffb35229a6020720f13.patch";
-        hash = "sha256-B3Og5eIUhpnbrN5wDUNjCiPqypottQjOC1pdjVo+zaM=";
-      })
-    ];
-    # Master moved the bundled chat UI to ui/, which the nixpkgs recipe cannot build.
-    # Open WebUI is the front end here, so skip the UI and its download fallback.
-    nativeBuildInputs = lib.remove pkgs.npmHooks.npmConfigHook old.nativeBuildInputs;
-    preConfigure = "";
-    cmakeFlags = old.cmakeFlags ++ [ (lib.cmakeBool "LLAMA_USE_PREBUILT_UI" false) ];
-    # Master includes nvml.h and dlopens the driver's libnvidia-ml at runtime.
-    buildInputs = old.buildInputs ++ [ pkgs.cudaPackages.cuda_nvml_dev ];
-  });
+  # Inkling 2 Mini needs ggml-org/llama.cpp#32694 (release b12600), and its Unsloth
+  # NVFP4 quants need #32704 for correct output. Drop once nixpkgs ships both.
+  services.llama-cpp.package =
+    assert lib.assertMsg (pkgs.llama-cpp.version == "1.0.0")
+      "nixpkgs updated llama-cpp: drop the Inkling 2 Mini override if it has ggml-org/llama.cpp#32694 and #32704.";
+    (pkgs.llama-cpp.override { cudaSupport = true; }).overrideAttrs (old: {
+      version = "1.0.0-unstable-2026-11-20";
+      src = pkgs.fetchFromGitHub {
+        owner = "ggml-org";
+        repo = "llama.cpp";
+        tag = "b12600";
+        hash = "sha256-6CcMhIEw2JzuQgAZqk0RnGuIXZ7/g4ofjLbQu9LRQAE=";
+      };
+      # Vendored from the #32704 branch, which may be rewritten before merging.
+      patches = (old.patches or [ ]) ++ [ ./llama-cpp-inkling2-loop-scales.patch ];
+      # Master moved the bundled chat UI to ui/, which the nixpkgs recipe cannot build.
+      # Open WebUI is the front end here, so skip the UI and its download fallback.
+      npmDeps = null;
+      nativeBuildInputs = lib.remove pkgs.npmHooks.npmConfigHook old.nativeBuildInputs;
+      preConfigure = "";
+      cmakeFlags = old.cmakeFlags ++ [
+        (lib.cmakeBool "LLAMA_USE_PREBUILT_UI" false)
+        # The recipe hardcodes v1.0.0's build info; later definitions win.
+        (lib.cmakeFeature "LLAMA_BUILD_NUMBER" "12600")
+        (lib.cmakeFeature "LLAMA_BUILD_COMMIT" "29b52d3")
+      ];
+      # Master includes nvml.h and dlopens the driver's libnvidia-ml at runtime.
+      buildInputs = old.buildInputs ++ [ pkgs.cudaPackages.cuda_nvml_dev ];
+    });
   services.llama-cpp.settings = {
     host = "127.0.0.1";
     port = 8081;
