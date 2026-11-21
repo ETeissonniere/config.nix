@@ -110,7 +110,7 @@ in
     '';
     models-max = 1;
     jinja = true;
-    inherit parallel;
+    # No global parallel: router arguments override each preset's own slot count.
     # Keep preset context sizes fixed while auto-fitting GPU offloading.
     fit = "on";
     fit-ctx = 32768;
