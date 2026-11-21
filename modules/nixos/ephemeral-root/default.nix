@@ -5,15 +5,15 @@
   ...
 }:
 let
-  scratch = inputs.self.lib.scratch;
-  scratchOnDisk = config.ephemeralRoot.scratchOnDisk;
+  tmpDirs = inputs.self.lib.tmpOnDisk;
+  tmpOnDisk = config.ephemeralRoot.tmpOnDisk;
 in
 {
   imports = [
     inputs.preservation.nixosModules.preservation
   ];
 
-  options.ephemeralRoot.scratchOnDisk = lib.mkEnableOption "disk-backed /tmp and /var/tmp under /persist, emptied on each boot";
+  options.ephemeralRoot.tmpOnDisk = lib.mkEnableOption "disk-backed /tmp and /var/tmp under /persist, emptied on each boot";
 
   config = {
     # Hosts supply persistent /nix and /persist mounts and their own state allowlist.
@@ -26,8 +26,8 @@ in
         "mode=755"
       ];
     };
-    boot.tmp.useTmpfs = !scratchOnDisk;
-    systemd.tmpfiles.rules = lib.mkIf scratchOnDisk scratch.wipeRules;
+    boot.tmp.useTmpfs = !tmpOnDisk;
+    systemd.tmpfiles.rules = lib.mkIf tmpOnDisk tmpDirs.wipeRules;
     fileSystems."/persist".neededForBoot = true;
     preservation = {
       enable = true;
@@ -55,11 +55,11 @@ in
           "/var/lib/systemd/timers"
           "/var/log"
         ]
-        ++ lib.optionals scratchOnDisk (
+        ++ lib.optionals tmpOnDisk (
           map (directory: {
             inherit directory;
             mode = "1777";
-          }) scratch.directories
+          }) tmpDirs.directories
         );
         files = [
           {

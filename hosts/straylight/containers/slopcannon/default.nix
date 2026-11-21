@@ -33,7 +33,7 @@ in
         "/var/log"
       ];
       # Useful for builds, discarded on container restarts.
-      scratchOnDisk = true;
+      tmpOnDisk = true;
     };
     # Match the container's private UID mapping, including root-owned secret files.
     extraFlags = [

@@ -19,7 +19,7 @@ let
 in
 {
   lib.keys = import ./keys.nix;
-  lib.scratch = import ./scratch.nix;
+  lib.tmpOnDisk = import ./tmp-on-disk.nix;
   lib.darwin.decryptAgeSePassword = import ./darwin/decrypt-age-se-password.nix;
   lib.commonModules = discoverModules ../modules/common // {
     profiles = discoverModules ../modules/common/profiles;

@@ -4,8 +4,8 @@
     depends = [ "/persist" ];
   };
 
-  # Builds and agents need more scratch space than RAM should hold.
-  ephemeralRoot.scratchOnDisk = true;
+  # Builds and agents need more /tmp space than RAM should hold.
+  ephemeralRoot.tmpOnDisk = true;
 
   preservation.preserveAt."/persist".directories = [
     "/var/lib/sbctl"

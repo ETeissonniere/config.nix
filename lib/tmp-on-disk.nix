@@ -1,4 +1,4 @@
-# Scratch directories kept on disk and emptied at boot. systemd's tmp.conf still
+# Temporary directories kept on disk and emptied at boot. systemd's tmp.conf still
 # removes files older than 10 days (/tmp) and 30 days (/var/tmp).
 rec {
   directories = [

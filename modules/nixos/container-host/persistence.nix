@@ -14,7 +14,7 @@ let
     in
     lib.all (component: component != "" && component != "." && component != "..") components
   );
-  scratch = inputs.self.lib.scratch;
+  tmpDirs = inputs.self.lib.tmpOnDisk;
   containersWithPersistence = lib.filterAttrs (
     _: container: container.persistence.directory != null
   ) config.containers;
@@ -39,7 +39,7 @@ in
               default = [ ];
               description = "Absolute container directories to preserve beneath the backing directory.";
             };
-            scratchOnDisk = lib.mkEnableOption "disk-backed /tmp and /var/tmp, emptied on each container start";
+            tmpOnDisk = lib.mkEnableOption "disk-backed /tmp and /var/tmp, emptied on each container start";
           };
 
           config = {
@@ -51,8 +51,8 @@ in
                 + lib.optionalString (config.privateUsers != "no") ":idmap"
               ) (persistence.directories ++ [ "/etc/machine-id" ])
             );
-            persistence.directories = lib.mkIf persistence.scratchOnDisk scratch.directories;
-            config.systemd.tmpfiles.rules = lib.mkIf persistence.scratchOnDisk scratch.wipeRules;
+            persistence.directories = lib.mkIf persistence.tmpOnDisk tmpDirs.directories;
+            config.systemd.tmpfiles.rules = lib.mkIf persistence.tmpOnDisk tmpDirs.wipeRules;
           };
         }
       )
@@ -66,8 +66,8 @@ in
         message = "containers.${name}.persistence requires ephemeral = true.";
       }) containersWithPersistence
       ++ lib.mapAttrsToList (name: container: {
-        assertion = !container.persistence.scratchOnDisk || container.persistence.directory != null;
-        message = "containers.${name}.persistence.scratchOnDisk requires persistence.directory.";
+        assertion = !container.persistence.tmpOnDisk || container.persistence.directory != null;
+        message = "containers.${name}.persistence.tmpOnDisk requires persistence.directory.";
       }) config.containers;
 
     systemd.tmpfiles.rules = lib.concatMap (
