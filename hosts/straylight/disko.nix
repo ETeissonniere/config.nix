@@ -5,7 +5,11 @@ let
     inherit name;
     # Supplied only at install time; delete afterward. Never put it in the Nix store.
     passwordFile = "/tmp/straylight-disk-password";
-    settings.crypttabExtraOpts = [ "tpm2-device=auto" ];
+    settings = {
+      crypttabExtraOpts = [ "tpm2-device=auto" ];
+      # Allow fstrim to do its job.
+      allowDiscards = true;
+    };
     content = {
       type = "filesystem";
       format = "ext4";

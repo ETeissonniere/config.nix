@@ -14,6 +14,7 @@
   environment.systemPackages = [ pkgs.ghostty.terminfo ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  zramSwap.enable = true;
   hardware.enableRedistributableFirmware = lib.mkDefault true;
 
   networking = {

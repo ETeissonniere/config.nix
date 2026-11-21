@@ -18,7 +18,10 @@
       "mode=755"
     ];
   };
-  boot.tmp.useTmpfs = true;
+  systemd.tmpfiles.rules = [
+    "D! /tmp 1777 root root"
+    "D! /var/tmp 1777 root root"
+  ];
   fileSystems."/persist".neededForBoot = true;
   preservation = {
     enable = true;
@@ -45,6 +48,14 @@
         }
         "/var/lib/systemd/timers"
         "/var/log"
+        {
+          directory = "/tmp";
+          mode = "1777";
+        }
+        {
+          directory = "/var/tmp";
+          mode = "1777";
+        }
       ];
       files = [
         {

@@ -39,14 +39,25 @@ in
             };
           };
 
-          config.extraFlags = lib.mkIf (persistence.directory != null) (
-            map (
-              directory:
-              # ID mapping keeps ownership independent of privateUsers=pick.
-              "--bind=${persistence.directory}${directory}:${directory}"
-              + lib.optionalString (config.privateUsers != "no") ":idmap"
-            ) (persistence.directories ++ [ "/etc/machine-id" ])
-          );
+          config = {
+            extraFlags = lib.mkIf (persistence.directory != null) (
+              map (
+                directory:
+                # ID mapping keeps ownership independent of privateUsers=pick.
+                "--bind=${persistence.directory}${directory}:${directory}"
+                + lib.optionalString (config.privateUsers != "no") ":idmap"
+              ) (persistence.directories ++ [ "/etc/machine-id" ])
+            );
+            # Wiped on every restart
+            persistence.directories = lib.mkIf (persistence.directory != null) [
+              "/tmp"
+              "/var/tmp"
+            ];
+            config.systemd.tmpfiles.rules = lib.mkIf (persistence.directory != null) [
+              "D! /tmp 1777 root root"
+              "D! /var/tmp 1777 root root"
+            ];
+          };
         }
       )
     );

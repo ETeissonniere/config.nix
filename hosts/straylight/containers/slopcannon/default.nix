@@ -9,7 +9,7 @@ in
 {
   containers.slopcannon = {
     limits = {
-      MemoryMax = "16G";
+      MemoryMax = "48G";
       CPUQuota = "800%";
       TasksMax = 4096;
     };
