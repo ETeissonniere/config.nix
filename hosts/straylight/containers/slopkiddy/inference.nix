@@ -13,6 +13,8 @@ let
       model,
       mmproj ? null,
       slots ? parallel,
+      # Full-length contexts in a KV pool shared by all slots; null gives each slot its own.
+      sharedContexts ? null,
       settings ? "",
       contexts ? [
         32
@@ -24,7 +26,11 @@ let
       model = /models/text/${directory}/${model}
       ${lib.optionalString (mmproj != null) "mmproj = /models/text/${directory}/${mmproj}"}
       parallel = ${toString slots}
-      ctx-size = ${toString (context * 1024 * slots)}
+      ctx-size = ${toString (context * 1024 * (if sharedContexts == null then slots else sharedContexts))}
+      ${lib.optionalString (sharedContexts != null) ''
+        kv-unified = true
+        kv-unified-per-slot = ${toString (context * 1024)}
+      ''}
       ${settings}
     '') contexts;
 in
@@ -72,7 +78,9 @@ in
         model = "Inkling-2-Mini-UD-Q4_K_XL.gguf";
         mmproj = "mmproj-F16.gguf";
         # Only 4 of 24 layers attend globally, so a q8_0 cache keeps 4 x 256K near 16 GiB.
-        slots = 4;
+        # Agents rarely fill their context together, so 8 slots share that pool.
+        slots = 8;
+        sharedContexts = 4;
         contexts = [
           32
           128
