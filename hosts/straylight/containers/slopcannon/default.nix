@@ -32,8 +32,6 @@ in
         "/var/lib/caddy"
         "/var/log"
       ];
-      # Useful for builds, discarded on container restarts.
-      tmpOnDisk = true;
     };
     # Match the container's private UID mapping, including root-owned secret files.
     extraFlags = [

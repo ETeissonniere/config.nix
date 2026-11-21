@@ -14,8 +14,6 @@ in
         "/var/lib/open-webui"
         "/var/lib/docling-serve"
       ];
-      # Uploads and model tooling can need more /tmp space than RAM should hold.
-      tmpOnDisk = true;
     };
     # Match the container's private UID mapping, including root-owned secret files.
     extraFlags = [
