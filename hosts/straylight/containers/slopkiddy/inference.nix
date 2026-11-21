@@ -29,6 +29,29 @@ let
     '') contexts;
 in
 {
+  # Inkling 2 Mini needs ggml-org/llama.cpp#32694, and its Unsloth NVFP4 quants
+  # need #32704 for correct output. Drop once nixpkgs ships a release with both.
+  services.llama-cpp.package = (pkgs.llama-cpp.override { cudaSupport = true; }).overrideAttrs (old: {
+    src = pkgs.fetchFromGitHub {
+      owner = "ggml-org";
+      repo = "llama.cpp";
+      rev = "29b52d398b294509746ec0a3f28948a3107c0213";
+      hash = "sha256-6CcMhIEw2JzuQgAZqk0RnGuIXZ7/g4ofjLbQu9LRQAE=";
+    };
+    patches = (old.patches or [ ]) ++ [
+      (pkgs.fetchpatch {
+        url = "https://github.com/ggml-org/llama.cpp/commit/2a28df0f9bd55c4975b6bffb35229a6020720f13.patch";
+        hash = "sha256-B3Og5eIUhpnbrN5wDUNjCiPqypottQjOC1pdjVo+zaM=";
+      })
+    ];
+    # Master moved the bundled chat UI to ui/, which the nixpkgs recipe cannot build.
+    # Open WebUI is the front end here, so skip the UI and its download fallback.
+    nativeBuildInputs = lib.remove pkgs.npmHooks.npmConfigHook old.nativeBuildInputs;
+    preConfigure = "";
+    cmakeFlags = old.cmakeFlags ++ [ (lib.cmakeBool "LLAMA_USE_PREBUILT_UI" false) ];
+    # Master includes nvml.h and dlopens the driver's libnvidia-ml at runtime.
+    buildInputs = old.buildInputs ++ [ pkgs.cudaPackages.cuda_nvml_dev ];
+  });
   services.llama-cpp.settings = {
     host = "127.0.0.1";
     port = 8081;
@@ -36,6 +59,19 @@ in
     models-preset = pkgs.writeText "slopkiddy-models.ini" ''
       version = 1
 
+      ${modelPresets {
+        name = "Inkling-2-Mini";
+        # Unsloth's Mainline_Support layout, renamed from .gguf_file to .gguf.
+        directory = "Inkling-2-Mini-UD-Q4_K_XL";
+        model = "Inkling-2-Mini-UD-Q4_K_XL.gguf";
+        mmproj = "mmproj-F16.gguf";
+        settings = ''
+          temp = 1.0
+          top-p = 1.0
+          top-k = 0
+          min-p = 0.0
+        '';
+      }}
       ${modelPresets {
         name = "LFM2.5-24B-A2B-QAD";
         directory = "LFM2.5-24B-A2B-QAD-Q4_0";
