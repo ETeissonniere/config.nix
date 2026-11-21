@@ -1,82 +1,80 @@
 {
   config,
   inputs,
-  lib,
   ...
 }:
-let
-  tmpDirs = inputs.self.lib.tmpOnDisk;
-  tmpOnDisk = config.ephemeralRoot.tmpOnDisk;
-in
 {
   imports = [
     inputs.preservation.nixosModules.preservation
   ];
 
-  options.ephemeralRoot.tmpOnDisk = lib.mkEnableOption "disk-backed /tmp and /var/tmp under /persist, emptied on each boot";
-
-  config = {
-    # Hosts supply persistent /nix and /persist mounts and their own state allowlist.
-    fileSystems."/" = {
-      device = "none";
-      fsType = "tmpfs";
-      # Cap transient data on / at 4GiB. Note that this is not reserving RAM, just saying we may grow **up to** 4GiB
-      options = [
-        "size=4G"
-        "mode=755"
+  # Hosts supply persistent /nix and /persist mounts and their own state allowlist.
+  fileSystems."/" = {
+    device = "none";
+    fsType = "tmpfs";
+    # Cap transient data on / at 4GiB. Note that this is not reserving RAM, just saying we may grow **up to** 4GiB
+    options = [
+      "size=4G"
+      "mode=755"
+    ];
+  };
+  # /tmp and /var/tmp are preserved below so we are not limited for builds or general
+  # agents work. Empty them at boot only, so rebuilds keep files in use; systemd's
+  # tmp.conf still removes files older than 10 days (/tmp) and 30 days (/var/tmp).
+  systemd.tmpfiles.rules = [
+    "D! /tmp 1777 root root"
+    "D! /var/tmp 1777 root root"
+  ];
+  fileSystems."/persist".neededForBoot = true;
+  preservation = {
+    enable = true;
+    preserveAt."/persist" = {
+      users.${config.me.username}.directories = [
+        {
+          # Fish replaces its history file atomically, so preserve the directory.
+          directory = ".local/share/fish";
+          mode = "0700";
+        }
+        {
+          directory = ".cache";
+          mode = "0700";
+        }
+      ];
+      directories = [
+        {
+          directory = "/etc/ssh";
+          inInitrd = true;
+        }
+        {
+          directory = "/var/lib/nixos";
+          inInitrd = true;
+        }
+        "/var/lib/systemd/timers"
+        "/var/log"
+        {
+          directory = "/tmp";
+          mode = "1777";
+        }
+        {
+          directory = "/var/tmp";
+          mode = "1777";
+        }
+      ];
+      files = [
+        {
+          file = "/etc/machine-id";
+          inInitrd = true;
+        }
+        {
+          file = "/var/lib/systemd/random-seed";
+          how = "symlink";
+          inInitrd = true;
+          configureParent = true;
+        }
       ];
     };
-    boot.tmp.useTmpfs = !tmpOnDisk;
-    systemd.tmpfiles.rules = lib.mkIf tmpOnDisk tmpDirs.wipeRules;
-    fileSystems."/persist".neededForBoot = true;
-    preservation = {
-      enable = true;
-      preserveAt."/persist" = {
-        users.${config.me.username}.directories = [
-          {
-            # Fish replaces its history file atomically, so preserve the directory.
-            directory = ".local/share/fish";
-            mode = "0700";
-          }
-          {
-            directory = ".cache";
-            mode = "0700";
-          }
-        ];
-        directories = [
-          {
-            directory = "/etc/ssh";
-            inInitrd = true;
-          }
-          {
-            directory = "/var/lib/nixos";
-            inInitrd = true;
-          }
-          "/var/lib/systemd/timers"
-          "/var/log"
-        ]
-        ++ lib.optionals tmpOnDisk (
-          map (directory: {
-            inherit directory;
-            mode = "1777";
-          }) tmpDirs.directories
-        );
-        files = [
-          {
-            file = "/etc/machine-id";
-            inInitrd = true;
-          }
-          {
-            file = "/var/lib/systemd/random-seed";
-            how = "symlink";
-            inInitrd = true;
-            configureParent = true;
-          }
-        ];
-      };
-    };
-    # Preservation supplies the persistent machine ID before systemd starts.
-    systemd.suppressedSystemUnits = [ "systemd-machine-id-commit.service" ];
-    users.mutableUsers = false;
   };
+  # Preservation supplies the persistent machine ID before systemd starts.
+  systemd.suppressedSystemUnits = [ "systemd-machine-id-commit.service" ];
+  users.mutableUsers = false;
 }

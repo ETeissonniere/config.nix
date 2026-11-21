@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
   ...
@@ -14,9 +13,6 @@ let
     in
     lib.all (component: component != "" && component != "." && component != "..") components
   );
-  tmpDirs = inputs.self.lib.tmpOnDisk;
-  # Containers keep /tmp wherever their host does.
-  tmpOnDisk = config.ephemeralRoot.tmpOnDisk;
   containersWithPersistence = lib.filterAttrs (
     _: container: container.persistence.directory != null
   ) config.containers;
@@ -52,8 +48,16 @@ in
                 + lib.optionalString (config.privateUsers != "no") ":idmap"
               ) (persistence.directories ++ [ "/etc/machine-id" ])
             );
-            persistence.directories = lib.mkIf tmpOnDisk tmpDirs.directories;
-            config.systemd.tmpfiles.rules = lib.mkIf tmpOnDisk tmpDirs.wipeRules;
+            # Containers inherit the host's on-disk /tmp and /var/tmp for consistency,
+            # emptied on each container start.
+            persistence.directories = lib.mkIf (persistence.directory != null) [
+              "/tmp"
+              "/var/tmp"
+            ];
+            config.systemd.tmpfiles.rules = lib.mkIf (persistence.directory != null) [
+              "D! /tmp 1777 root root"
+              "D! /var/tmp 1777 root root"
+            ];
           };
         }
       )
@@ -61,15 +65,10 @@ in
   };
 
   config = lib.mkIf config.boot.enableContainers {
-    assertions =
-      lib.mapAttrsToList (name: container: {
-        assertion = container.ephemeral;
-        message = "containers.${name}.persistence requires ephemeral = true.";
-      }) containersWithPersistence
-      ++ lib.mapAttrsToList (name: container: {
-        assertion = !tmpOnDisk || container.persistence.directory != null;
-        message = "containers.${name} needs persistence.directory to keep /tmp on disk like its host (ephemeralRoot.tmpOnDisk).";
-      }) config.containers;
+    assertions = lib.mapAttrsToList (name: container: {
+      assertion = container.ephemeral;
+      message = "containers.${name}.persistence requires ephemeral = true.";
+    }) containersWithPersistence;
 
     systemd.tmpfiles.rules = lib.concatMap (
       container:

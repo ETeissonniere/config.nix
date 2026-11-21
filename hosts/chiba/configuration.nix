@@ -38,7 +38,6 @@
     "size=256M"
     "mode=755"
   ];
-  boot.tmp.tmpfsSize = "128M";
   services.journald.settings.Journal = {
     SystemMaxUse = "64M";
     RuntimeMaxUse = "16M";
