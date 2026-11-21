@@ -48,7 +48,7 @@ in
                 + lib.optionalString (config.privateUsers != "no") ":idmap"
               ) (persistence.directories ++ [ "/etc/machine-id" ])
             );
-            # Not preserved: listed only to get disk-backed binds like the host's; wiped at each start.
+            # Wiped on every restart
             persistence.directories = lib.mkIf (persistence.directory != null) [
               "/tmp"
               "/var/tmp"
