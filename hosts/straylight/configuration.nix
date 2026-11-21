@@ -20,9 +20,6 @@
 
   containerHost.network.mainNetworkInterface = "enp12s0";
 
-  # Compress RAM if under pressure (for instance for tmpfs).
-  zramSwap.enable = true;
-
   hardware.cpu.amd.updateMicrocode = true;
   boot.initrd.availableKernelModules = [
     "ahci"
