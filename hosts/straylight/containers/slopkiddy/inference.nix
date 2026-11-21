@@ -88,53 +88,10 @@ in
         '';
       }}
       ${modelPresets {
-        name = "LFM2.5-24B-A2B-QAD";
-        directory = "LFM2.5-24B-A2B-QAD-Q4_0";
-        model = "LFM2.5-24B-A2B-QAD-Q4_0.gguf";
-        slots = 1;
-        settings = ''
-          temp = 0.1
-          top-k = 50
-          repeat-penalty = 1.05
-          flash-attn = on
-        '';
-      }}
-      ${modelPresets {
-        name = "LFM3-Omni-2B";
-        directory = "LFM3-Omni-2B-Q8_0";
-        model = "LFM3-Omni-2B-Q8_0.gguf";
-        mmproj = "mmproj-LFM3-Omni-2B-Q8_0.gguf";
-        contexts = [ 32 ];
-        settings = ''
-          temp = 0
-          reasoning = off
-        '';
-      }}
-      ${modelPresets {
-        name = "LFM3-VL-2B";
-        directory = "LFM3-VL-2B-Q8_0";
-        model = "LFM3-VL-2B-Q8_0.gguf";
-        mmproj = "mmproj-LFM3-VL-2B-Q8_0.gguf";
-        settings = ''
-          temp = 0.1
-          top-p = 1.0
-          top-k = 50
-          min-p = 0.0
-          repeat-penalty = 1.1
-          no-reasoning-preserve = true
-        '';
-      }}
-      ${modelPresets {
         name = "Nemotron-3.5-Bolt-74B";
         directory = "Nemotron-3.5-Bolt-74B-A9B";
         model = "NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf";
         mmproj = "mmproj-NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf";
-      }}
-      ${modelPresets {
-        name = "Qwen3.8-27B-Q4";
-        directory = "Qwen3.8-27B-Uncensored-Q4_K_M";
-        model = "Qwen3.8-27B-Uncensored-Q4_K_M.gguf";
-        mmproj = "mmproj-f16.gguf";
       }}
       ${modelPresets {
         name = "Qwen3.8-27B-Q3";
