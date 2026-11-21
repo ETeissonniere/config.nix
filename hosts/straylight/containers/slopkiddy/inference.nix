@@ -13,8 +13,6 @@ let
       model,
       mmproj ? null,
       slots ? parallel,
-      # Full-length contexts in a KV pool shared by all slots; null gives each slot its own.
-      sharedContexts ? null,
       settings ? "",
       contexts ? [
         32
@@ -26,13 +24,34 @@ let
       model = /models/text/${directory}/${model}
       ${lib.optionalString (mmproj != null) "mmproj = /models/text/${directory}/${mmproj}"}
       parallel = ${toString slots}
-      ctx-size = ${toString (context * 1024 * (if sharedContexts == null then slots else sharedContexts))}
-      ${lib.optionalString (sharedContexts != null) ''
-        kv-unified = true
-        kv-unified-per-slot = ${toString (context * 1024)}
-      ''}
+      ctx-size = ${toString (context * 1024 * slots)}
       ${settings}
     '') contexts;
+  # Inkling's relative-position bias disables flash attention, so compute buffers
+  # grow with batch size times context; 256K measured too slow to keep.
+  inklingPresets =
+    {
+      slots,
+      contexts,
+      settings ? "",
+    }:
+    modelPresets {
+      name = "Inkling-2-Mini";
+      # Unsloth's Mainline_Support layout, renamed from .gguf_file to .gguf.
+      directory = "Inkling-2-Mini-UD-Q4_K_XL";
+      model = "Inkling-2-Mini-UD-Q4_K_XL.gguf";
+      mmproj = "mmproj-F16.gguf";
+      inherit slots contexts;
+      settings = ''
+        temp = 1.0
+        top-p = 1.0
+        top-k = 0
+        min-p = 0.0
+        cache-type-k = q8_0
+        cache-type-v = q8_0
+        ${settings}
+      '';
+    };
 in
 {
   # Inkling 2 Mini needs ggml-org/llama.cpp#32694 (release b12600), and its Unsloth
@@ -71,29 +90,16 @@ in
     models-preset = pkgs.writeText "slopkiddy-models.ini" ''
       version = 1
 
-      ${modelPresets {
-        name = "Inkling-2-Mini";
-        # Unsloth's Mainline_Support layout, renamed from .gguf_file to .gguf.
-        directory = "Inkling-2-Mini-UD-Q4_K_XL";
-        model = "Inkling-2-Mini-UD-Q4_K_XL.gguf";
-        mmproj = "mmproj-F16.gguf";
-        # Only 4 of 24 layers attend globally, so a q8_0 cache keeps 4 x 256K near 16 GiB.
-        # Agents rarely fill their context together, so 8 slots share that pool.
-        slots = 8;
-        sharedContexts = 4;
-        contexts = [
-          32
-          128
-          256
-        ];
-        settings = ''
-          temp = 1.0
-          top-p = 1.0
-          top-k = 0
-          min-p = 0.0
-          cache-type-k = q8_0
-          cache-type-v = q8_0
-        '';
+      ${inklingPresets {
+        # Two slots measured fastest: 33 t/s alone, 41 t/s across both.
+        slots = 2;
+        contexts = [ 32 ];
+      }}
+      ${inklingPresets {
+        # Without flash attention, a 128K batch-512 compute buffer outgrows the GPU.
+        slots = 1;
+        contexts = [ 128 ];
+        settings = "ubatch-size = 128";
       }}
       ${modelPresets {
         name = "Nemotron-3.5-Bolt-74B";
