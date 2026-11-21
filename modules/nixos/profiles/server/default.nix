@@ -29,6 +29,11 @@
       publish-addresses = true;
     };
   };
+  # Avahi exits when the system bus goes away and nothing restarts it, leaving
+  # the host unreachable as <host>.local. Starting it with the bus brings it back.
+  systemd.services.avahi-daemon.wantedBy = [
+    (if config.services.dbus.implementation == "broker" then "dbus-broker.service" else "dbus.service")
+  ];
   users.users.${config.me.username} = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
