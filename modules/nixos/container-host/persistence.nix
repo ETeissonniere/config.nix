@@ -48,8 +48,6 @@ in
                 + lib.optionalString (config.privateUsers != "no") ":idmap"
               ) (persistence.directories ++ [ "/etc/machine-id" ])
             );
-            # Containers inherit the host's on-disk /tmp and /var/tmp for consistency,
-            # emptied on each container start.
             persistence.directories = lib.mkIf (persistence.directory != null) [
               "/tmp"
               "/var/tmp"

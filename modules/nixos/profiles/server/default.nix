@@ -14,7 +14,6 @@
   environment.systemPackages = [ pkgs.ghostty.terminfo ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  # Compress RAM if under pressure (for instance for tmpfs).
   zramSwap.enable = true;
   hardware.enableRedistributableFirmware = lib.mkDefault true;
 

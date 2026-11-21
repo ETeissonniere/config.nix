@@ -18,9 +18,6 @@
       "mode=755"
     ];
   };
-  # /tmp and /var/tmp are preserved below so we are not limited for builds or general
-  # agents work. Empty them at boot only, so rebuilds keep files in use; systemd's
-  # tmp.conf still removes files older than 10 days (/tmp) and 30 days (/var/tmp).
   systemd.tmpfiles.rules = [
     "D! /tmp 1777 root root"
     "D! /var/tmp 1777 root root"
