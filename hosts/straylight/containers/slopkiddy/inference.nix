@@ -65,11 +65,20 @@ in
         directory = "Inkling-2-Mini-UD-Q4_K_XL";
         model = "Inkling-2-Mini-UD-Q4_K_XL.gguf";
         mmproj = "mmproj-F16.gguf";
+        # Only 4 of 24 layers attend globally, so a q8_0 cache keeps 4 x 256K near 16 GiB.
+        slots = 4;
+        contexts = [
+          32
+          128
+          256
+        ];
         settings = ''
           temp = 1.0
           top-p = 1.0
           top-k = 0
           min-p = 0.0
+          cache-type-k = q8_0
+          cache-type-v = q8_0
         '';
       }}
       ${modelPresets {
