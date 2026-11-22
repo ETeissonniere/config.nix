@@ -23,6 +23,8 @@
     "D! /var/tmp 1777 root root"
   ];
   fileSystems."/persist".neededForBoot = true;
+  # Hosts bind /nix from /persist/nix.
+  fileSystems."/nix".depends = [ "/persist" ];
   preservation = {
     enable = true;
     preserveAt."/persist" = {
