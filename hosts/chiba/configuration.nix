@@ -9,7 +9,6 @@
     ./backup.nix
     ./containers
     ./sd-image.nix
-    ./persistence.nix
     ./secrets.nix
   ];
 
