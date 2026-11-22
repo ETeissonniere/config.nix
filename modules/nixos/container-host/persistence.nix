@@ -55,10 +55,7 @@ in
               "/tmp"
               "/var/tmp"
             ];
-            config.systemd.tmpfiles.rules = lib.mkIf (persistence.directory != null) [
-              "D! /tmp 1777 root root"
-              "D! /var/tmp 1777 root root"
-            ];
+            config = lib.mkIf (persistence.directory != null) (import ../tmp-on-disk);
           };
         }
       )

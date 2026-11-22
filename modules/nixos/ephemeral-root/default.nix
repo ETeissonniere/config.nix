@@ -6,6 +6,7 @@
 {
   imports = [
     inputs.preservation.nixosModules.preservation
+    ../tmp-on-disk
   ];
 
   # Hosts supply persistent /nix and /persist mounts and their own state allowlist.
@@ -18,10 +19,6 @@
       "mode=755"
     ];
   };
-  systemd.tmpfiles.rules = [
-    "D! /tmp 1777 root root"
-    "D! /var/tmp 1777 root root"
-  ];
   fileSystems."/persist".neededForBoot = true;
   # Hosts bind /nix from /persist/nix.
   fileSystems."/nix".depends = [ "/persist" ];
