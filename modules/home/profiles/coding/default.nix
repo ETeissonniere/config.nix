@@ -9,6 +9,7 @@
   imports = [
     ./agents.nix
     ./developer-folder.nix
+    ./direnv.nix
     ./gh.nix
     ./git.nix
     ./scauth.nix
