@@ -44,4 +44,5 @@
   # passwordless sudo; every other machine trusts only root.
   nix.settings.trusted-users = [ config.me.username ];
   nix.gc.dates = "weekly";
+  services.journald.settings.Journal.SystemMaxUse = lib.mkDefault "1G";
 }

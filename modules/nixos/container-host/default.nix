@@ -36,6 +36,8 @@ in
           config = {
             # Containers share the host store, so only the host schedules garbage collection.
             nix.gc.automatic = lib.mkForce false;
+            services.journald.settings.Journal.SystemMaxUse =
+              lib.mkDefault config.services.journald.settings.Journal.SystemMaxUse;
             networking = lib.mkIf network.enable {
               useHostResolvConf = false;
               interfaces.eth0.useDHCP = lib.mkDefault true;
