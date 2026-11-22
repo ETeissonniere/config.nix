@@ -27,7 +27,6 @@ in
       directories = [
         "/home"
         "/etc/ssh"
-        "/var/lib/nixos"
         "/var/lib/systemd"
         "/var/lib/caddy"
         "/var/log"
