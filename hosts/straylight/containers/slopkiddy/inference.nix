@@ -27,8 +27,6 @@ let
       ctx-size = ${toString (context * 1024 * slots)}
       ${settings}
     '') contexts;
-  # Inkling's relative-position bias disables flash attention, so compute buffers
-  # grow with batch size times context; 256K measured too slow to keep.
   inklingPresets =
     {
       slots,
@@ -42,7 +40,6 @@ let
       model = "Inkling-2-Mini-UD-Q4_K_XL.gguf";
       mmproj = "mmproj-F16.gguf";
       inherit slots contexts;
-      # DSpark drafting with three tokens measured best: +52% at 32K and +32% at 128K for one request.
       settings = ''
         temp = 1.0
         top-p = 1.0
