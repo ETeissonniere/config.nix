@@ -6,7 +6,6 @@
 }:
 {
   environment.systemPackages = with pkgs; [
-    appcleaner
     container
     ghostty-bin
     zed-editor
@@ -40,14 +39,6 @@
     {
       programs.ghostty.package = null;
       programs.zed-editor.package = null;
-
-      # Nix owns these apps; their built-in updaters cannot modify the store.
-      targets.darwin.defaults = {
-        "net.freemacsoft.AppCleaner" = {
-          SUEnableAutomaticChecks = false;
-          SUAutomaticallyUpdate = false;
-        };
-      };
     }
   ];
 
@@ -61,7 +52,6 @@
     "chatgpt"
     "claude"
     "google-chrome"
-    "monitorcontrol"
     "t3-code"
   ];
 
