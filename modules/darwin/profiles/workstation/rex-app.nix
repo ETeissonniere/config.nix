@@ -2,19 +2,23 @@
 let
   appcast = "https://blob.superlogical.com/public/rex-app/preview/appcast.xml";
   app = "/Applications/Rex.app";
+  rexCli = "${app}/Contents/Helpers/Server.rex/Contents/MacOS/rex";
 in
 {
   home-manager.sharedModules = [
-    {
-      # The app bundles rex and its terminfo; only its init.lua comes from here.
-      programs.rex = {
-        enable = true;
-        package = null;
-        config = ''
-          rex.host({ label = "slopcannon", endpoints = { "ssh://slopcannon.local" }, icon = "server" })
+    (
+      { lib, pkgs, ... }:
+      {
+        # Stored in Rex's own host list rather than a managed init.lua, which stays hand-editable.
+        home.activation.rexHosts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          if [ -x ${rexCli} ] && ! ${rexCli} hosts list --json \
+              | ${lib.getExe pkgs.jq} -e 'any(.hosts[]; .host.label == "slopcannon")' >/dev/null; then
+            run ${rexCli} hosts add slopcannon ssh://slopcannon.local --icon server \
+              || warnEcho "could not add slopcannon to Rex; the next switch will retry"
+          fi
         '';
-      };
-    }
+      }
+    )
   ];
 
   # There is no Homebrew cask, so install the newest build once, like a cask would.
