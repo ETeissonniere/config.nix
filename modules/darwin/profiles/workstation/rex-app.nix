@@ -1,50 +1,9 @@
-{
-  config,
-  inputs,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 let
   appcast = "https://blob.superlogical.com/public/rex-app/preview/appcast.xml";
   app = "/Applications/Rex.app";
-  rexCli = "${app}/Contents/Helpers/Server.rex/Contents/MacOS/rex";
-
-  servesRex =
-    machine:
-    lib.any (user: user.services.rex.enable or false) (
-      lib.attrValues (machine.home-manager.users or { })
-    );
-
-  # Every NixOS host or container that runs a Rex server, by its mDNS name.
-  rexServers = lib.concatLists (
-    lib.mapAttrsToList (
-      hostName: host:
-      lib.optional (servesRex host.config) hostName
-      ++ lib.attrNames (lib.filterAttrs (_: container: servesRex container.config) host.config.containers)
-    ) inputs.self.nixosConfigurations
-  );
 in
 {
-  home-manager.sharedModules = [
-    (
-      { lib, pkgs, ... }:
-      {
-        # Stored in Rex's own host list rather than a managed init.lua, which stays hand-editable.
-        home.activation.rexHosts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          if [ -x ${rexCli} ]; then
-            for host in ${lib.escapeShellArgs rexServers}; do
-              if ! ${rexCli} hosts list --json \
-                  | ${lib.getExe pkgs.jq} -e --arg host "$host" 'any(.hosts[]; .host.label == $host)' >/dev/null; then
-                run ${rexCli} hosts add "$host" "ssh://$host.local" --icon server \
-                  || warnEcho "could not add $host to Rex; the next switch will retry"
-              fi
-            done
-          fi
-        '';
-      }
-    )
-  ];
-
   # There is no Homebrew cask, so install the newest build once, like a cask would.
   # Rex then updates itself through Sparkle, so Nix never pins or replaces it.
   system.activationScripts.postActivation.text = ''
