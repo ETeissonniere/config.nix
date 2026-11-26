@@ -11,9 +11,10 @@
     nixRemoteBuilders.enable = true;
   };
 
-  services.tailscale.enable = true;
-
-  homebrew.casks = [ "utm" ];
+  homebrew.casks = [
+    "tailscale-app"
+    "utm"
+  ];
 
   # Compatibility baseline for this installation; do not bump during updates.
   system.stateVersion = 6;
