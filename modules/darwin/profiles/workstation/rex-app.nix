@@ -4,6 +4,19 @@ let
   app = "/Applications/Rex.app";
 in
 {
+  home-manager.sharedModules = [
+    {
+      # The app bundles rex and its terminfo; only its init.lua comes from here.
+      programs.rex = {
+        enable = true;
+        package = null;
+        config = ''
+          rex.host({ label = "slopcannon", endpoints = { "ssh://slopcannon.local" }, icon = "server" })
+        '';
+      };
+    }
+  ];
+
   # There is no Homebrew cask, so install the newest build once, like a cask would.
   # Rex then updates itself through Sparkle, so Nix never pins or replaces it.
   system.activationScripts.postActivation.text = ''
