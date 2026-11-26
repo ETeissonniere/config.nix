@@ -4,6 +4,12 @@ let
   app = "/Applications/Rex.app";
 in
 {
+  home-manager.sharedModules = [
+    {
+      targets.darwin.defaults."com.superlogical.rex"."Workspace.darkThemeID" = "whitby-bay";
+    }
+  ];
+
   # There is no Homebrew cask, so install the newest build once, like a cask would.
   # Rex then updates itself through Sparkle, so Nix never pins or replaces it.
   system.activationScripts.postActivation.text = ''
