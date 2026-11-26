@@ -13,6 +13,8 @@
     ./git.nix
     ./scauth.nix
     inputs.self.homeModules.sshkey
+    # Exposes services.rex for Linux machines that want a Rex server.
+    inputs.rex.homeManagerModules.default
   ];
 
   home.packages = [ pkgs.python3Packages.huggingface-hub ];

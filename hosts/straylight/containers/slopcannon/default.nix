@@ -72,10 +72,7 @@ in
       users.allowNoPasswordLogin = true;
 
       home-manager.users.${username} = {
-        imports = [
-          inputs.self.homeModules.profiles.coding
-          inputs.rex.homeManagerModules.default
-        ];
+        imports = [ inputs.self.homeModules.profiles.coding ];
         services.t3-remote-control.enable = true;
         services.rex.enable = true;
         home.stateVersion = "26.05";
