@@ -17,5 +17,5 @@ Containers use native NixOS containers. Manage them through systemd, for example
 
 | Service | Purpose | Access and storage | Startup |
 | --- | --- | --- | --- |
-| `container@slopcannon` | Remote development in a native NixOS container. | Own LAN address and mDNS name: `ssh slopcannon.local`. T3 Code at `t3.teiss.org`. Rex server over SSH at `ssh://slopcannon.local`. Home, SSH host keys, and credentials persist under `/data/slopcannon`. | Automatic |
+| `container@slopcannon` | Remote development in a native NixOS container. | Own LAN address and mDNS name: `ssh slopcannon.local`. T3 Code at `t3.teiss.org`. Home, SSH host keys, and credentials persist under `/data/slopcannon`. | Automatic |
 | `container@slopkiddy` | Local AI: Open WebUI, llama.cpp, and ComfyUI behind Caddy, signed in through Pocket ID. | `openwebui.teiss.org` and `comfy.teiss.org`. State and manually downloaded models persist under `/data/slopkiddy`. | Automatic |
