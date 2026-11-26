@@ -16,7 +16,6 @@
     "utm"
   ];
 
-  # Launch through LaunchServices so the app starts as it would from Finder.
   launchd.user.agents.tailscale.serviceConfig = {
     ProgramArguments = [
       "/usr/bin/open"
