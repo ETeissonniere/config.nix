@@ -55,7 +55,7 @@
       inputs.home-manager.follows = "home-manager";
     };
     rex = {
-      # Stable has no releases yet; preview is what upstream's installer falls back to.
+      # Kept here until an upstream package is available.
       url = "https://pkgs.superlogical.com/rex/nix/preview.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
