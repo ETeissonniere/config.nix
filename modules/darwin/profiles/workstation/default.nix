@@ -11,6 +11,7 @@ in
   imports = [
     ./apps.nix
     ./dock.nix
+    ./rex-app.nix
     ./system-defaults.nix
     ./wallpaper.nix
     inputs.self.darwinModules.nas
