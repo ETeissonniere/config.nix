@@ -5,9 +5,18 @@ let
 in
 {
   home-manager.sharedModules = [
-    {
-      targets.darwin.defaults."com.superlogical.rex"."Workspace.darkThemeID" = "whitby-bay";
-    }
+    (
+      { pkgs, ... }:
+      {
+        # Run the app's own rex so the command updates along with the app.
+        home.packages = [
+          (pkgs.writeShellScriptBin "rex" ''
+            exec "${app}/Contents/Helpers/Rex Server.rex/Contents/MacOS/rex" "$@"
+          '')
+        ];
+        targets.darwin.defaults."com.superlogical.rex"."Workspace.darkThemeID" = "whitby-bay";
+      }
+    )
   ];
 
   # There is no Homebrew cask, so install the newest build once, like a cask would.
