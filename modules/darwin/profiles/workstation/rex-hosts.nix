@@ -30,7 +30,7 @@ in
                 --argjson want ${lib.escapeShellArg (builtins.toJSON rexServers)} \
                 '$want - [.hosts[].host.label] | .[]')"; then
               for host in $missing; do
-                run ${rexCli} hosts add "$host" "ssh://$host.local" --icon server \
+                run ${rexCli} hosts add "$host" "ssh://$host.local" --icon server.rack \
                   || warnEcho "could not add $host to Rex; the next switch will retry"
               done
             else
