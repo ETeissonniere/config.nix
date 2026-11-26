@@ -74,6 +74,8 @@ in
       home-manager.users.${username} = {
         imports = [ inputs.self.homeModules.profiles.coding ];
         services.t3-remote-control.enable = true;
+        # Keeps Rex sessions alive between connections; Macs add it as ssh://slopcannon.local.
+        services.rex.enable = true;
         home.stateVersion = "26.05";
       };
       system.stateVersion = "26.05";
