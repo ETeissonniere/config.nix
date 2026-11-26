@@ -1,7 +1,8 @@
 { inputs, lib, ... }:
 let
   # The app bundles rex; rex-app.nix installs it.
-  rexCli = "/Applications/Rex.app/Contents/Helpers/Server.rex/Contents/MacOS/rex";
+  app = "/Applications/Rex.app";
+  rexCli = lib.escapeShellArg "${app}/Contents/Helpers/Rex Server.rex/Contents/MacOS/rex";
 
   # Every NixOS host and container, by its mDNS name.
   machines = lib.concatMapAttrs (
@@ -24,7 +25,7 @@ in
       {
         # Stored in Rex's own host list rather than a managed init.lua, which stays hand-editable.
         home.activation.rexHosts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          if [ -x ${rexCli} ]; then
+          if [ -e ${app} ]; then
             if missing="$(${rexCli} hosts list --json | ${lib.getExe pkgs.jq} -r \
                 --argjson want ${lib.escapeShellArg (builtins.toJSON rexServers)} \
                 '$want - [.hosts[].host.label] | .[]')"; then
