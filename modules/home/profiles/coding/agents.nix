@@ -54,5 +54,17 @@
       ".claude/skills".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
     };
+
+    # Rex writes its skill and session hooks itself, so they follow Rex upgrades. Setup is
+    # idempotent, and runs after the settings merges so they don't drop its hooks.
+    home.activation.rexAgentSetup =
+      lib.hm.dag.entryAfter [ "writeBoundary" "claudeCodeSettings" "codexMutableSettings" ]
+        ''
+          rex=${config.home.path}/bin/rex
+          if [ -x "$rex" ]; then
+            run --quiet "$rex" skill setup --autostart=false \
+              || warnEcho "could not set up Rex's agent skill; the next switch will retry"
+          fi
+        '';
   };
 }
