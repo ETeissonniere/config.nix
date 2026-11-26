@@ -1,7 +1,5 @@
-{ inputs, ... }:
 {
-  imports = [ inputs.self.darwinModules.linearmouse ];
+  imports = [ ./linearmouse.nix ];
 
-  services.linearmouse.enable = true;
   homebrew.casks = [ "monitorcontrol" ];
 }
