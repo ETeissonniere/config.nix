@@ -2,6 +2,7 @@
 // at commit 9ad9158a93c0de0c045e1c6b27df37da698bc8af, unmodified below this header except:
 // - THRESHOLD_MIN_DISTANCE is lowered from 1.5 so every cursor move animates.
 // - No trail is drawn from a new pane's empty previous cursor, which Ghostty starts at 0,0.
+// - A ring pulses out of the cursor when the pane gains focus (the FOCUS_PULSE_* settings).
 //
 // MIT License
 //
@@ -41,6 +42,10 @@ const float TRAIL_THICKNESS_X = 0.9;
 
 const float FADE_ENABLED = 0.0; // 1.0 to enable fade gradient along the trail, 0.0 to disable
 const float FADE_EXPONENT = 5.0; // exponent for fade gradient along the trail
+
+const float FOCUS_PULSE_DURATION = 0.4; // seconds; 0.0 disables the pulse
+const float FOCUS_PULSE_SIZE = 2.0; // how far the ring travels, in cursor heights
+const float FOCUS_PULSE_THICKNESS = 0.15; // ring thickness, in cursor heights
 
 // --- CONSTANTS for easing functions ---
 const float PI = 3.14159265359;
@@ -330,6 +335,17 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
         // punch hole on the trail, so current cursor is drawn on top
         newColor = mix(newColor, fragColor, step(sdfCurrentCursor, 0.));
 
+    }
+
+    // A pane can't see the cursor in the pane that had focus, so mark the switch here instead.
+    float focusProgress = (iTime - iTimeFocus) / max(FOCUS_PULSE_DURATION, 1e-6);
+    if (iFocus == 1 && focusProgress < 1.0) {
+        float eased = 1.0 - pow(1.0 - focusProgress, 3.0);
+        float radius = eased * FOCUS_PULSE_SIZE * currentCursor.w;
+        float halfThickness = 0.5 * FOCUS_PULSE_THICKNESS * currentCursor.w;
+        float ring = antialising(abs(sdfCurrentCursor - radius) - halfThickness, BLUR);
+        float alpha = TRAIL_COLOR.a * (1.0 - focusProgress) * ring;
+        newColor = mix(newColor, vec4(TRAIL_COLOR.rgb, newColor.a), alpha);
     }
 
     fragColor = newColor;
