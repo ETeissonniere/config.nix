@@ -1,6 +1,7 @@
 // cursor_warp.glsl from https://github.com/sahaj-b/ghostty-cursor-shaders
-// at commit 9ad9158a93c0de0c045e1c6b27df37da698bc8af, unmodified below this header
-// except THRESHOLD_MIN_DISTANCE, lowered from 1.5 so every cursor move animates.
+// at commit 9ad9158a93c0de0c045e1c6b27df37da698bc8af, unmodified below this header except:
+// - THRESHOLD_MIN_DISTANCE is lowered from 1.5 so every cursor move animates.
+// - No trail is drawn from a new pane's empty previous cursor, which Ghostty starts at 0,0.
 //
 // MIT License
 //
@@ -201,7 +202,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
 
     float baseProgress = iTime - iTimeCursorChange;
     
-    if (lineLength > minDist && baseProgress < DURATION - 0.001) {
+    bool hasPreviousCursor = iPreviousCursor.w > 0.0;
+    if (hasPreviousCursor && lineLength > minDist && baseProgress < DURATION - 0.001) {
         // defining corners of cursors
 
         // Y (Height) with TRAIL_THICKNESS
