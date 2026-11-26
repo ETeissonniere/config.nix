@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 {
   imports = [
     ./t3-remote-control.nix
@@ -50,24 +45,13 @@
           });
       in
       {
-        ".agents/AGENTS.md".text =
-          builtins.replaceStrings
-            [ "@shellInstructions@\n" ]
-            [
-              (lib.optionalString config.programs.fish.enable ''
-                ## Shell commands
-                - This machine uses fish. When generating commands or scripts to be run manually and locally, prefer fish syntax unless otherwise specified.
-                - When running commands yourself within the Codex sandbox, keep the default configured shell and syntax.
-
-              '')
-            ]
-            (builtins.readFile ./agents/AGENTS.md);
         ".agents/skills" = {
           source = ./agents/skills;
           recursive = true;
         };
       }
-      // linkTo config.home.file.".agents/AGENTS.md".source [
+      // linkTo ./agents/AGENTS.md [
+        ".agents/AGENTS.md"
         ".codex/AGENTS.md"
         ".claude/CLAUDE.md"
         ".gemini/GEMINI.md"
