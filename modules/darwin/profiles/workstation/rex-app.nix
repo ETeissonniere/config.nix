@@ -14,7 +14,12 @@ in
             exec "${app}/Contents/Helpers/Rex Server.rex/Contents/MacOS/rex" "$@"
           '')
         ];
-        targets.darwin.defaults."com.superlogical.rex"."Workspace.darkThemeID" = "whitby-bay";
+        targets.darwin.defaults."com.superlogical.rex" = {
+          "Workspace.darkThemeID" = "whitby-bay";
+          "Workspace.cursorShadersEnabled" = true;
+          "Workspace.cursorShader" = "warp";
+          "Workspace.terminalCursorStyle" = "bar";
+        };
       }
     )
   ];
