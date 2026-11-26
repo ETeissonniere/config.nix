@@ -21,7 +21,6 @@
       "/System/Applications/Calendar.app"
       "/System/Applications/Reminders.app"
       "/Applications/Nix Apps/Ghostty.app"
-      "/Applications/Rex.app"
       "/Applications/T3 Code (Beta).app"
     ];
 

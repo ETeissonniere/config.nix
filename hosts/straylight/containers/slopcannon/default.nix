@@ -74,7 +74,6 @@ in
       home-manager.users.${username} = {
         imports = [ inputs.self.homeModules.profiles.coding ];
         services.t3-remote-control.enable = true;
-        services.rex.enable = true;
         home.stateVersion = "26.05";
       };
       system.stateVersion = "26.05";
