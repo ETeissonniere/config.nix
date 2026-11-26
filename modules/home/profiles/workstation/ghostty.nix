@@ -18,6 +18,8 @@
       keybind = "shift+enter=text:\\x1b\\r";
       shell-integration-features = "sudo,ssh-terminfo,ssh-env";
       cursor-style = "bar";
+      # Ayu Mirage's orange cursor would also color the trail; follow the text color instead.
+      cursor-color = "cell-foreground";
       custom-shader = "${./ghostty-cursor-warp.glsl}";
     };
   };
