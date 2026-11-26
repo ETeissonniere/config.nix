@@ -11,7 +11,6 @@
     ./developer-folder.nix
     ./gh.nix
     ./git.nix
-    ./rex.nix
     ./scauth.nix
     inputs.self.homeModules.sshkey
   ];

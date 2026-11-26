@@ -1,30 +1,27 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
-  # There is no Homebrew cask, so install the app once, like a cask would.
-  # Rex updates itself through Sparkle afterwards, so this pin only matters on a fresh Mac.
-  rexDmg = pkgs.fetchurl {
-    url = "https://blob.superlogical.com/public/rex-app/preview/Rex-0.1.0-2147.dmg";
-    hash = "sha256-UNTcmw4ZQV4BKzZ+V4zeKx8m1GR1wQNAw8rC5Thh6/8=";
-  };
+  appcast = "https://blob.superlogical.com/public/rex-app/preview/appcast.xml";
+  app = "/Applications/Rex.app";
 in
 {
+  # There is no Homebrew cask, so install the newest build once, like a cask would.
+  # Rex then updates itself through Sparkle, so Nix never pins or replaces it.
   system.activationScripts.postActivation.text = ''
-    if ! /bin/ls -d /Applications/Rex*.app >/dev/null 2>&1; then
+    if [ ! -e ${app} ]; then
       echo "Installing Rex..."
-      rexMount="$(/usr/bin/mktemp -d)"
-      /usr/bin/hdiutil attach -nobrowse -readonly -mountpoint "$rexMount" ${rexDmg} >/dev/null
-      for app in "$rexMount"/*.app; do
-        /usr/bin/ditto "$app" "/Applications/$(/usr/bin/basename "$app")"
+      (
+        set -euo pipefail
+        work="$(/usr/bin/mktemp -d)"
+        trap '/usr/bin/hdiutil detach -quiet "$work/mnt" 2>/dev/null || true; /bin/rm -rf "$work"' EXIT
+        url="$(/usr/bin/curl -fsSL ${appcast} | /usr/bin/xmllint --xpath 'string(/rss/channel/item[1]/enclosure/@url)' -)"
+        /usr/bin/curl -fsSL -o "$work/Rex.dmg" "$url"
+        /usr/bin/hdiutil attach -quiet -nobrowse -readonly -mountpoint "$work/mnt" "$work/Rex.dmg"
+        /usr/bin/codesign --verify --deep --strict \
+          -R='identifier "com.superlogical.rex" and anchor apple generic' "$work/mnt/Rex.app"
+        /usr/bin/ditto "$work/mnt/Rex.app" ${app}
         # Sparkle updates the app in place, which needs the user to own it.
-        /usr/sbin/chown -R ${lib.escapeShellArg config.system.primaryUser}:staff "/Applications/$(/usr/bin/basename "$app")"
-      done
-      /usr/bin/hdiutil detach "$rexMount" >/dev/null
-      /bin/rmdir "$rexMount"
+        /usr/sbin/chown -R ${lib.escapeShellArg config.system.primaryUser}:staff ${app}
+      ) || echo "warning: could not install Rex; the next activation will retry" >&2
     fi
   '';
 }

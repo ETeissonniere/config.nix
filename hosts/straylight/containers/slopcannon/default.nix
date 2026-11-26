@@ -72,9 +72,11 @@ in
       users.allowNoPasswordLogin = true;
 
       home-manager.users.${username} = {
-        imports = [ inputs.self.homeModules.profiles.coding ];
+        imports = [
+          inputs.self.homeModules.profiles.coding
+          inputs.rex.homeManagerModules.default
+        ];
         services.t3-remote-control.enable = true;
-        # Keeps Rex sessions alive between connections; Macs add it as ssh://slopcannon.local.
         services.rex.enable = true;
         home.stateVersion = "26.05";
       };
