@@ -2,7 +2,7 @@
 {
   imports = [
     inputs.self.darwinModules.profiles.workstation
-    inputs.self.darwinModules.linearmouse
+    inputs.self.darwinModules.profiles.desktop
   ];
 
   workstation = {
@@ -11,8 +11,6 @@
     linuxBuilder.enable = true;
     nixRemoteBuilders.enable = true;
   };
-  services.linearmouse.enable = true;
-  homebrew.casks = [ "monitorcontrol" ];
 
   # Compatibility baseline for this installation; do not bump during updates.
   system.stateVersion = 6;
