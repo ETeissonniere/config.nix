@@ -2,7 +2,6 @@
   config,
   inputs,
   lib,
-  osClass,
   pkgs,
   ...
 }:
@@ -12,10 +11,10 @@
     ./developer-folder.nix
     ./gh.nix
     ./git.nix
+    ./rex.nix
     ./scauth.nix
     inputs.self.homeModules.sshkey
-  ]
-  ++ lib.optional (osClass == "nixos") inputs.rex.homeManagerModules.default;
+  ];
 
   home.packages = [ pkgs.python3Packages.huggingface-hub ];
 
