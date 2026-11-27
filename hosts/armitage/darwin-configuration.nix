@@ -16,6 +16,15 @@
     "utm"
   ];
 
+  launchd.user.agents.tailscale.serviceConfig = {
+    ProgramArguments = [
+      "/usr/bin/open"
+      "-a"
+      "/Applications/Tailscale.app"
+    ];
+    RunAtLoad = true;
+  };
+
   # Compatibility baseline for this installation; do not bump during updates.
   system.stateVersion = 6;
 }
