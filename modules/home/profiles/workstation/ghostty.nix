@@ -17,6 +17,8 @@
       window-padding-y = 16;
       keybind = "shift+enter=text:\\x1b\\r";
       shell-integration-features = "sudo,ssh-terminfo,ssh-env";
+      cursor-style = "bar";
+      custom-shader = "${./ghostty-cursor-warp.glsl}";
     };
   };
 }
